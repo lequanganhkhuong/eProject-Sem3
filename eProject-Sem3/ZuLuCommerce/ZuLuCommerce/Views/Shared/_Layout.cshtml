@@ -1,0 +1,488 @@
+﻿@using ZuLuCommerce.Models
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>@ViewBag.Title</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Place favicon.ico in the root directory -->
+    <link rel="shortcut icon" type="image/x-icon" href="~/Content/admin/img/favicon.ico">
+    <!--All Css Here-->
+    <!-- Ionicons Font CSS-->
+    <link rel="stylesheet" href="~/Content/admin/css/ionicons.min.css">
+    <!-- Font Awesome CSS-->
+    <link rel="stylesheet" href="~/Content/admin/css/font-awesome.min.css">
+    
+    <!-- Animate CSS-->
+    <link rel="stylesheet" href="~/Content/admin/css/animate.css">
+    <!-- Owl Carousel CSS-->
+    <link rel="stylesheet" href="~/Content/admin/css/owl.carousel.min.css">
+    <!-- Nice Select CSS-->
+    <link rel="stylesheet" href="~/Content/admin/css/nice-select.css">
+    <!-- Slick CSS-->
+    <link rel="stylesheet" href="~/Content/admin/css/slick.css">
+    <!-- Meanmenu CSS-->
+    <link rel="stylesheet" href="~/Content/admin/css/meanmenu.min.css">
+    <!-- Venobox CSS-->
+    <link rel="stylesheet" href="~/Content/admin/css/venobox.css">
+    <!-- Bootstrap CSS-->
+    <link rel="stylesheet" href="~/Content/admin/css/bootstrap.min.css">
+    <!-- Style CSS -->
+    <link rel="stylesheet" href="~/Content/admin/style.css">
+    <link href="~/Content/admin/MyCss.css" rel="stylesheet" />
+    <!-- Responsive CSS -->
+    <link rel="stylesheet" href="~/Content/admin/css/responsive.css">
+    <!-- Modernizr Js -->
+    <script src="~/Content/admin/js/vendor/modernizr-2.8.3.min.js"></script>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</head>
+<body>
+    <!--[if lt IE 8]>
+    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    <div class="wrapper">
+        <!--Header Area Start-->
+        <header>
+            <!--Header Top Area Start-->
+            <div class="header-top-area">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <!--Header Top Left Start-->
+                            <div class="header-top-left">
+                                <a href="#">Reliable electronic shopping website</a>
+                            </div>
+                            <!--Header Top Left End-->
+                        </div>
+                        <div class="col-md-6">
+                            <!--Header Top Right Start-->
+                            <div class="header-top-right text-center text-md-right">
+                                <ul class="header-top-menu">
+                                    <li><a href="my-account.html">My account</a></li>
+                                   
+                                    <li class="drodown-show">
+                                        <a href="#">English <i class="ion-ios-arrow-down"></i></a>
+                                        <!--Header Top Dropdown Start-->
+                                        <ul class="ht-dropdown">
+                                            <li><a href="#">English</a></li>
+                                            <li><a href="#">Vietnamese</a></li>
+                                        </ul>
+                                        <!--Header Top Dropdown End-->
+                                    </li>
+                                </ul>
+                            </div>
+                            <!--Header Top Right End-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--Header Top Area End-->
+            <!--Header Middle Area Start-->
+            <div class="header-middle-area header-sticky">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <!--Logo Start-->
+                            @*<div class="logo">
+                                <a href="index.html">
+                                    <img src="~/Content/admin/img/logo/logo1.jpg" alt="">
+                                </a>
+                            </div>*@
+                            <!--Logo End-->
+                        </div>
+                        <div class="col-md-9">
+                            <!--Header Menu Start-->
+                            <div class="header-menu-area">
+                                <nav>
+                                    <ul class="main-menu">
+                                        <li class="active">
+                                            <a href="index.html">Home</a>
+                                            <!--Dropdown Menu Start-->
+                                            @*<ul class="dropdown">
+                                                <li><a href="index.html">Home Shop 1</a></li>
+                                                <li><a href="index-2.html">Home Shop 2</a></li>
+                                                <li><a href="index-3.html">Home Shop 3</a></li>
+                                                <li><a href="index-4.html">Home Shop 4</a></li>
+                                            </ul>*@
+                                            <!--Dropdown Menu End-->
+                                        </li>
+                                        <li><a href="about.html">About us</a></li>
+                                        <li><a href="shop.html">Shop</a></li>
+                                       
+                                        
+                                        @*<li>
+                                            <a href="#">Features</a>
+                                            <!--Mega Menu Start-->
+                                            <ul class="mega-menu">
+                                                <li>
+                                                    <a href="#" class="item-link">Pages</a>
+                                                    <ul>
+                                                        <li><a href="my-account.html">My Account</a></li>
+                                                        <li><a href="checkout.html">Checkout</a></li>
+                                                        <li><a href="cart.html">Shopping cart</a></li>
+                                                        <li><a href="wishlist.html">Wishlist</a></li>
+                                                        <li><a href="faq.html">Frequently Questions</a></li>
+                                                        <li><a href="404.html">Error 404</a></li>
+                                                    </ul>
+                                                </li>
+                                                <li>
+                                                    <a href="#" class="item-link">Blog</a>
+                                                    <ul>
+                                                        <li><a href="blog-nosidebar.html">None Sidebar</a></li>
+                                                        <li><a href="blog-left-sidebar.html">Sidebar Left</a></li>
+                                                        <li><a href="single-blog.html">Gallery Format</a></li>
+                                                        <li><a href="single-blog.html">Audio Format</a></li>
+                                                        <li><a href="single-blog.html">Video Format</a></li>
+                                                    </ul>
+                                                </li>
+                                                <li>
+                                                    <a href="#" class="item-link">Shop</a>
+                                                    <ul>
+                                                        <li><a href="shop-full-width.html">Full Width</a></li>
+                                                        <li><a href="shop-right-sidebar.html">Sidebar Right</a></li>
+                                                        <li><a href="shop-list.html">List View</a></li>
+                                                        <li><a href="single-product.html">Single Product</a></li>
+                                                        <li><a href="single-product.html">Variable Product</a></li>
+                                                        <li><a href="single-product.html">Simple Product</a></li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                            <!--Mega Menu End-->
+                                        </li>*@
+                                    </ul>
+                                </nav>
+                            </div>
+                            <!--Header Menu End-->
+                            <div class="header-phone">
+                                <p>Call us: <br><span>(999) 1234 56789</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <!--Mobile Menu Area Start-->
+                            <div class="mobile-menu d-lg-none"></div>
+                            <!--Mobile Menu Area End-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--Header Middle Area End-->
+            <!--Header Bottom Area Start-->
+            <div class="header-bottom-area pb-15">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12 col-lg-3 order-lg-1 order-3">
+                           
+                        </div>
+                        <div class="col-md-9 col-lg-6 order-lg-2 order-1">
+                            <!--Header Top Search Start-->
+                            <div class="header-top-search">
+                                <div class="search-categories">
+                                    <form action="#">
+                                        <div class="search-form-input">
+                                            <select id="select" name="select" class="nice-select">
+                                                <option value="0">All Categories</option>
+                                                @{
+                                                    eCommerceEntities db = new eCommerceEntities();
+                                                    foreach (var cat in db.Categories.ToList())
+                                                    {
+                                                        <option value="@cat.Id">@cat.Name</option>
+                                                    }
+                                                }
+                                                
+                                            </select>
+                                            <input type="text" placeholder="Search product...">
+                                            <button class="top-search-btn" type="submit"><i class="ion-ios-search-strong"></i></button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <!--Header Top Search End-->
+                        </div>
+                        <div class="col-md-3 col-lg-3 order-lg-3 order-2">
+                            <!--Mini Cart Start-->
+                            <div class="mini-cart">
+                                <a href=@Url.Action("Index","Carts")>
+                                    <span class="cart-info">
+                                        <span class="cart-total">0</span>
+                                        <span class="text">My Cart</span>
+                                    </span>
+                                </a>
+                              
+                            </div>
+                          
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--Header Bottom Area End-->
+        </header>
+        <!--Header Area End-->
+        @RenderBody()
+        <!--Footer Area Start-->
+        <footer>
+            <div class="footer-container">
+                <!--Footer Top Area Start-->
+                <div class="footer-top-area pt-50 pb-35">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-4 col-md-6 col-12">
+                                <!--Single Footer Wiedget Start-->
+                                <div class="single-footer-wiedget mb-30">
+                                    <div class="footer-logo">
+                                        <a href="index.html"><img src="~/Content/admin/img/logo/logo1.jpg" alt=""></a>
+                                    </div>
+                                    <div class="desc-footer">We are a team of designers and developers that create high quality Magento, Prestashop, Opencart.</div>
+                                    <div class="address-footer">
+                                        <p class="address"><span>The Barn, Ullenhall, Henley-in-Arden B578 5CC, England</span></p>
+                                        <p class="phone"><span>+123.456.789 - +123.456.678</span></p>
+                                        <p class="mail"><span>support@devitems.com</span></p>
+                                    </div>
+                                </div>
+                                <!--Single Footer Wiedget End-->
+                            </div>
+                            <div class="col-lg-2 col-md-6 col-12">
+                                <!--Single Footer Wiedget Start-->
+                                <div class="single-footer-wiedget mb-30">
+                                    <div class="footer-title">
+                                        <h3>Products</h3>
+                                    </div>
+                                    <ul class="link-widget">
+                                        <li><a href="#">Prices drop</a></li>
+                                        <li><a href="#">New products</a></li>
+                                        <li><a href="#">Best sales</a></li>
+                                        <li><a href="#">Contact us</a></li>
+                                        <li><a href="#">Sitemap</a></li>
+                                        <li><a href="#">Login</a></li>
+                                    </ul>
+                                </div>
+                                <!--Single Footer Wiedget End-->
+                            </div>
+                            <div class="col-lg-2 col-md-6 col-12">
+                                <!--Single Footer Wiedget Start-->
+                                <div class="single-footer-wiedget mb-30">
+                                    <div class="footer-title">
+                                        <h3>Our company</h3>
+                                    </div>
+                                    <ul class="link-widget">
+                                        <li><a href="#">Delivery</a></li>
+                                        <li><a href="#">Legal Notice</a></li>
+                                        <li><a href="#">About us</a></li>
+                                        <li><a href="#">Secure payment</a></li>
+                                        <li><a href="#">Contact us</a></li>
+                                        <li><a href="#">Stores</a></li>
+                                    </ul>
+                                </div>
+                                <!--Single Footer Wiedget End-->
+                            </div>
+                            <div class="col-lg-4 col-md-6 col-12">
+                                <!--Single Footer Wiedget Start-->
+                                <div class="single-footer-wiedget mb-30">
+                                    <div class="footer-title">
+                                        <h3>Instagram</h3>
+                                        <a href="#">Follow our instagram</a>
+                                    </div>
+                                    <ul id="Instafeed"></ul>
+                                </div>
+                                <!--Single Footer Wiedget End-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Footer Top Area End-->
+                <!--Footer Middle Area Start-->
+                <div class="footer-middle-area">
+                    <div class="container">
+                        <div class="newsletter-social-block-content">
+                            <div class="row">
+                                <div class="col-lg-7 col-md-12">
+                                    <!--Newsletter Area Start-->
+                                    <div class="newsletter-area">
+                                        <p>Sign up for newsletter</p>
+                                        <div class="newsletter-form">
+                                            <!-- Newsletter Form -->
+                                            <form action="http://devitems.us11.list-manage.com/subscribe/post?u=6bbb9b6f5827bd842d9640c82&amp;id=05d85f18ef" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="popup-subscribe-form validate" target="_blank" novalidate>
+                                                <div id="mc_embed_signup_scroll">
+                                                    <div id="mc-form" class="mc-form subscribe-form">
+                                                        <input id="mc-email" type="email" autocomplete="off" placeholder="Enter your email here" />
+                                                        <button id="mc-submit">Subscribe</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <!--Newsletter Area End-->
+                                </div>
+                                <div class="col-lg-5 col-md-12 text-center text-lg-right">
+                                    <div class="social-title">
+                                        <h2>Follow Us</h2>
+                                    </div>
+                                    <ul class="social-icon">
+                                        <li><a href="#"><i class="ion-social-facebook"></i></a></li>
+                                        <li><a href="#"><i class="ion-social-twitter"></i></a></li>
+                                        <li><a href="#"><i class="ion-social-youtube"></i></a></li>
+                                        <li><a href="#"><i class="ion-social-googleplus-outline"></i></a></li>
+                                        <li><a href="#"><i class="ion-social-instagram"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="footer-link pt-50 pb-30">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="footer-link-title">
+                                        <h2>Quick Links</h2>
+                                    </div>
+                                    <!--Single Tag Content Start-->
+                                    <div class="tag-content">
+                                        <h4>Electronics:</h4>
+                                        <ul class="tag-link">
+                                            <li><a href="#">Headsets</a></li>
+                                            <li><a href="#">Headphones</a></li>
+                                            <li><a href="#">Speakers</a></li>
+                                            <li><a href="#">Portronics Speakers </a></li>
+                                            <li><a href="#">Intex Speakers</a></li>
+                                            <li><a href="#">Xoofer speakers </a></li>
+                                            <li><a href="#">Smart Watch </a></li>
+                                            <li><a href="#">Mobile </a></li>
+                                            <li><a href="#">Digital Cameras </a></li>
+                                        </ul>
+                                    </div>
+                                    <!--Single Tag Content End-->
+                                    <!--Single Tag Content Start-->
+                                    <div class="tag-content">
+                                        <h4>Fashion:</h4>
+                                        <ul class="tag-link">
+                                            <li><a href="#">men's fashion</a></li>
+                                            <li><a href="#">women's fashion</a></li>
+                                            <li><a href="#">handbag</a></li>
+                                            <li><a href="#">watches</a></li>
+                                            <li><a href="#">clothing</a></li>
+                                            <li><a href="#">T-shit</a></li>
+                                            <li><a href="#">Sportwear</a></li>
+                                            <li><a href="#">lougewear</a></li>
+                                            <li><a href="#">Digital Cameras</a></li>
+                                        </ul>
+                                    </div>
+                                    <!--Single Tag Content End-->
+                                    <!--Single Tag Content Start-->
+                                    <div class="tag-content">
+                                        <h4>Cosmetic:</h4>
+                                        <ul class="tag-link">
+                                            <li><a href="#">Makeup</a></li>
+                                            <li><a href="#">Skin Care</a></li>
+                                            <li><a href="#">Speakers</a></li>
+                                            <li><a href="#">Hair Care </a></li>
+                                            <li><a href="#">Nails Art </a></li>
+                                            <li><a href="#">Lip Care</a></li>
+                                            <li><a href="#">Tools</a></li>
+                                            <li><a href="#">Blush </a></li>
+                                            <li><a href="#">Sprays</a></li>
+                                            <li><a href="#">Makeup Brushes</a></li>
+                                            <li><a href="#">Lipstick</a></li>
+                                            <li><a href="#">Lipcolor</a></li>
+                                        </ul>
+                                    </div>
+                                    <!--Single Tag Content End-->
+                                    <!--Single Tag Content Start-->
+                                    <div class="tag-content">
+                                        <h4>Furniturex:</h4>
+                                        <ul class="tag-link">
+                                            <li><a href="#">Living Room</a></li>
+                                            <li><a href="#">Dinning Room </a></li>
+                                            <li><a href="#">Mattress Protectors </a></li>
+                                            <li><a href="#">Accent Chairs </a></li>
+                                            <li><a href="#">Sofa Beds & Futons</a></li>
+                                            <li><a href="#">Cabinets & Etageres</a></li>
+                                        </ul>
+                                    </div>
+                                    <!--Single Tag Content End-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Footer Middle Area End-->
+                <!--Footer Bottom Area Start-->
+                <div class="footer-bottom-area">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <!--Footer Copyright Start-->
+                                <div class="footer-copyright">
+                                    <p>Copyright &copy; <a href="#">Picaboo.</a> All Rights Reserved</p>
+                                </div>
+                                <!--Footer Copyright End-->
+                            </div>
+                            <div class="col-md-6">
+                                <!--Footer Payment Start-->
+                                <div class="footer-payments-image text-center text-md-right">
+                                    <img src="~/Content/admin/img/payment/payment.png" alt="">
+                                </div>
+                                <!--Footer Payment End-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Footer Bottom Area End-->
+            </div>
+        </footer>
+        <!--Footer Area End-->
+        
+    </div>
+
+
+
+
+
+    <!--All Js Here-->
+    <!--Jquery 1.12.4-->
+    <script src="~/Content/admin/js/vendor/jquery-1.12.4.min.js"></script>
+    <!--Imagesloaded-->
+    <script src="~/Content/admin/js/imagesloaded.pkgd.min.js"></script>
+    <!--Isotope-->
+    <script src="~/Content/admin/js/isotope.pkgd.min.js"></script>
+    <!--Waypoints-->
+    <script src="~/Content/admin/js/waypoints.min.js"></script>
+    <!--Counterup-->
+    <script src="~/Content/admin/js/jquery.counterup.min.js"></script>
+    <!--Countdown-->
+    <script src="~/Content/admin/js/jquery.countdown.min.js"></script>
+    <!--Carousel-->
+    <script src="~/Content/admin/js/owl.carousel.min.js"></script>
+    <!--Slick-->
+    <script src="~/Content/admin/js/slick.min.js"></script>
+    <!--Meanmenu-->
+    <script src="~/Content/admin/js/jquery.meanmenu.min.js"></script>
+    <!--Instafeed-->
+    <script src="~/Content/admin/js/instafeed.min.js"></script>
+    <!--Nice Select-->
+    <script src="~/Content/admin/js/jquery.nice-select.min.js"></script>
+    <!--ScrollUp-->
+    <script src="~/Content/admin/js/jquery.scrollUp.min.js"></script>
+    <!--Wow-->
+    <script src="~/Content/admin/js/wow.min.js"></script>
+    <!--Venobox-->
+    <script src="~/Content/admin/js/venobox.min.js"></script>
+    <!--Popper-->
+    <script src="~/Content/admin/js/popper.min.js"></script>
+    <!--Bootstrap-->
+    <script src="~/Content/admin/js/bootstrap.min.js"></script>
+    <!--Plugins-->
+    <script src="~/Content/admin/js/plugins.js"></script>
+    <!--Main Js-->
+    <script src="~/Content/admin/js/main.js"></script>
+    <script src="~/Content/admin/js/jquery.cookie.js"></script>
+    <script src="~/Content/admin/js/shopping.js"></script>
+
+    <script>
+        CartItemsCount();
+    </script>
+</body>
+</html>

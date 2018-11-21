@@ -1,0 +1,74 @@
+﻿@model ZuLuCommerce.Models.Product
+<div class="col-lg-4 col-xl-4 col-md-4">
+    <!--Single Product Start-->
+    <div class="single-product mb-30">
+        <div class="product-img" style="height:230px;text-align:center">
+
+            <a href=@Url.Action("Details","Products", new { id = Model.Id})>
+                @{
+                    string src = "/Uploads/image-not-available.jpg";//default
+                    string hover = "/Uploads/image-not-available.jpg";//default
+                    if(Model.Thumbnail != null)
+                    {
+                        var pic = Model.Pictures.Where(x => x.ProductId == Model.Id && x.URL != Model.Thumbnail).FirstOrDefault();
+                        if (pic != null)
+                        {
+                            src = "/Uploads/Products/" + Model.Id + "/" + Model.Thumbnail;
+                            hover = "/Uploads/Products/" + Model.Id + "/" + pic.URL;
+                        }
+                    }
+                    else
+                    {
+                        var pic = Model.Pictures.Where(x => x.ProductId == Model.Id).ToList();
+                        if (pic != null)
+                        {
+                            src = "/Uploads/Products/" + Model.Id + "/" + pic.FirstOrDefault().URL;
+                            hover = "/Uploads/Products/" + Model.Id + "/" + pic.LastOrDefault().URL;
+                        }
+                    }
+
+                }
+                <img  class="first-img" src="@src" alt="@Model.Name">
+                <img  class="hover-img" src="@hover" alt="@Model.Name">
+            </a>
+
+            <span class="sticker">New</span>
+            <div class="product-action">
+                <ul>
+                    <li><a class="quick-add-to-cart" pid="@Model.Id" pthumbnail="@Model.Thumbnail" pname="@Model.Name" pprice="@Model.Price" title="Add to cart" href="#"><i class="ion-bag"></i></a></li>
+                    <li><a title="Quick View" href="#open-modal" data-toggle="modal"><i class="ion-eye"></i></a></li>
+                    <li><a title="Compare" href="#"><i class="ion-ios-copy-outline"></i></a></li>
+                </ul>
+            </div>
+
+
+        </div>
+
+        <div class="product-content">
+            <h4>
+                @{
+
+                    string productname = Model.Name;
+                    if (productname.Length > 25)
+                    {
+                        productname = productname.Substring(0, 25);
+
+                        productname += "...";
+                    }
+                }
+                <a href="@Url.Action("Details","Products",new { id = Model.Id})">@productname</a>
+            </h4>
+            <div class="product-price">
+                <span class="price">@Model.Price.ToString("N0") VND</span>
+            </div>
+            <div class="product-reviews">
+                <i class="ion-android-star"></i>
+                <i class="ion-android-star"></i>
+                <i class="ion-android-star"></i>
+                <i class="ion-android-star"></i>
+                <i class="ion-android-star"></i>
+            </div>
+        </div>
+    </div>
+    <!--Single Product End-->
+</div>

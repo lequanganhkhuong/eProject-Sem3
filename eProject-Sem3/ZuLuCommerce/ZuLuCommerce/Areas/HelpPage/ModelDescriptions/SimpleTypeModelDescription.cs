@@ -1,0 +1,6 @@
+namespace ZuLuCommerce.Areas.HelpPage.ModelDescriptions
+{
+    public class SimpleTypeModelDescription : ModelDescription
+    {
+    }
+}

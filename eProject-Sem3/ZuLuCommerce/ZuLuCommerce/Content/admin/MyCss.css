@@ -1,0 +1,68 @@
+﻿body {
+
+}
+/*------------Admin edit images--------------*/
+.images {
+    height: 250px;
+    overflow: hidden;
+    position: relative;
+    margin:0 0 10px 0;
+
+    padding: 10px;
+}
+    .images:hover {
+        box-shadow: 2px 2px 5px gray;
+    }
+    .images img {
+        border: 1px solid black;
+        height: auto;
+        max-height:85%;
+        overflow:hidden;
+        margin:auto;
+        width: 100%;
+    }
+
+    .images .btnSetThumbnail {
+        position: absolute;
+        bottom: 5%;
+        left: 50%;
+        transform: translateX(-50%)
+    }
+
+    .images .btnRemovePic {
+        position: absolute;
+        top: 5%;
+        right: 5%;
+        border-radius: 20px;
+        background-color: gray;
+        opacity: .4
+    }
+
+        .images .btnRemovePic:hover {
+            color:white;
+            opacity:.8;
+            background-color:black
+        }
+/*------------ADMIN edit images end------------------*/
+
+
+
+/*-----------product details page-------------------*/
+/*.single-product-img {
+    height: 300px;
+    width: 100%;
+    overflow: hidden;
+    max-height: 300px;
+
+}
+.img-full img {
+    border:1px solid black;
+    height: 100%;
+    max-height: 300px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: auto;
+}*/
+.single-slide-menu .img-full:hover{
+    border:1px solid gray
+}

@@ -1,0 +1,403 @@
+﻿ @model PagedList.IPagedList<ZuLuCommerce.Models.Product>
+@using PagedList.Mvc 
+@using ZuLuCommerce.Models
+@{ 
+    eCommerceEntities db = new eCommerceEntities();
+}
+@{ 
+    ViewBag.Title = "Products List";
+}
+    <!--Breadcrumb Area Start-->
+<div class="breadcrumb-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb-content text-center">
+                    <h1 class="breadmome-name">Shop</h1>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li class="active">Shop</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Breadcrumb Area End-->
+<!--Shop Area Start-->
+<div class="shop-area mt-80">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 order-2 order-lg-1">
+                <!--Shop Product Categorie Start-->
+                <div class="shop-product-cate mb-20">
+                    <h3>Categories</h3>
+                    <div id="shop-cate-toggle" class="category-menu sidebar-menu sidbar-style">
+                        <ul class="category-sub-menu">
+                            @foreach (var topic in db.Topics.OrderBy(x=>x.Id))
+                            {
+                                <li class="has-sub">
+                                    <a href="#">@topic.TopicName</a>
+                                    <ul class="category-sub">
+                                        @{
+                                            var cat = db.Categories.Where(x => x.TopicId == topic.Id);
+                                            foreach (var c in cat)
+                                            {
+                                                <li><a href="shop.html">@c.Name</a></li>
+                                            }
+                                        }
+
+                                    </ul>
+                                </li>
+                            }
+                            
+                         
+                        </ul>
+                    </div>
+                </div>
+                <!--Shop Product Categorie End-->
+                <!--Brand Categorie Widget Start-->
+                <div class="shop-sidebar mb-20">
+                    <h3>Brand</h3>
+                    <div class="shop-checkbox">
+                        <ul>
+                            <li><input name="product-categori" type="checkbox"><a href="#">Graphic Corner (5)</a></li>
+                            <li><input name="product-categori" type="checkbox"><a href="#">Studio Design (8)</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <!--Brand Categorie Widget End-->
+                <!--Price Categorie Widget Start-->
+                <div class="shop-sidebar mb-20">
+                    <h3>Price</h3>
+                    <div class="shop-checkbox">
+                        <ul>
+                            <li><input name="price-filter" checked="" type="radio"><a href="#">$18.00 - $21.00 (1)</a></li>
+                            <li><input name="price-filter" checked="" type="radio"><a href="#">$30.00 - $37.00 (1)</a></li>
+                            <li><input name="price-filter" checked="" type="radio"><a href="#">$54.00 - $62.00 (1)</a></li>
+                            <li><input name="price-filter" checked="" type="radio"><a href="#">$72.00 - $83.00 (1)</a></li>
+                            <li><input name="price-filter" checked="" type="radio"><a href="#">$90.00 - $94.00 (1)</a></li>
+                            <li><input name="price-filter" checked="" type="radio"><a href="#">$96.00 - $125.00 (1)</a></li>
+                            <li><input name="price-filter" checked="" type="radio"><a href="#">$176.00 - $364.00 (7)</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <!--Price Categorie Widget End-->
+                <!--Size Categorie Widget Strat-->
+                <div class="shop-sidebar mb-20">
+                    <h3>Size</h3>
+                    <div class="shop-checkbox">
+                        <ul>
+                            <li><input name="product-categori" type="checkbox"><a href="#">S (2)</a></li>
+                            <li><input name="product-categori" type="checkbox"><a href="#">M (2)</a></li>
+                            <li><input name="product-categori" type="checkbox"><a href="#">L (2)</a></li>
+                            <li><input name="product-categori" type="checkbox"><a href="#">XL (2)</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <!--Size Categorie Widget End-->
+                <!--Color Categorie Widget Start-->
+                <div class="shop-sidebar mb-20">
+                    <h3>color</h3>
+                    <div class="shop-checkbox">
+                        <ul>
+                            <li><a href="#"><span class="color"></span>Pink (2)</a></li>
+                            <li><a href="#"><span class="color"></span>Green (2)</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <!--Color Categorie Widget End-->
+                <!--Dimension Categorie Widget Start-->
+                <div class="shop-sidebar mb-20">
+                    <h3>Dimension</h3>
+                    <div class="shop-checkbox">
+                        <ul>
+                            <li><input name="product-categori" type="checkbox"><a href="#">40x60cm (3)</a></li>
+                            <li><input name="product-categori" type="checkbox"><a href="#">60x90cm (3)</a></li>
+                            <li><input name="product-categori" type="checkbox"><a href="#">80x120cm (3)</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <!--Dimension Categorie Widget End-->
+            </div>
+            <div class="col-lg-9 order-1 order-lg-2">
+                <div class="shop-layout">
+                    <!--Grid & List View Start-->
+                    <div class="shop-topbar-wrapper mb-30 d-md-flex justify-content-md-between align-items-center">
+                        <div class="grid-list-option">
+                            <ul class="nav">
+                                <li>
+                                    <a class="active" data-toggle="tab" href="#grid"><i class="ion-grid show_grid"></i></a>
+                                </li>
+                                <li>
+                                    <a data-toggle="tab" href="#list"><i class="ion-android-menu show_list"></i></a>
+                                </li>
+                            </ul>
+                            <p class="show-product">Showing 1–9 of 42 results</p>
+                        </div>
+                        <!--Toolbar Short Area Start-->
+                        <div class="toolbar-short-area d-md-flex align-items-center">
+                            <div class="toolbar-shorter">
+                                <label>Sort By:</label>
+                                <select class="wide nice-select">
+                                    <option data-display="Select">Nothing</option>
+                                    <option value="Relevance">Relevance</option>
+                                    <option value="Name, A to Z">Name, A to Z</option>
+                                    <option value="Name, Z to A">Name, Z to A</option>
+                                    <option value="Price, low to high">Price, low to high</option>
+                                    <option value="Price, high to low">Price, high to low</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!--Toolbar Short Area End-->
+                    </div>
+                    <!--Grid & List View End-->
+                    <!--Shop Product Start-->
+                    <div class="shop-product">
+                        <div id="myTabContent-2" class="tab-content">
+                            <div id="grid" class="tab-pane fade show active">
+                                <div class="product-grid-view">
+                                    <div class="row">
+                                        @foreach (var item in Model)
+                                        {
+                                            @Html.Partial("_ProductItems", item);
+                                        }
+                                       
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="list" class="tab-pane fade">
+                                <div class="product-list-view">
+                                   @foreach (var item in Model)
+                                        {
+                                            @Html.Partial("_ProductItems2", item);
+                                        }
+                                   
+                                </div>
+                            </div>
+                            <!--Pagination Start-->
+                            <div class="pagination-product d-md-flex justify-content-md-between align-items-center">
+                                <div class="showing-product">
+                                    @{ 
+                                        int start = 1;
+                                        int end = Model.PageSize;
+                                        int max = db.Products.Count();
+                                        if (Model.PageNumber > 1)
+                                        {
+                                            start = start + Model.PageSize * (Model.PageNumber - 1);
+                                            end = end * Model.PageNumber;
+                                        }
+                                        if (end > max)
+                                        {
+                                            end = max;
+                                        }
+
+
+                                    }
+                                    <p> Showing @start - @end of @max item(s) </p>
+                                </div>
+                                <div class="page-list">
+                                    <div style="text-align:center;left:50%;position:relative;transform:translateX(-50%)" class="pagedListContainer">
+                                        @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Pagination End-->
+                        </div>
+                    </div>
+                    <!--Shop Product End-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Shop Area End-->
+<!--Feature Area Start-->
+<div class="feature-area mt-80">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <!--Single Feature Start-->
+                <div class="single-feature">
+                    <div class="feature-icon">
+                        <i class="icon ion-ios-telephone"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>(999) 1234 56789</h3>
+                        <p>Free support line!</p>
+                    </div>
+                </div>
+                <!--Single Feature End-->
+            </div>
+            <div class="col-md-4">
+                <!--Single Feature Start-->
+                <div class="single-feature">
+                    <div class="feature-icon">
+                        <i class="icon ion-email"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>(999) 1234 56789</h3>
+                        <p>Free support line!</p>
+                    </div>
+                </div>
+                <!--Single Feature End-->
+            </div>
+            <div class="col-md-4">
+                <!--Single Feature Start-->
+                <div class="single-feature">
+                    <div class="feature-icon">
+                        <i class="icon ion-ios-timer-outline"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>(999) 1234 56789</h3>
+                        <p>Free support line!</p>
+                    </div>
+                </div>
+                <!--Single Feature End-->
+            </div>
+        </div>
+    </div>
+</div>
+<!--Feature Area End-->
+<!-- Modal Area Strat -->
+<div class="modal fade" id="open-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <!--Modal Img-->
+                    <div class="col-md-5">
+                        <!--Modal Tab Content Start-->
+                        <div class="tab-content product-details-large" id="myTabContent">
+                            <div class="tab-pane fade show active" id="single-slide1" role="tabpanel" aria-labelledby="single-slide-tab-1">
+                                <!--Single Product Image Start-->
+                                <div class="single-product-img img-full">
+                                    <img src="~/Content/admin/img/single-product/large/large1.jpg" alt="">
+                                </div>
+                                <!--Single Product Image End-->
+                            </div>
+                            <div class="tab-pane fade" id="single-slide2" role="tabpanel" aria-labelledby="single-slide-tab-2">
+                                <!--Single Product Image Start-->
+                                <div class="single-product-img img-full">
+                                    <img src="~/Content/admin/img/single-product/large/large2.jpg" alt="">
+                                </div>
+                                <!--Single Product Image End-->
+                            </div>
+                            <div class="tab-pane fade" id="single-slide3" role="tabpanel" aria-labelledby="single-slide-tab-3">
+                                <!--Single Product Image Start-->
+                                <div class="single-product-img img-full">
+                                    <img src="~/Content/admin/img/single-product/large/large3.jpg" alt="">
+                                </div>
+                                <!--Single Product Image End-->
+                            </div>
+                            <div class="tab-pane fade" id="single-slide4" role="tabpanel" aria-labelledby="single-slide-tab-4">
+                                <!--Single Product Image Start-->
+                                <div class="single-product-img img-full">
+                                    <img src="~/Content/admin/img/single-product/large/large4.jpg" alt="">
+                                </div>
+                                <!--Single Product Image End-->
+                            </div>
+                        </div>
+                        <!--Modal Content End-->
+                        <!--Modal Tab Menu Start-->
+                        <div class="single-product-menu">
+                            <div class="nav single-slide-menu" role="tablist">
+                                <div class="single-tab-menu img-full">
+                                    <a class="active" data-toggle="tab" id="single-slide-tab-1" href="#single-slide1"><img src="~/Content/admin/img/single-product/small/small1.jpg" alt=""></a>
+                                </div>
+                                <div class="single-tab-menu img-full">
+                                    <a data-toggle="tab" id="single-slide-tab-2" href="#single-slide2"><img src="~/Content/admin/img/single-product/small/small2.jpg" alt=""></a>
+                                </div>
+                                <div class="single-tab-menu img-full">
+                                    <a data-toggle="tab" id="single-slide-tab-3" href="#single-slide3"><img src="~/Content/admin/img/single-product/small/small3.jpg" alt=""></a>
+                                </div>
+                                <div class="single-tab-menu img-full">
+                                    <a data-toggle="tab" id="single-slide-tab-4" href="#single-slide4"><img src="~/Content/admin/img/single-product/small/small4.jpg" alt=""></a>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Modal Tab Menu End-->
+                    </div>
+                    <!--Modal Img-->
+                    <!--Modal Content-->
+                    <div class="col-md-7">
+                        <div class="single-product-content">
+                            <h1 class="single-product-name">Printed Chiffon Dress</h1>
+                            <div class="single-product-reviews">
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                            </div>
+                            <div class="single-product-price">
+                                <div class="product-discount">
+                                    <span class="regular-price">$20.50</span>
+                                    <span class="price">$16.40</span>
+                                    <span class="discount">-20%</span>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <p>Long printed dress with thin adjustable straps. V-neckline and wiring under the bust with ruffles at the bottom of the dress.</p>
+                            </div>
+                            <div class="single-product-action">
+                                <form action="#">
+                                    <div class="product-variants">
+                                        <div class="product-variants-item">
+                                            <span class="control-label">Size</span>
+                                            <select class="nice-select" name="size">
+                                                <option value="1">S</option>
+                                                <option value="2">M</option>
+                                                <option value="3">X</option>
+                                                <option value="4">XL</option>
+                                            </select>
+                                        </div>
+                                        <div class="product-variants-item">
+                                            <span class="control-label">Color</span>
+                                            <select class="nice-select" name="color">
+                                                <option value="1">Red</option>
+                                                <option value="2">Green</option>
+                                                <option value="3">Blue</option>
+                                                <option value="4">White</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="product-add-to-cart">
+                                        <span class="control-label">Quantity</span>
+                                        <div class="cart-plus-minus">
+                                            <input class="cart-plus-minus-box" type="text" name="qtybutton" value="0">
+                                        </div>
+                                        <div class="add">
+                                            <button class="add-to-cart"><i class="zmdi zmdi-shopping-cart-plus"></i> add-to-cart</button>
+                                            <span class="product-availability"><i class="zmdi zmdi-check"></i> In stock</span>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Modal Content-->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <!--Single Product Share-->
+                <div class="single-product-share">
+                    <ul>
+                        <li class="categories-title">Share :</li>
+                        <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                        <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                        <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+                        <li><a href="#"><i class="fa fa-pinterest"></i></a></li>
+                    </ul>
+                </div>
+                <!--Single Product Share-->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Area End -->
