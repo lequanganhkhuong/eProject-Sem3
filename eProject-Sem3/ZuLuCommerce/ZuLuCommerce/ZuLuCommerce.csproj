@@ -162,6 +162,8 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\ADMIN\ADMINAreaRegistration.cs" />
+    <Compile Include="Areas\ADMIN\Controllers\CategoriesController.cs" />
+    <Compile Include="Areas\ADMIN\Controllers\OrdersController.cs" />
     <Compile Include="Areas\ADMIN\Controllers\ProductsController.cs" />
     <Compile Include="Areas\HelpPage\ApiDescriptionExtensions.cs" />
     <Compile Include="Areas\HelpPage\App_Start\HelpPageConfig.cs" />
@@ -407,6 +409,16 @@
     <Content Include="Content\admin\fonts\fontawesome-webfont.woff2" />
     <Content Include="Content\admin\fonts\ionicons.ttf" />
     <Content Include="Content\admin\fonts\ionicons.woff" />
+    <Content Include="Areas\ADMIN\Views\Categories\Create.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Categories\Delete.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Categories\Details.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Categories\Edit.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Categories\Index.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Orders\Create.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Orders\Delete.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Orders\Details.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Orders\Edit.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Orders\Index.cshtml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />

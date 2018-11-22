@@ -1,0 +1,110 @@
+﻿@model ZuLuCommerce.Models.Order
+@using ZuLuCommerce.Models
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Order</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.CreatedDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreatedDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PaymentType)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PaymentType)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Discount)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Discount)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Tax)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Tax)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Customer.FirstName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Customer.FirstName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Employee.FirstName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Employee.FirstName)
+        </dd>
+
+        <dt>
+            @Html.DisplayName("Order status")
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OrderStatus.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Shipment.ShippingAddress)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Shipment.ShippingAddress)
+        </dd>
+        <dt>
+            @Html.DisplayName("Order Items: ")
+        </dt>
+        <dd>
+            @{
+                eCommerceEntities db = new eCommerceEntities();
+                <div class="row">
+                    @foreach(var od in db.OrderDetails.Where(x=>x.OrderId == Model.Id).ToList())
+                    {
+
+                    <div class="col-md-4" style="text-align:center">
+                        <p>@od.ProductName</p>
+                        <img style="width:200px" src="~/Uploads/Products/@od.ProductId/@od.Product.Thumbnail" />
+                    </div>
+
+
+
+                    }
+                </div>
+            }
+        </dd>
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
