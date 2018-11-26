@@ -31,6 +31,7 @@ namespace ZuLuCommerce.Models
         public string Password { get; set; }
         public int LevelId { get; set; }
         public Nullable<System.DateTime> LastLogin { get; set; }
+        public bool IsActive { get; set; }
     
         public virtual Level Level { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

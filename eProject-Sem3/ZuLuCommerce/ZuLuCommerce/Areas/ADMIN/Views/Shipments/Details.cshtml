@@ -1,0 +1,66 @@
+﻿@model ZuLuCommerce.Models.Shipment
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Shipment</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ShippedDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ShippedDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ShippingAddress)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ShippingAddress)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ShippingCity)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ShippingCity)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ShippingFee)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ShippingFee)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ShipmentStatus.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ShipmentStatus.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Shipper.FirstName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Shipper.FirstName)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

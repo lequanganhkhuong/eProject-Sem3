@@ -13,6 +13,14 @@
           <Property Name="Username" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Password" Type="nvarchar" MaxLength="200" Nullable="false" />
           <Property Name="CustomerId" Type="int" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="BestSellings">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProductId" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="CartItems">
           <Key>
@@ -61,6 +69,7 @@
           <Property Name="Address" Type="nvarchar" MaxLength="200" Nullable="false" />
           <Property Name="Email" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Birthday" Type="datetime" />
+          <Property Name="IsRegistered" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Employees">
           <Key>
@@ -77,6 +86,24 @@
           <Property Name="Password" Type="nvarchar" MaxLength="200" Nullable="false" />
           <Property Name="LevelId" Type="int" Nullable="false" />
           <Property Name="LastLogin" Type="datetime" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="GroupItems">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="GroupId" Type="int" Nullable="false" />
+          <Property Name="ProductId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Groups">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="250" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Levels">
           <Key>
@@ -111,6 +138,9 @@
           <Property Name="ShipmentId" Type="int" />
           <Property Name="Discount" Type="decimal" Precision="18" Scale="2" />
           <Property Name="Tax" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="ShippingFee" Type="money" />
+          <Property Name="ShippingAddress" Type="nvarchar" MaxLength="500" />
+          <Property Name="ShippingCity" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="OrderStatuses">
           <Key>
@@ -149,6 +179,13 @@
           <Property Name="ProductId" Type="int" Nullable="false" />
           <Property Name="UserId" Type="int" Nullable="false" />
           <Property Name="Rating" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="RecommendProducts">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProductId" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="Shipments">
           <Key>
@@ -190,12 +227,8 @@
           <Property Name="Email" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Phone" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Address" Type="nvarchar" MaxLength="200" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Table">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Logo" Type="varchar" MaxLength="200" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Topics">
           <Key>
@@ -213,6 +246,18 @@
             </Principal>
             <Dependent Role="Accounts">
               <PropertyRef Name="CustomerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_BestSellings_Products">
+          <End Role="Products" Type="Self.Products" Multiplicity="1" />
+          <End Role="BestSellings" Type="Self.BestSellings" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Products">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="BestSellings">
+              <PropertyRef Name="ProductId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -309,6 +354,30 @@
             </Principal>
             <Dependent Role="Employees">
               <PropertyRef Name="LevelId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_GroupItems_Groups">
+          <End Role="Groups" Type="Self.Groups" Multiplicity="1" />
+          <End Role="GroupItems" Type="Self.GroupItems" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Groups">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="GroupItems">
+              <PropertyRef Name="GroupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_GroupItems_Products">
+          <End Role="Products" Type="Self.Products" Multiplicity="1" />
+          <End Role="GroupItems" Type="Self.GroupItems" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Products">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="GroupItems">
+              <PropertyRef Name="ProductId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -444,6 +513,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_RecommendProducts_Products">
+          <End Role="Products" Type="Self.Products" Multiplicity="1" />
+          <End Role="RecommendProducts" Type="Self.RecommendProducts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Products">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="RecommendProducts">
+              <PropertyRef Name="ProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Shipments_ShipmentStatuses">
           <End Role="ShipmentStatuses" Type="Self.ShipmentStatuses" Multiplicity="1" />
           <End Role="Shipments" Type="Self.Shipments" Multiplicity="*" />
@@ -470,12 +551,15 @@
         </Association>
         <EntityContainer Name="eCommerceModelStoreContainer">
           <EntitySet Name="Accounts" EntityType="Self.Accounts" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="BestSellings" EntityType="Self.BestSellings" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CartItems" EntityType="Self.CartItems" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Carts" EntityType="Self.Carts" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Categories" EntityType="Self.Categories" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Comments" EntityType="Self.Comments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Customers" EntityType="Self.Customers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Employees" EntityType="Self.Employees" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="GroupItems" EntityType="Self.GroupItems" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Groups" EntityType="Self.Groups" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Levels" EntityType="Self.Levels" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OrderDetails" EntityType="Self.OrderDetails" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Orders" EntityType="Self.Orders" Schema="dbo" store:Type="Tables" />
@@ -483,15 +567,19 @@
           <EntitySet Name="Pictures" EntityType="Self.Pictures" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Products" EntityType="Self.Products" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Ratings" EntityType="Self.Ratings" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="RecommendProducts" EntityType="Self.RecommendProducts" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Shipments" EntityType="Self.Shipments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ShipmentStatuses" EntityType="Self.ShipmentStatuses" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Shippers" EntityType="Self.Shippers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Suppliers" EntityType="Self.Suppliers" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Table" EntityType="Self.Table" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Topics" EntityType="Self.Topics" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_Accounts_Customers" Association="Self.FK_Accounts_Customers">
             <End Role="Customers" EntitySet="Customers" />
             <End Role="Accounts" EntitySet="Accounts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_BestSellings_Products" Association="Self.FK_BestSellings_Products">
+            <End Role="Products" EntitySet="Products" />
+            <End Role="BestSellings" EntitySet="BestSellings" />
           </AssociationSet>
           <AssociationSet Name="FK_CartItems_Carts" Association="Self.FK_CartItems_Carts">
             <End Role="Carts" EntitySet="Carts" />
@@ -524,6 +612,14 @@
           <AssociationSet Name="FK_Employees_Levels" Association="Self.FK_Employees_Levels">
             <End Role="Levels" EntitySet="Levels" />
             <End Role="Employees" EntitySet="Employees" />
+          </AssociationSet>
+          <AssociationSet Name="FK_GroupItems_Groups" Association="Self.FK_GroupItems_Groups">
+            <End Role="Groups" EntitySet="Groups" />
+            <End Role="GroupItems" EntitySet="GroupItems" />
+          </AssociationSet>
+          <AssociationSet Name="FK_GroupItems_Products" Association="Self.FK_GroupItems_Products">
+            <End Role="Products" EntitySet="Products" />
+            <End Role="GroupItems" EntitySet="GroupItems" />
           </AssociationSet>
           <AssociationSet Name="FK_OrderDetails_Orders" Association="Self.FK_OrderDetails_Orders">
             <End Role="Orders" EntitySet="Orders" />
@@ -569,6 +665,10 @@
             <End Role="Products" EntitySet="Products" />
             <End Role="Ratings" EntitySet="Ratings" />
           </AssociationSet>
+          <AssociationSet Name="FK_RecommendProducts_Products" Association="Self.FK_RecommendProducts_Products">
+            <End Role="Products" EntitySet="Products" />
+            <End Role="RecommendProducts" EntitySet="RecommendProducts" />
+          </AssociationSet>
           <AssociationSet Name="FK_Shipments_ShipmentStatuses" Association="Self.FK_Shipments_ShipmentStatuses">
             <End Role="ShipmentStatuses" EntitySet="ShipmentStatuses" />
             <End Role="Shipments" EntitySet="Shipments" />
@@ -582,403 +682,109 @@
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="eCommerceModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityType Name="Account">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Username" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Password" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="CustomerId" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Customer" Relationship="Self.FK_Accounts_Customers" FromRole="Accounts" ToRole="Customers" />
-          <NavigationProperty Name="Carts" Relationship="Self.FK_Carts_Accounts" FromRole="Accounts" ToRole="Carts" />
-          <NavigationProperty Name="Comments" Relationship="Self.FK_Comments_Accounts" FromRole="Accounts" ToRole="Comments" />
-          <NavigationProperty Name="Ratings" Relationship="Self.FK_Ratings_Accounts" FromRole="Accounts" ToRole="Ratings" />
-        </EntityType>
-        <EntityType Name="CartItem">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="CartId" Type="Int32" Nullable="false" />
-          <Property Name="ProductId" Type="Int32" Nullable="false" />
-          <Property Name="Quantity" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Cart" Relationship="Self.FK_CartItems_Carts" FromRole="CartItems" ToRole="Carts" />
-          <NavigationProperty Name="Product" Relationship="eCommerceModel.FK_CartItems_Products" FromRole="CartItem" ToRole="Product" />
-        </EntityType>
-        <EntityType Name="Cart">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UserId" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Account" Relationship="Self.FK_Carts_Accounts" FromRole="Carts" ToRole="Accounts" />
-          <NavigationProperty Name="CartItems" Relationship="Self.FK_CartItems_Carts" FromRole="Carts" ToRole="CartItems" />
-        </EntityType>
-        <EntityType Name="Category">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="TopicId" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Topic" Relationship="Self.FK_Categories_Topics" FromRole="Categories" ToRole="Topics" />
-          <NavigationProperty Name="Products" Relationship="eCommerceModel.FK_Products_Categories" FromRole="Category" ToRole="Product" />
-        </EntityType>
-        <EntityType Name="Comment">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ProductId" Type="Int32" Nullable="false" />
-          <Property Name="ParentId" Type="Int32" />
-          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="UserId" Type="Int32" Nullable="false" />
-          <Property Name="DateComment" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="Account" Relationship="Self.FK_Comments_Accounts" FromRole="Comments" ToRole="Accounts" />
-          <NavigationProperty Name="Comments1" Relationship="Self.FK_Comments_Comments" FromRole="Comments" ToRole="Comments1" />
-          <NavigationProperty Name="Comment1" Relationship="Self.FK_Comments_Comments" FromRole="Comments1" ToRole="Comments" />
-          <NavigationProperty Name="Product" Relationship="eCommerceModel.FK_Comments_Products" FromRole="Comment" ToRole="Product" />
-        </EntityType>
-        <EntityType Name="Customer">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="FirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="LastName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="Phone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="Address" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="Birthday" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="Accounts" Relationship="Self.FK_Accounts_Customers" FromRole="Customers" ToRole="Accounts" />
-          <NavigationProperty Name="Orders" Relationship="eCommerceModel.FK_Orders_Customers" FromRole="Customer" ToRole="Order" />
-        </EntityType>
-        <EntityType Name="Employee">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="FirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="LastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Phone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="Address" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="Birthday" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="Username" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Password" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="LevelId" Type="Int32" Nullable="false" />
-          <Property Name="LastLogin" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="Level" Relationship="Self.FK_Employees_Levels" FromRole="Employees" ToRole="Levels" />
-          <NavigationProperty Name="Orders" Relationship="eCommerceModel.FK_Orders_Employees" FromRole="Employee" ToRole="Order" />
-        </EntityType>
-        <EntityType Name="Level">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="LevelName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="Employees" Relationship="Self.FK_Employees_Levels" FromRole="Levels" ToRole="Employees" />
-        </EntityType>
-        <EntityType Name="OrderDetail">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="OrderId" Type="Int32" Nullable="false" />
-          <Property Name="ProductId" Type="Int32" Nullable="false" />
-          <Property Name="Quantity" Type="Int32" Nullable="false" />
-          <Property Name="ProductName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Price" Type="Decimal" Precision="19" Scale="4" />
-          <NavigationProperty Name="Product" Relationship="eCommerceModel.FK_OrderDetails_Products" FromRole="OrderDetail" ToRole="Product" />
-          <NavigationProperty Name="Order" Relationship="eCommerceModel.FK_OrderDetails_Orders" FromRole="OrderDetail" ToRole="Order" />
-        </EntityType>
-        <EntityType Name="OrderStatus">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="Orders" Relationship="eCommerceModel.FK_Orders_OrderStatuses" FromRole="OrderStatus" ToRole="Order" />
-        </EntityType>
-        <EntityType Name="Picture">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ProductId" Type="Int32" Nullable="false" />
-          <Property Name="URL" Type="String" MaxLength="500" FixedLength="false" Unicode="false" Nullable="false" />
-          <NavigationProperty Name="Product" Relationship="eCommerceModel.FK_Pictures_Products" FromRole="Picture" ToRole="Product" />
-        </EntityType>
-        <EntityType Name="Rating">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ProductId" Type="Int32" Nullable="false" />
-          <Property Name="UserId" Type="Int32" Nullable="false" />
-          <Property Name="Rating1" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Account" Relationship="Self.FK_Ratings_Accounts" FromRole="Ratings" ToRole="Accounts" />
-          <NavigationProperty Name="Product" Relationship="eCommerceModel.FK_Ratings_Products" FromRole="Rating" ToRole="Product" />
-        </EntityType>
-        <EntityType Name="Shipment">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="StatusId" Type="Int32" Nullable="false" />
-          <Property Name="ShippedDate" Type="DateTime" Precision="3" />
-          <Property Name="ShippingAddress" Type="String" MaxLength="500" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ShippingCity" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ShippingFee" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
-          <Property Name="ShipperId" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="ShipmentStatus" Relationship="Self.FK_Shipments_ShipmentStatuses" FromRole="Shipments" ToRole="ShipmentStatuses" />
-          <NavigationProperty Name="Shipper" Relationship="Self.FK_Shipments_Shippers" FromRole="Shipments" ToRole="Shippers" />
-          <NavigationProperty Name="Orders" Relationship="eCommerceModel.FK_Orders_Shipments" FromRole="Shipment" ToRole="Order" />
-        </EntityType>
-        <EntityType Name="ShipmentStatus">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="Shipments" Relationship="Self.FK_Shipments_ShipmentStatuses" FromRole="ShipmentStatuses" ToRole="Shipments" />
-        </EntityType>
-        <EntityType Name="Shipper">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="FirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="LastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Phone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="Address" Type="String" MaxLength="500" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="Birthday" Type="DateTime" Nullable="false" Precision="3" />
-          <NavigationProperty Name="Shipments" Relationship="Self.FK_Shipments_Shippers" FromRole="Shippers" ToRole="Shipments" />
-        </EntityType>
-        <EntityType Name="Supplier">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="Phone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="Address" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="Products" Relationship="eCommerceModel.FK_Products_Suppliers" FromRole="Supplier" ToRole="Product" />
-        </EntityType>
-        <EntityType Name="Table">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Topic">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="TopicName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="Categories" Relationship="Self.FK_Categories_Topics" FromRole="Topics" ToRole="Categories" />
-        </EntityType>
-        <Association Name="FK_Accounts_Customers">
-          <End Role="Customers" Type="Self.Customer" Multiplicity="1" />
-          <End Role="Accounts" Type="Self.Account" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Customers">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Accounts">
-              <PropertyRef Name="CustomerId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Carts_Accounts">
-          <End Role="Accounts" Type="Self.Account" Multiplicity="1" />
-          <End Role="Carts" Type="Self.Cart" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Accounts">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Carts">
-              <PropertyRef Name="UserId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Comments_Accounts">
-          <End Role="Accounts" Type="Self.Account" Multiplicity="1" />
-          <End Role="Comments" Type="Self.Comment" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Accounts">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Comments">
-              <PropertyRef Name="UserId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Ratings_Accounts">
-          <End Role="Accounts" Type="Self.Account" Multiplicity="1" />
-          <End Role="Ratings" Type="Self.Rating" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Accounts">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Ratings">
-              <PropertyRef Name="UserId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_CartItems_Carts">
-          <End Role="Carts" Type="Self.Cart" Multiplicity="1" />
-          <End Role="CartItems" Type="Self.CartItem" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Carts">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="CartItems">
-              <PropertyRef Name="CartId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Categories_Topics">
-          <End Role="Topics" Type="Self.Topic" Multiplicity="1" />
-          <End Role="Categories" Type="Self.Category" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Topics">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Categories">
-              <PropertyRef Name="TopicId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Comments_Comments">
-          <End Role="Comments" Type="Self.Comment" Multiplicity="0..1" />
-          <End Role="Comments1" Type="Self.Comment" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Comments">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Comments1">
-              <PropertyRef Name="ParentId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Employees_Levels">
-          <End Role="Levels" Type="Self.Level" Multiplicity="1" />
-          <End Role="Employees" Type="Self.Employee" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Levels">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Employees">
-              <PropertyRef Name="LevelId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Shipments_ShipmentStatuses">
-          <End Role="ShipmentStatuses" Type="Self.ShipmentStatus" Multiplicity="1" />
-          <End Role="Shipments" Type="Self.Shipment" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="ShipmentStatuses">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Shipments">
-              <PropertyRef Name="StatusId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Shipments_Shippers">
-          <End Role="Shippers" Type="Self.Shipper" Multiplicity="1" />
-          <End Role="Shipments" Type="Self.Shipment" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Shippers">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Shipments">
-              <PropertyRef Name="ShipperId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityContainer Name="eCommerceEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Accounts" EntityType="Self.Account" />
-          <EntitySet Name="CartItems" EntityType="Self.CartItem" />
-          <EntitySet Name="Carts" EntityType="Self.Cart" />
-          <EntitySet Name="Categories" EntityType="Self.Category" />
-          <EntitySet Name="Comments" EntityType="Self.Comment" />
-          <EntitySet Name="Customers" EntityType="Self.Customer" />
-          <EntitySet Name="Employees" EntityType="Self.Employee" />
-          <EntitySet Name="Levels" EntityType="Self.Level" />
-          <EntitySet Name="OrderDetails" EntityType="Self.OrderDetail" />
-          <EntitySet Name="OrderStatuses" EntityType="Self.OrderStatus" />
-          <EntitySet Name="Pictures" EntityType="Self.Picture" />
-          <EntitySet Name="Ratings" EntityType="Self.Rating" />
-          <EntitySet Name="Shipments" EntityType="Self.Shipment" />
-          <EntitySet Name="ShipmentStatuses" EntityType="Self.ShipmentStatus" />
-          <EntitySet Name="Shippers" EntityType="Self.Shipper" />
-          <EntitySet Name="Suppliers" EntityType="Self.Supplier" />
-          <EntitySet Name="Tables" EntityType="Self.Table" />
-          <EntitySet Name="Topics" EntityType="Self.Topic" />
-          <AssociationSet Name="FK_Accounts_Customers" Association="Self.FK_Accounts_Customers">
-            <End Role="Customers" EntitySet="Customers" />
-            <End Role="Accounts" EntitySet="Accounts" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Carts_Accounts" Association="Self.FK_Carts_Accounts">
-            <End Role="Accounts" EntitySet="Accounts" />
-            <End Role="Carts" EntitySet="Carts" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Comments_Accounts" Association="Self.FK_Comments_Accounts">
-            <End Role="Accounts" EntitySet="Accounts" />
-            <End Role="Comments" EntitySet="Comments" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Ratings_Accounts" Association="Self.FK_Ratings_Accounts">
-            <End Role="Accounts" EntitySet="Accounts" />
-            <End Role="Ratings" EntitySet="Ratings" />
-          </AssociationSet>
-          <AssociationSet Name="FK_CartItems_Carts" Association="Self.FK_CartItems_Carts">
-            <End Role="Carts" EntitySet="Carts" />
-            <End Role="CartItems" EntitySet="CartItems" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Categories_Topics" Association="Self.FK_Categories_Topics">
-            <End Role="Topics" EntitySet="Topics" />
-            <End Role="Categories" EntitySet="Categories" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Comments_Comments" Association="Self.FK_Comments_Comments">
-            <End Role="Comments" EntitySet="Comments" />
-            <End Role="Comments1" EntitySet="Comments" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Employees_Levels" Association="Self.FK_Employees_Levels">
-            <End Role="Levels" EntitySet="Levels" />
-            <End Role="Employees" EntitySet="Employees" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Shipments_ShipmentStatuses" Association="Self.FK_Shipments_ShipmentStatuses">
-            <End Role="ShipmentStatuses" EntitySet="ShipmentStatuses" />
-            <End Role="Shipments" EntitySet="Shipments" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Shipments_Shippers" Association="Self.FK_Shipments_Shippers">
-            <End Role="Shippers" EntitySet="Shippers" />
-            <End Role="Shipments" EntitySet="Shipments" />
-          </AssociationSet>
+          <EntitySet Name="Accounts" EntityType="eCommerceModel.Account" />
+          <EntitySet Name="BestSellings" EntityType="eCommerceModel.BestSelling" />
+          <EntitySet Name="CartItems" EntityType="eCommerceModel.CartItem" />
+          <EntitySet Name="Carts" EntityType="eCommerceModel.Cart" />
+          <EntitySet Name="Categories" EntityType="eCommerceModel.Category" />
+          <EntitySet Name="Comments" EntityType="eCommerceModel.Comment" />
+          <EntitySet Name="Customers" EntityType="eCommerceModel.Customer" />
+          <EntitySet Name="Employees" EntityType="eCommerceModel.Employee" />
+          <EntitySet Name="GroupItems" EntityType="eCommerceModel.GroupItem" />
+          <EntitySet Name="Groups" EntityType="eCommerceModel.Group" />
+          <EntitySet Name="Levels" EntityType="eCommerceModel.Level" />
+          <EntitySet Name="OrderDetails" EntityType="eCommerceModel.OrderDetail" />
+          <EntitySet Name="Orders" EntityType="eCommerceModel.Order" />
+          <EntitySet Name="OrderStatuses" EntityType="eCommerceModel.OrderStatus" />
+          <EntitySet Name="Pictures" EntityType="eCommerceModel.Picture" />
           <EntitySet Name="Products" EntityType="eCommerceModel.Product" />
+          <EntitySet Name="Ratings" EntityType="eCommerceModel.Rating" />
+          <EntitySet Name="RecommendProducts" EntityType="eCommerceModel.RecommendProduct" />
+          <EntitySet Name="Shipments" EntityType="eCommerceModel.Shipment" />
+          <EntitySet Name="ShipmentStatuses" EntityType="eCommerceModel.ShipmentStatus" />
+          <EntitySet Name="Shippers" EntityType="eCommerceModel.Shipper" />
+          <EntitySet Name="Suppliers" EntityType="eCommerceModel.Supplier" />
+          <EntitySet Name="Topics" EntityType="eCommerceModel.Topic" />
+          <AssociationSet Name="FK_Accounts_Customers" Association="eCommerceModel.FK_Accounts_Customers">
+            <End Role="Customer" EntitySet="Customers" />
+            <End Role="Account" EntitySet="Accounts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Carts_Accounts" Association="eCommerceModel.FK_Carts_Accounts">
+            <End Role="Account" EntitySet="Accounts" />
+            <End Role="Cart" EntitySet="Carts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Comments_Accounts" Association="eCommerceModel.FK_Comments_Accounts">
+            <End Role="Account" EntitySet="Accounts" />
+            <End Role="Comment" EntitySet="Comments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Ratings_Accounts" Association="eCommerceModel.FK_Ratings_Accounts">
+            <End Role="Account" EntitySet="Accounts" />
+            <End Role="Rating" EntitySet="Ratings" />
+          </AssociationSet>
+          <AssociationSet Name="FK_BestSellings_Products" Association="eCommerceModel.FK_BestSellings_Products">
+            <End Role="Product" EntitySet="Products" />
+            <End Role="BestSelling" EntitySet="BestSellings" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CartItems_Carts" Association="eCommerceModel.FK_CartItems_Carts">
+            <End Role="Cart" EntitySet="Carts" />
+            <End Role="CartItem" EntitySet="CartItems" />
+          </AssociationSet>
           <AssociationSet Name="FK_CartItems_Products" Association="eCommerceModel.FK_CartItems_Products">
             <End Role="Product" EntitySet="Products" />
             <End Role="CartItem" EntitySet="CartItems" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Categories_Topics" Association="eCommerceModel.FK_Categories_Topics">
+            <End Role="Topic" EntitySet="Topics" />
+            <End Role="Category" EntitySet="Categories" />
           </AssociationSet>
           <AssociationSet Name="FK_Products_Categories" Association="eCommerceModel.FK_Products_Categories">
             <End Role="Category" EntitySet="Categories" />
             <End Role="Product" EntitySet="Products" />
           </AssociationSet>
+          <AssociationSet Name="FK_Comments_Comments" Association="eCommerceModel.FK_Comments_Comments">
+            <End Role="Comment" EntitySet="Comments" />
+            <End Role="Comment1" EntitySet="Comments" />
+          </AssociationSet>
           <AssociationSet Name="FK_Comments_Products" Association="eCommerceModel.FK_Comments_Products">
             <End Role="Product" EntitySet="Products" />
             <End Role="Comment" EntitySet="Comments" />
           </AssociationSet>
+          <AssociationSet Name="FK_Orders_Customers" Association="eCommerceModel.FK_Orders_Customers">
+            <End Role="Customer" EntitySet="Customers" />
+            <End Role="Order" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Employees_Levels" Association="eCommerceModel.FK_Employees_Levels">
+            <End Role="Level" EntitySet="Levels" />
+            <End Role="Employee" EntitySet="Employees" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Orders_Employees" Association="eCommerceModel.FK_Orders_Employees">
+            <End Role="Employee" EntitySet="Employees" />
+            <End Role="Order" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_GroupItems_Groups" Association="eCommerceModel.FK_GroupItems_Groups">
+            <End Role="Group" EntitySet="Groups" />
+            <End Role="GroupItem" EntitySet="GroupItems" />
+          </AssociationSet>
+          <AssociationSet Name="FK_GroupItems_Products" Association="eCommerceModel.FK_GroupItems_Products">
+            <End Role="Product" EntitySet="Products" />
+            <End Role="GroupItem" EntitySet="GroupItems" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OrderDetails_Orders" Association="eCommerceModel.FK_OrderDetails_Orders">
+            <End Role="Order" EntitySet="Orders" />
+            <End Role="OrderDetail" EntitySet="OrderDetails" />
+          </AssociationSet>
           <AssociationSet Name="FK_OrderDetails_Products" Association="eCommerceModel.FK_OrderDetails_Products">
             <End Role="Product" EntitySet="Products" />
             <End Role="OrderDetail" EntitySet="OrderDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Orders_OrderStatuses" Association="eCommerceModel.FK_Orders_OrderStatuses">
+            <End Role="OrderStatus" EntitySet="OrderStatuses" />
+            <End Role="Order" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Orders_Shipments" Association="eCommerceModel.FK_Orders_Shipments">
+            <End Role="Shipment" EntitySet="Shipments" />
+            <End Role="Order" EntitySet="Orders" />
           </AssociationSet>
           <AssociationSet Name="FK_Pictures_Products" Association="eCommerceModel.FK_Pictures_Products">
             <End Role="Product" EntitySet="Products" />
@@ -992,28 +798,203 @@
             <End Role="Product" EntitySet="Products" />
             <End Role="Rating" EntitySet="Ratings" />
           </AssociationSet>
-          <EntitySet Name="Orders" EntityType="eCommerceModel.Order" />
-          <AssociationSet Name="FK_Orders_Customers" Association="eCommerceModel.FK_Orders_Customers">
-            <End Role="Customer" EntitySet="Customers" />
-            <End Role="Order" EntitySet="Orders" />
+          <AssociationSet Name="FK_RecommendProducts_Products" Association="eCommerceModel.FK_RecommendProducts_Products">
+            <End Role="Product" EntitySet="Products" />
+            <End Role="RecommendProduct" EntitySet="RecommendProducts" />
           </AssociationSet>
-          <AssociationSet Name="FK_Orders_Employees" Association="eCommerceModel.FK_Orders_Employees">
-            <End Role="Employee" EntitySet="Employees" />
-            <End Role="Order" EntitySet="Orders" />
-          </AssociationSet>
-          <AssociationSet Name="FK_OrderDetails_Orders" Association="eCommerceModel.FK_OrderDetails_Orders">
-            <End Role="Order" EntitySet="Orders" />
-            <End Role="OrderDetail" EntitySet="OrderDetails" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Orders_OrderStatuses" Association="eCommerceModel.FK_Orders_OrderStatuses">
-            <End Role="OrderStatus" EntitySet="OrderStatuses" />
-            <End Role="Order" EntitySet="Orders" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Orders_Shipments" Association="eCommerceModel.FK_Orders_Shipments">
+          <AssociationSet Name="FK_Shipments_ShipmentStatuses" Association="eCommerceModel.FK_Shipments_ShipmentStatuses">
+            <End Role="ShipmentStatus" EntitySet="ShipmentStatuses" />
             <End Role="Shipment" EntitySet="Shipments" />
-            <End Role="Order" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Shipments_Shippers" Association="eCommerceModel.FK_Shipments_Shippers">
+            <End Role="Shipper" EntitySet="Shippers" />
+            <End Role="Shipment" EntitySet="Shipments" />
           </AssociationSet>
         </EntityContainer>
+        <EntityType Name="Account">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Username" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="CustomerId" Type="Int32" Nullable="false" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Customer" Relationship="eCommerceModel.FK_Accounts_Customers" FromRole="Account" ToRole="Customer" />
+          <NavigationProperty Name="Carts" Relationship="eCommerceModel.FK_Carts_Accounts" FromRole="Account" ToRole="Cart" />
+          <NavigationProperty Name="Comments" Relationship="eCommerceModel.FK_Comments_Accounts" FromRole="Account" ToRole="Comment" />
+          <NavigationProperty Name="Ratings" Relationship="eCommerceModel.FK_Ratings_Accounts" FromRole="Account" ToRole="Rating" />
+        </EntityType>
+        <EntityType Name="BestSelling">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProductId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Product" Relationship="eCommerceModel.FK_BestSellings_Products" FromRole="BestSelling" ToRole="Product" />
+        </EntityType>
+        <EntityType Name="CartItem">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CartId" Type="Int32" Nullable="false" />
+          <Property Name="ProductId" Type="Int32" Nullable="false" />
+          <Property Name="Quantity" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Cart" Relationship="eCommerceModel.FK_CartItems_Carts" FromRole="CartItem" ToRole="Cart" />
+          <NavigationProperty Name="Product" Relationship="eCommerceModel.FK_CartItems_Products" FromRole="CartItem" ToRole="Product" />
+        </EntityType>
+        <EntityType Name="Cart">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Account" Relationship="eCommerceModel.FK_Carts_Accounts" FromRole="Cart" ToRole="Account" />
+          <NavigationProperty Name="CartItems" Relationship="eCommerceModel.FK_CartItems_Carts" FromRole="Cart" ToRole="CartItem" />
+        </EntityType>
+        <EntityType Name="Category">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="TopicId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Topic" Relationship="eCommerceModel.FK_Categories_Topics" FromRole="Category" ToRole="Topic" />
+          <NavigationProperty Name="Products" Relationship="eCommerceModel.FK_Products_Categories" FromRole="Category" ToRole="Product" />
+        </EntityType>
+        <EntityType Name="Comment">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProductId" Type="Int32" Nullable="false" />
+          <Property Name="ParentId" Type="Int32" />
+          <Property Name="Content" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="DateComment" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Account" Relationship="eCommerceModel.FK_Comments_Accounts" FromRole="Comment" ToRole="Account" />
+          <NavigationProperty Name="Comments1" Relationship="eCommerceModel.FK_Comments_Comments" FromRole="Comment" ToRole="Comment1" />
+          <NavigationProperty Name="Comment1" Relationship="eCommerceModel.FK_Comments_Comments" FromRole="Comment1" ToRole="Comment" />
+          <NavigationProperty Name="Product" Relationship="eCommerceModel.FK_Comments_Products" FromRole="Comment" ToRole="Product" />
+        </EntityType>
+        <EntityType Name="Customer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FirstName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LastName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Phone" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Address" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Birthday" Type="DateTime" Precision="3" />
+          <Property Name="IsRegistered" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Accounts" Relationship="eCommerceModel.FK_Accounts_Customers" FromRole="Customer" ToRole="Account" />
+          <NavigationProperty Name="Orders" Relationship="eCommerceModel.FK_Orders_Customers" FromRole="Customer" ToRole="Order" />
+        </EntityType>
+        <EntityType Name="Employee">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FirstName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LastName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Phone" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Address" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Birthday" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Username" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="LevelId" Type="Int32" Nullable="false" />
+          <Property Name="LastLogin" Type="DateTime" Precision="3" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Level" Relationship="eCommerceModel.FK_Employees_Levels" FromRole="Employee" ToRole="Level" />
+          <NavigationProperty Name="Orders" Relationship="eCommerceModel.FK_Orders_Employees" FromRole="Employee" ToRole="Order" />
+        </EntityType>
+        <EntityType Name="GroupItem">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="GroupId" Type="Int32" Nullable="false" />
+          <Property Name="ProductId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Group" Relationship="eCommerceModel.FK_GroupItems_Groups" FromRole="GroupItem" ToRole="Group" />
+          <NavigationProperty Name="Product" Relationship="eCommerceModel.FK_GroupItems_Products" FromRole="GroupItem" ToRole="Product" />
+        </EntityType>
+        <EntityType Name="Group">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="GroupItems" Relationship="eCommerceModel.FK_GroupItems_Groups" FromRole="Group" ToRole="GroupItem" />
+        </EntityType>
+        <EntityType Name="Level">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="LevelName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Employees" Relationship="eCommerceModel.FK_Employees_Levels" FromRole="Level" ToRole="Employee" />
+        </EntityType>
+        <EntityType Name="OrderDetail">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OrderId" Type="Int32" Nullable="false" />
+          <Property Name="ProductId" Type="Int32" Nullable="false" />
+          <Property Name="Quantity" Type="Int32" Nullable="false" />
+          <Property Name="ProductName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Price" Type="Decimal" Precision="19" Scale="4" />
+          <NavigationProperty Name="Order" Relationship="eCommerceModel.FK_OrderDetails_Orders" FromRole="OrderDetail" ToRole="Order" />
+          <NavigationProperty Name="Product" Relationship="eCommerceModel.FK_OrderDetails_Products" FromRole="OrderDetail" ToRole="Product" />
+        </EntityType>
+        <EntityType Name="Order">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="StatusId" Type="Int32" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="PaymentType" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="CustomerId" Type="Int32" />
+          <Property Name="EmployeeId" Type="Int32" />
+          <Property Name="ShipmentId" Type="Int32" />
+          <Property Name="Discount" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="Tax" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+          <Property Name="ShippingFee" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="ShippingAddress" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="ShippingCity" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Customer" Relationship="eCommerceModel.FK_Orders_Customers" FromRole="Order" ToRole="Customer" />
+          <NavigationProperty Name="Employee" Relationship="eCommerceModel.FK_Orders_Employees" FromRole="Order" ToRole="Employee" />
+          <NavigationProperty Name="OrderDetails" Relationship="eCommerceModel.FK_OrderDetails_Orders" FromRole="Order" ToRole="OrderDetail" />
+          <NavigationProperty Name="OrderStatus" Relationship="eCommerceModel.FK_Orders_OrderStatuses" FromRole="Order" ToRole="OrderStatus" />
+          <NavigationProperty Name="Shipment" Relationship="eCommerceModel.FK_Orders_Shipments" FromRole="Order" ToRole="Shipment" />
+        </EntityType>
+        <EntityType Name="OrderStatus">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Orders" Relationship="eCommerceModel.FK_Orders_OrderStatuses" FromRole="OrderStatus" ToRole="Order" />
+        </EntityType>
+        <EntityType Name="Picture">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProductId" Type="Int32" Nullable="false" />
+          <Property Name="URL" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Product" Relationship="eCommerceModel.FK_Pictures_Products" FromRole="Picture" ToRole="Product" />
+        </EntityType>
         <EntityType Name="Product">
           <Key>
             <PropertyRef Name="Id" />
@@ -1027,14 +1008,165 @@
           <Property Name="SupplierId" Type="Int32" Nullable="false" />
           <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Thumbnail" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="BestSellings" Relationship="eCommerceModel.FK_BestSellings_Products" FromRole="Product" ToRole="BestSelling" />
           <NavigationProperty Name="CartItems" Relationship="eCommerceModel.FK_CartItems_Products" FromRole="Product" ToRole="CartItem" />
           <NavigationProperty Name="Category" Relationship="eCommerceModel.FK_Products_Categories" FromRole="Product" ToRole="Category" />
           <NavigationProperty Name="Comments" Relationship="eCommerceModel.FK_Comments_Products" FromRole="Product" ToRole="Comment" />
+          <NavigationProperty Name="GroupItems" Relationship="eCommerceModel.FK_GroupItems_Products" FromRole="Product" ToRole="GroupItem" />
           <NavigationProperty Name="OrderDetails" Relationship="eCommerceModel.FK_OrderDetails_Products" FromRole="Product" ToRole="OrderDetail" />
           <NavigationProperty Name="Pictures" Relationship="eCommerceModel.FK_Pictures_Products" FromRole="Product" ToRole="Picture" />
           <NavigationProperty Name="Supplier" Relationship="eCommerceModel.FK_Products_Suppliers" FromRole="Product" ToRole="Supplier" />
           <NavigationProperty Name="Ratings" Relationship="eCommerceModel.FK_Ratings_Products" FromRole="Product" ToRole="Rating" />
+          <NavigationProperty Name="RecommendProducts" Relationship="eCommerceModel.FK_RecommendProducts_Products" FromRole="Product" ToRole="RecommendProduct" />
         </EntityType>
+        <EntityType Name="Rating">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProductId" Type="Int32" Nullable="false" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="Rating1" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Account" Relationship="eCommerceModel.FK_Ratings_Accounts" FromRole="Rating" ToRole="Account" />
+          <NavigationProperty Name="Product" Relationship="eCommerceModel.FK_Ratings_Products" FromRole="Rating" ToRole="Product" />
+        </EntityType>
+        <EntityType Name="RecommendProduct">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProductId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Product" Relationship="eCommerceModel.FK_RecommendProducts_Products" FromRole="RecommendProduct" ToRole="Product" />
+        </EntityType>
+        <EntityType Name="Shipment">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="StatusId" Type="Int32" Nullable="false" />
+          <Property Name="ShippedDate" Type="DateTime" Precision="3" />
+          <Property Name="ShippingAddress" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="ShippingCity" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ShippingFee" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+          <Property Name="ShipperId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Orders" Relationship="eCommerceModel.FK_Orders_Shipments" FromRole="Shipment" ToRole="Order" />
+          <NavigationProperty Name="ShipmentStatus" Relationship="eCommerceModel.FK_Shipments_ShipmentStatuses" FromRole="Shipment" ToRole="ShipmentStatus" />
+          <NavigationProperty Name="Shipper" Relationship="eCommerceModel.FK_Shipments_Shippers" FromRole="Shipment" ToRole="Shipper" />
+        </EntityType>
+        <EntityType Name="ShipmentStatus">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Shipments" Relationship="eCommerceModel.FK_Shipments_ShipmentStatuses" FromRole="ShipmentStatus" ToRole="Shipment" />
+        </EntityType>
+        <EntityType Name="Shipper">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FirstName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LastName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Phone" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Address" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Birthday" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Shipments" Relationship="eCommerceModel.FK_Shipments_Shippers" FromRole="Shipper" ToRole="Shipment" />
+        </EntityType>
+        <EntityType Name="Supplier">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Phone" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Address" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Logo" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Products" Relationship="eCommerceModel.FK_Products_Suppliers" FromRole="Supplier" ToRole="Product" />
+        </EntityType>
+        <EntityType Name="Topic">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TopicName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Categories" Relationship="eCommerceModel.FK_Categories_Topics" FromRole="Topic" ToRole="Category" />
+        </EntityType>
+        <Association Name="FK_Accounts_Customers">
+          <End Type="eCommerceModel.Customer" Role="Customer" Multiplicity="1" />
+          <End Type="eCommerceModel.Account" Role="Account" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Account">
+              <PropertyRef Name="CustomerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Carts_Accounts">
+          <End Type="eCommerceModel.Account" Role="Account" Multiplicity="1" />
+          <End Type="eCommerceModel.Cart" Role="Cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Account">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Cart">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Comments_Accounts">
+          <End Type="eCommerceModel.Account" Role="Account" Multiplicity="1" />
+          <End Type="eCommerceModel.Comment" Role="Comment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Account">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Comment">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Ratings_Accounts">
+          <End Type="eCommerceModel.Account" Role="Account" Multiplicity="1" />
+          <End Type="eCommerceModel.Rating" Role="Rating" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Account">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Rating">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_BestSellings_Products">
+          <End Type="eCommerceModel.Product" Role="Product" Multiplicity="1" />
+          <End Type="eCommerceModel.BestSelling" Role="BestSelling" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Product">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="BestSelling">
+              <PropertyRef Name="ProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CartItems_Carts">
+          <End Type="eCommerceModel.Cart" Role="Cart" Multiplicity="1" />
+          <End Type="eCommerceModel.CartItem" Role="CartItem" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Cart">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CartItem">
+              <PropertyRef Name="CartId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_CartItems_Products">
           <End Type="eCommerceModel.Product" Role="Product" Multiplicity="1" />
           <End Type="eCommerceModel.CartItem" Role="CartItem" Multiplicity="*" />
@@ -1044,6 +1176,18 @@
             </Principal>
             <Dependent Role="CartItem">
               <PropertyRef Name="ProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Categories_Topics">
+          <End Type="eCommerceModel.Topic" Role="Topic" Multiplicity="1" />
+          <End Type="eCommerceModel.Category" Role="Category" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Topic">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Category">
+              <PropertyRef Name="TopicId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1059,6 +1203,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Comments_Comments">
+          <End Type="eCommerceModel.Comment" Role="Comment" Multiplicity="0..1" />
+          <End Type="eCommerceModel.Comment" Role="Comment1" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Comment">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Comment1">
+              <PropertyRef Name="ParentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Comments_Products">
           <End Type="eCommerceModel.Product" Role="Product" Multiplicity="1" />
           <End Type="eCommerceModel.Comment" Role="Comment" Multiplicity="*" />
@@ -1071,6 +1227,78 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Orders_Customers">
+          <End Type="eCommerceModel.Customer" Role="Customer" Multiplicity="0..1" />
+          <End Type="eCommerceModel.Order" Role="Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Order">
+              <PropertyRef Name="CustomerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Employees_Levels">
+          <End Type="eCommerceModel.Level" Role="Level" Multiplicity="1" />
+          <End Type="eCommerceModel.Employee" Role="Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Level">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Employee">
+              <PropertyRef Name="LevelId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Orders_Employees">
+          <End Type="eCommerceModel.Employee" Role="Employee" Multiplicity="0..1" />
+          <End Type="eCommerceModel.Order" Role="Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Order">
+              <PropertyRef Name="EmployeeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_GroupItems_Groups">
+          <End Type="eCommerceModel.Group" Role="Group" Multiplicity="1" />
+          <End Type="eCommerceModel.GroupItem" Role="GroupItem" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Group">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="GroupItem">
+              <PropertyRef Name="GroupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_GroupItems_Products">
+          <End Type="eCommerceModel.Product" Role="Product" Multiplicity="1" />
+          <End Type="eCommerceModel.GroupItem" Role="GroupItem" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Product">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="GroupItem">
+              <PropertyRef Name="ProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_OrderDetails_Orders">
+          <End Type="eCommerceModel.Order" Role="Order" Multiplicity="1" />
+          <End Type="eCommerceModel.OrderDetail" Role="OrderDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Order">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="OrderDetail">
+              <PropertyRef Name="OrderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_OrderDetails_Products">
           <End Type="eCommerceModel.Product" Role="Product" Multiplicity="1" />
           <End Type="eCommerceModel.OrderDetail" Role="OrderDetail" Multiplicity="*" />
@@ -1080,6 +1308,30 @@
             </Principal>
             <Dependent Role="OrderDetail">
               <PropertyRef Name="ProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Orders_OrderStatuses">
+          <End Type="eCommerceModel.OrderStatus" Role="OrderStatus" Multiplicity="1" />
+          <End Type="eCommerceModel.Order" Role="Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OrderStatus">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Order">
+              <PropertyRef Name="StatusId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Orders_Shipments">
+          <End Type="eCommerceModel.Shipment" Role="Shipment" Multiplicity="0..1" />
+          <End Type="eCommerceModel.Order" Role="Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Shipment">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Order">
+              <PropertyRef Name="ShipmentId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1119,87 +1371,43 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="Order">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="CreatedDate" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="StatusId" Type="Int32" Nullable="false" />
-          <Property Name="Description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="PaymentType" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="CustomerId" Type="Int32" />
-          <Property Name="EmployeeId" Type="Int32" />
-          <Property Name="ShipmentId" Type="Int32" />
-          <Property Name="Discount" Type="Decimal" Precision="18" Scale="2" />
-          <Property Name="Tax" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
-          <NavigationProperty Name="Customer" Relationship="eCommerceModel.FK_Orders_Customers" FromRole="Order" ToRole="Customer" />
-          <NavigationProperty Name="Employee" Relationship="eCommerceModel.FK_Orders_Employees" FromRole="Order" ToRole="Employee" />
-          <NavigationProperty Name="OrderDetails" Relationship="eCommerceModel.FK_OrderDetails_Orders" FromRole="Order" ToRole="OrderDetail" />
-          <NavigationProperty Name="OrderStatus" Relationship="eCommerceModel.FK_Orders_OrderStatuses" FromRole="Order" ToRole="OrderStatus" />
-          <NavigationProperty Name="Shipment" Relationship="eCommerceModel.FK_Orders_Shipments" FromRole="Order" ToRole="Shipment" />
-        </EntityType>
-        <Association Name="FK_Orders_Customers">
-          <End Type="eCommerceModel.Customer" Role="Customer" Multiplicity="0..1" />
-          <End Type="eCommerceModel.Order" Role="Order" Multiplicity="*" />
+        <Association Name="FK_RecommendProducts_Products">
+          <End Type="eCommerceModel.Product" Role="Product" Multiplicity="1" />
+          <End Type="eCommerceModel.RecommendProduct" Role="RecommendProduct" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Customer">
+            <Principal Role="Product">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="Order">
-              <PropertyRef Name="CustomerId" />
+            <Dependent Role="RecommendProduct">
+              <PropertyRef Name="ProductId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Orders_Employees">
-          <End Type="eCommerceModel.Employee" Role="Employee" Multiplicity="0..1" />
-          <End Type="eCommerceModel.Order" Role="Order" Multiplicity="*" />
+        <Association Name="FK_Shipments_ShipmentStatuses">
+          <End Type="eCommerceModel.ShipmentStatus" Role="ShipmentStatus" Multiplicity="1" />
+          <End Type="eCommerceModel.Shipment" Role="Shipment" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Employee">
+            <Principal Role="ShipmentStatus">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="Order">
-              <PropertyRef Name="EmployeeId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_OrderDetails_Orders">
-          <End Type="eCommerceModel.Order" Role="Order" Multiplicity="1" />
-          <End Type="eCommerceModel.OrderDetail" Role="OrderDetail" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Order">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="OrderDetail">
-              <PropertyRef Name="OrderId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Orders_OrderStatuses">
-          <End Type="eCommerceModel.OrderStatus" Role="OrderStatus" Multiplicity="1" />
-          <End Type="eCommerceModel.Order" Role="Order" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="OrderStatus">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Order">
+            <Dependent Role="Shipment">
               <PropertyRef Name="StatusId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Orders_Shipments">
-          <End Type="eCommerceModel.Shipment" Role="Shipment" Multiplicity="0..1" />
-          <End Type="eCommerceModel.Order" Role="Order" Multiplicity="*" />
+        <Association Name="FK_Shipments_Shippers">
+          <End Type="eCommerceModel.Shipper" Role="Shipper" Multiplicity="1" />
+          <End Type="eCommerceModel.Shipment" Role="Shipment" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Shipment">
+            <Principal Role="Shipper">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="Order">
-              <PropertyRef Name="ShipmentId" />
+            <Dependent Role="Shipment">
+              <PropertyRef Name="ShipperId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-      </Schema>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
@@ -1208,188 +1416,167 @@
           <EntitySetMapping Name="Accounts">
             <EntityTypeMapping TypeName="eCommerceModel.Account">
               <MappingFragment StoreEntitySet="Accounts">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Username" ColumnName="Username" />
-                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BestSellings">
+            <EntityTypeMapping TypeName="eCommerceModel.BestSelling">
+              <MappingFragment StoreEntitySet="BestSellings">
+                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="CartItems">
             <EntityTypeMapping TypeName="eCommerceModel.CartItem">
               <MappingFragment StoreEntitySet="CartItems">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="CartId" ColumnName="CartId" />
-                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
                 <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+                <ScalarProperty Name="CartId" ColumnName="CartId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Carts">
             <EntityTypeMapping TypeName="eCommerceModel.Cart">
               <MappingFragment StoreEntitySet="Carts">
-                <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Categories">
             <EntityTypeMapping TypeName="eCommerceModel.Category">
               <MappingFragment StoreEntitySet="Categories">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="TopicId" ColumnName="TopicId" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Comments">
             <EntityTypeMapping TypeName="eCommerceModel.Comment">
               <MappingFragment StoreEntitySet="Comments">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
-                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
-                <ScalarProperty Name="Content" ColumnName="Content" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="DateComment" ColumnName="DateComment" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Customers">
             <EntityTypeMapping TypeName="eCommerceModel.Customer">
               <MappingFragment StoreEntitySet="Customers">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
-                <ScalarProperty Name="LastName" ColumnName="LastName" />
-                <ScalarProperty Name="Phone" ColumnName="Phone" />
-                <ScalarProperty Name="Address" ColumnName="Address" />
-                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="IsRegistered" ColumnName="IsRegistered" />
                 <ScalarProperty Name="Birthday" ColumnName="Birthday" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Employees">
             <EntityTypeMapping TypeName="eCommerceModel.Employee">
               <MappingFragment StoreEntitySet="Employees">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
-                <ScalarProperty Name="LastName" ColumnName="LastName" />
-                <ScalarProperty Name="Phone" ColumnName="Phone" />
-                <ScalarProperty Name="Address" ColumnName="Address" />
-                <ScalarProperty Name="Email" ColumnName="Email" />
-                <ScalarProperty Name="Birthday" ColumnName="Birthday" />
-                <ScalarProperty Name="Username" ColumnName="Username" />
-                <ScalarProperty Name="Password" ColumnName="Password" />
-                <ScalarProperty Name="LevelId" ColumnName="LevelId" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="LastLogin" ColumnName="LastLogin" />
+                <ScalarProperty Name="LevelId" ColumnName="LevelId" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="Birthday" ColumnName="Birthday" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="GroupItems">
+            <EntityTypeMapping TypeName="eCommerceModel.GroupItem">
+              <MappingFragment StoreEntitySet="GroupItems">
+                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+                <ScalarProperty Name="GroupId" ColumnName="GroupId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Groups">
+            <EntityTypeMapping TypeName="eCommerceModel.Group">
+              <MappingFragment StoreEntitySet="Groups">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Levels">
             <EntityTypeMapping TypeName="eCommerceModel.Level">
               <MappingFragment StoreEntitySet="Levels">
-                <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="LevelName" ColumnName="LevelName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="OrderDetails">
             <EntityTypeMapping TypeName="eCommerceModel.OrderDetail">
               <MappingFragment StoreEntitySet="OrderDetails">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="OrderId" ColumnName="OrderId" />
-                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
-                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
-                <ScalarProperty Name="ProductName" ColumnName="ProductName" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="ProductName" ColumnName="ProductName" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+                <ScalarProperty Name="OrderId" ColumnName="OrderId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Orders">
+            <EntityTypeMapping TypeName="eCommerceModel.Order">
+              <MappingFragment StoreEntitySet="Orders">
+                <ScalarProperty Name="ShippingCity" ColumnName="ShippingCity" />
+                <ScalarProperty Name="ShippingAddress" ColumnName="ShippingAddress" />
+                <ScalarProperty Name="ShippingFee" ColumnName="ShippingFee" />
+                <ScalarProperty Name="Tax" ColumnName="Tax" />
+                <ScalarProperty Name="Discount" ColumnName="Discount" />
+                <ScalarProperty Name="ShipmentId" ColumnName="ShipmentId" />
+                <ScalarProperty Name="EmployeeId" ColumnName="EmployeeId" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="PaymentType" ColumnName="PaymentType" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="StatusId" ColumnName="StatusId" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="OrderStatuses">
             <EntityTypeMapping TypeName="eCommerceModel.OrderStatus">
               <MappingFragment StoreEntitySet="OrderStatuses">
-                <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Pictures">
             <EntityTypeMapping TypeName="eCommerceModel.Picture">
               <MappingFragment StoreEntitySet="Pictures">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
                 <ScalarProperty Name="URL" ColumnName="URL" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Ratings">
-            <EntityTypeMapping TypeName="eCommerceModel.Rating">
-              <MappingFragment StoreEntitySet="Ratings">
-                <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="ProductId" ColumnName="ProductId" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-                <ScalarProperty Name="Rating1" ColumnName="Rating" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Shipments">
-            <EntityTypeMapping TypeName="eCommerceModel.Shipment">
-              <MappingFragment StoreEntitySet="Shipments">
                 <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="StatusId" ColumnName="StatusId" />
-                <ScalarProperty Name="ShippedDate" ColumnName="ShippedDate" />
-                <ScalarProperty Name="ShippingAddress" ColumnName="ShippingAddress" />
-                <ScalarProperty Name="ShippingCity" ColumnName="ShippingCity" />
-                <ScalarProperty Name="ShippingFee" ColumnName="ShippingFee" />
-                <ScalarProperty Name="ShipperId" ColumnName="ShipperId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ShipmentStatuses">
-            <EntityTypeMapping TypeName="eCommerceModel.ShipmentStatus">
-              <MappingFragment StoreEntitySet="ShipmentStatuses">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Shippers">
-            <EntityTypeMapping TypeName="eCommerceModel.Shipper">
-              <MappingFragment StoreEntitySet="Shippers">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
-                <ScalarProperty Name="LastName" ColumnName="LastName" />
-                <ScalarProperty Name="Phone" ColumnName="Phone" />
-                <ScalarProperty Name="Address" ColumnName="Address" />
-                <ScalarProperty Name="Email" ColumnName="Email" />
-                <ScalarProperty Name="Birthday" ColumnName="Birthday" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Suppliers">
-            <EntityTypeMapping TypeName="eCommerceModel.Supplier">
-              <MappingFragment StoreEntitySet="Suppliers">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Email" ColumnName="Email" />
-                <ScalarProperty Name="Phone" ColumnName="Phone" />
-                <ScalarProperty Name="Address" ColumnName="Address" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Tables">
-            <EntityTypeMapping TypeName="eCommerceModel.Table">
-              <MappingFragment StoreEntitySet="Table">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Topics">
-            <EntityTypeMapping TypeName="eCommerceModel.Topic">
-              <MappingFragment StoreEntitySet="Topics">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="TopicName" ColumnName="TopicName" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1408,18 +1595,75 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Orders">
-            <EntityTypeMapping TypeName="eCommerceModel.Order">
-              <MappingFragment StoreEntitySet="Orders">
-                <ScalarProperty Name="Tax" ColumnName="Tax" />
-                <ScalarProperty Name="Discount" ColumnName="Discount" />
-                <ScalarProperty Name="ShipmentId" ColumnName="ShipmentId" />
-                <ScalarProperty Name="EmployeeId" ColumnName="EmployeeId" />
-                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
-                <ScalarProperty Name="PaymentType" ColumnName="PaymentType" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
+          <EntitySetMapping Name="Ratings">
+            <EntityTypeMapping TypeName="eCommerceModel.Rating">
+              <MappingFragment StoreEntitySet="Ratings">
+                <ScalarProperty Name="Rating1" ColumnName="Rating" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RecommendProducts">
+            <EntityTypeMapping TypeName="eCommerceModel.RecommendProduct">
+              <MappingFragment StoreEntitySet="RecommendProducts">
+                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Shipments">
+            <EntityTypeMapping TypeName="eCommerceModel.Shipment">
+              <MappingFragment StoreEntitySet="Shipments">
+                <ScalarProperty Name="ShipperId" ColumnName="ShipperId" />
+                <ScalarProperty Name="ShippingFee" ColumnName="ShippingFee" />
+                <ScalarProperty Name="ShippingCity" ColumnName="ShippingCity" />
+                <ScalarProperty Name="ShippingAddress" ColumnName="ShippingAddress" />
+                <ScalarProperty Name="ShippedDate" ColumnName="ShippedDate" />
                 <ScalarProperty Name="StatusId" ColumnName="StatusId" />
-                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ShipmentStatuses">
+            <EntityTypeMapping TypeName="eCommerceModel.ShipmentStatus">
+              <MappingFragment StoreEntitySet="ShipmentStatuses">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Shippers">
+            <EntityTypeMapping TypeName="eCommerceModel.Shipper">
+              <MappingFragment StoreEntitySet="Shippers">
+                <ScalarProperty Name="Birthday" ColumnName="Birthday" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Suppliers">
+            <EntityTypeMapping TypeName="eCommerceModel.Supplier">
+              <MappingFragment StoreEntitySet="Suppliers">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Logo" ColumnName="Logo" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Topics">
+            <EntityTypeMapping TypeName="eCommerceModel.Topic">
+              <MappingFragment StoreEntitySet="Topics">
+                <ScalarProperty Name="TopicName" ColumnName="TopicName" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

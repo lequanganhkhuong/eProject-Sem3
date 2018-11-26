@@ -30,6 +30,9 @@ namespace ZuLuCommerce.Models
         public Nullable<int> ShipmentId { get; set; }
         public Nullable<decimal> Discount { get; set; }
         public decimal Tax { get; set; }
+        public Nullable<decimal> ShippingFee { get; set; }
+        public string ShippingAddress { get; set; }
+        public string ShippingCity { get; set; }
     
         public virtual Customer Customer { get; set; }
         public virtual Employee Employee { get; set; }

@@ -162,9 +162,13 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\ADMIN\ADMINAreaRegistration.cs" />
-    <Compile Include="Areas\ADMIN\Controllers\CategoriesController.cs" />
-    <Compile Include="Areas\ADMIN\Controllers\OrdersController.cs" />
-    <Compile Include="Areas\ADMIN\Controllers\ProductsController.cs" />
+    <Compile Include="Areas\ADMIN\Controllers\BestSellingsController.cs" />
+    <Compile Include="Areas\ADMIN\Controllers\GroupsController.cs" />
+    <Compile Include="Areas\ADMIN\Controllers\RecommendProductsController.cs" />
+    <Compile Include="Areas\ADMIN\Controllers\ShipmentsController.cs" />
+    <Compile Include="Areas\ADMIN\Controllers\ShippersController.cs" />
+    <Compile Include="Areas\ADMIN\Controllers\SuppliersController.cs" />
+    <Compile Include="Areas\ADMIN\Controllers\TopicsController.cs" />
     <Compile Include="Areas\HelpPage\ApiDescriptionExtensions.cs" />
     <Compile Include="Areas\HelpPage\App_Start\HelpPageConfig.cs" />
     <Compile Include="Areas\HelpPage\Controllers\HelpController.cs" />
@@ -203,6 +207,9 @@
     <Compile Include="Models\Account.cs">
       <DependentUpon>eCommerceDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\BestSelling.cs">
+      <DependentUpon>eCommerceDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Cart.cs">
       <DependentUpon>eCommerceDb.tt</DependentUpon>
     </Compile>
@@ -236,6 +243,12 @@
     <Compile Include="Models\Employee.cs">
       <DependentUpon>eCommerceDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Group.cs">
+      <DependentUpon>eCommerceDb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GroupItem.cs">
+      <DependentUpon>eCommerceDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Level.cs">
       <DependentUpon>eCommerceDb.tt</DependentUpon>
     </Compile>
@@ -257,6 +270,9 @@
     <Compile Include="Models\Rating.cs">
       <DependentUpon>eCommerceDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\RecommendProduct.cs">
+      <DependentUpon>eCommerceDb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Shipment.cs">
       <DependentUpon>eCommerceDb.tt</DependentUpon>
     </Compile>
@@ -267,9 +283,6 @@
       <DependentUpon>eCommerceDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Supplier.cs">
-      <DependentUpon>eCommerceDb.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Table.cs">
       <DependentUpon>eCommerceDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Topic.cs">
@@ -360,6 +373,7 @@
       <LastGenOutput>eCommerceDb.Context.cs</LastGenOutput>
       <DependentUpon>eCommerceDb.edmx</DependentUpon>
     </Content>
+    <Content Include="Models\eCommerceDb.edmx.sql" />
     <Content Include="Models\eCommerceDb.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>eCommerceDb.edmx</DependentUpon>
@@ -419,6 +433,67 @@
     <Content Include="Areas\ADMIN\Views\Orders\Details.cshtml" />
     <Content Include="Areas\ADMIN\Views\Orders\Edit.cshtml" />
     <Content Include="Areas\ADMIN\Views\Orders\Index.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Customers\Create.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Customers\Delete.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Customers\Details.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Customers\Edit.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Customers\Index.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Accounts\Create.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Accounts\Delete.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Accounts\Details.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Accounts\Edit.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Accounts\Index.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Carts\Create.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Carts\Delete.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Carts\Details.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Carts\Edit.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Carts\Index.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Employees\Create.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Employees\Delete.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Employees\Details.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Employees\Edit.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Employees\Index.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Levels\Create.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Levels\Delete.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Levels\Details.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Levels\Edit.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Levels\Index.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Groups\Create.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Groups\Delete.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Groups\Details.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Groups\Edit.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Groups\Index.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Shipments\Create.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Shipments\Delete.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Shipments\Details.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Shipments\Edit.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Shipments\Index.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Shippers\Create.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Shippers\Delete.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Shippers\Details.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Shippers\Edit.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Shippers\Index.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Suppliers\Create.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Suppliers\Delete.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Suppliers\Details.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Suppliers\Edit.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Suppliers\Index.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Topics\Create.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Topics\Delete.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Topics\Details.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Topics\Edit.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Topics\Index.cshtml" />
+    <Content Include="Areas\ADMIN\Views\BestSellings\Create.cshtml" />
+    <Content Include="Areas\ADMIN\Views\BestSellings\Delete.cshtml" />
+    <Content Include="Areas\ADMIN\Views\BestSellings\Details.cshtml" />
+    <Content Include="Areas\ADMIN\Views\BestSellings\Edit.cshtml" />
+    <Content Include="Areas\ADMIN\Views\BestSellings\Index.cshtml" />
+    <Content Include="Areas\ADMIN\Views\RecommendProducts\Create.cshtml" />
+    <Content Include="Areas\ADMIN\Views\RecommendProducts\Delete.cshtml" />
+    <Content Include="Areas\ADMIN\Views\RecommendProducts\Details.cshtml" />
+    <Content Include="Areas\ADMIN\Views\RecommendProducts\Edit.cshtml" />
+    <Content Include="Areas\ADMIN\Views\RecommendProducts\Index.cshtml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />

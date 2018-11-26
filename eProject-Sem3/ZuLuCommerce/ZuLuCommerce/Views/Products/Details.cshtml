@@ -90,7 +90,10 @@
                     </div>
                 </div>
                 <!--Tab Menu End-->
-
+                @{ 
+                    var discount_price = Model.Price;
+                    discount_price -= Model.Price * Model.Discount / 100;
+                }
                 
                 
             </div>
@@ -106,8 +109,23 @@
                     </div>
                     <div class="single-product-price">
                         <div class="product-discount">
-                            <span class="price">@Model.Price.ToString("N0") VND</span>
-                            <span class="discount">-@Model.Discount %</span>
+                            @{
+                                if (Model.Discount != 0)
+                                {
+                                    <span class="price">@discount_price.ToString("N0") VND</span>
+                                    <span class="discount">-@Model.Discount %</span>
+                                    <div class="product-price">
+                                       <span class="regular-price">@Model.Price.ToString("N0") VND</span>
+                                            
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span class="price">@Model.Price.ToString("N0") VND</span>
+                                    <span class="discount">-@Model.Discount %</span>
+                                }
+                            }
+                           
                         </div>
                     </div>
                     <div class="product-info">
@@ -141,7 +159,7 @@
                                     <input id="quantity" class="cart-plus-minus-box" type="number" @*name="qtybutton"*@ value="0">
                                 </div>
                                 <div class="add">
-                                    <button class="add-to-cart btnAddToCart" pid="@Model.Id" pthumbnail="@Model.Thumbnail" pname="@Model.Name" pprice="@Model.Price"><i class="ion-bag"></i> add-to-cart</button>
+                                    <button class="add-to-cart btnAddToCart" pid="@Model.Id" pthumbnail="@Model.Thumbnail" pname="@Model.Name" pprice="@discount_price"><i class="ion-bag"></i> add-to-cart</button>
                                     <span class="product-availability">In stock</span>
                                 </div>
                             </div>

@@ -47,7 +47,8 @@
         <div class="product-content">
             <h4>
                 @{
-
+                    var discount_price = Model.Price;
+                    discount_price -= Model.Price * Model.Discount / 100;
                     string productname = Model.Name;
                     if (productname.Length > 25)
                     {
@@ -58,9 +59,22 @@
                 }
                 <a href="@Url.Action("Details","Products",new { id = Model.Id})">@productname</a>
             </h4>
-            <div class="product-price">
-                <span class="price">@Model.Price.ToString("N0") VND</span>
-            </div>
+            @{
+                if (Model.Discount == 0)
+                {
+                    <div class="product-price">
+                        <span class="price">@Model.Price.ToString("N0") VND</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="product-price">
+                        <span class="regular-price">@Model.Price.ToString("N0")</span>
+                        <span class="price">@discount_price.ToString("N0") VND</span>
+                    </div>
+                }
+            }
+            
             <div class="product-reviews">
                 <i class="ion-android-star"></i>
                 <i class="ion-android-star"></i>
