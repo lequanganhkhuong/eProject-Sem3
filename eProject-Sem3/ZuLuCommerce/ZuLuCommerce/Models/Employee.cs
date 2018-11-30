@@ -17,6 +17,7 @@ namespace ZuLuCommerce.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Employee()
         {
+            this.EmployeeLevels = new HashSet<EmployeeLevel>();
             this.Orders = new HashSet<Order>();
         }
     
@@ -26,13 +27,18 @@ namespace ZuLuCommerce.Models
         public string Phone { get; set; }
         public string Address { get; set; }
         public string Email { get; set; }
+        public string Gender { get; set; }
         public System.DateTime Birthday { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
         public int LevelId { get; set; }
+        public string Avatar { get; set; }
         public Nullable<System.DateTime> LastLogin { get; set; }
         public bool IsActive { get; set; }
+        public bool IsOnline { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<EmployeeLevel> EmployeeLevels { get; set; }
         public virtual Level Level { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Order> Orders { get; set; }

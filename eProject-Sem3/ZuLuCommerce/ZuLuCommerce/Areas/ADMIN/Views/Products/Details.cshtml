@@ -50,7 +50,13 @@
             @Html.DisplayFor(model => model.Description)
         </dd>
 
-        
+        <dt>
+            @Html.DisplayNameFor(model => model.Thumbnail)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Thumbnail)
+        </dd>
 
         <dt>
             @Html.DisplayNameFor(model => model.Category.Name)
@@ -67,13 +73,7 @@
         <dd>
             @Html.DisplayFor(model => model.Supplier.Name)
         </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Thumbnail)
-        </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Thumbnail)
-        </dd>
     </dl>
 </div>
 <p>

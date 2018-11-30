@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 using ZuLuCommerce.Models;
 
 namespace ZuLuCommerce.Areas.ADMIN.Controllers
@@ -14,6 +15,55 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
     {
         private eCommerceEntities db = new eCommerceEntities();
 
+        // GET: Admin/Account/Login
+        public ActionResult Login()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult Login(string Loginname, string Password)
+        {
+            var emp = db.Employees.Where(x => x.Username.Equals(Loginname)).SingleOrDefault();
+            if (emp != null)
+            {
+                if (emp.Password.Equals(MySecurity.EncryptPass(Password)))
+                {
+                    if (emp.IsActive)
+                    {
+                        FormsAuthentication.SetAuthCookie(emp.Id.ToString(), false);
+                        emp.IsOnline = true;
+
+                        db.SaveChanges();
+                        return RedirectToAction("Index", "Dashboard");
+                    }
+                    else
+                    {
+                        ViewBag.Message = "This user is blocked";
+                    }
+                   
+
+                }
+                else
+                {
+                    ViewBag.Message = "Password invalid";
+                }
+            }
+            else
+            {
+                ViewBag.Message = "Login name not exist";
+            }
+            return View();
+        }
+        public ActionResult Logout()
+        {
+            int cur = int.Parse(User.Identity.Name);
+            var emp = db.Employees.Where(x => x.Id == cur).SingleOrDefault();
+            emp.IsOnline = false;
+            emp.LastLogin = DateTime.Now;
+            db.SaveChanges();
+            FormsAuthentication.SignOut();
+            return RedirectToAction("Login");
+        }
         // GET: ADMIN/Accounts
         public ActionResult Index()
         {
@@ -48,7 +98,7 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Username,Password,CustomerId")] Account account)
+        public ActionResult Create([Bind(Include = "Id,Username,Password,CustomerId,IsActive")] Account account)
         {
             if (ModelState.IsValid)
             {
@@ -82,7 +132,7 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Username,Password,CustomerId")] Account account)
+        public ActionResult Edit([Bind(Include = "Id,Username,Password,CustomerId,IsActive")] Account account)
         {
             if (ModelState.IsValid)
             {

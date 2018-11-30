@@ -32,7 +32,6 @@ namespace ZuLuCommerce.Models
         public virtual DbSet<Category> Categories { get; set; }
         public virtual DbSet<Comment> Comments { get; set; }
         public virtual DbSet<Customer> Customers { get; set; }
-        public virtual DbSet<Employee> Employees { get; set; }
         public virtual DbSet<GroupItem> GroupItems { get; set; }
         public virtual DbSet<Group> Groups { get; set; }
         public virtual DbSet<Level> Levels { get; set; }
@@ -48,5 +47,8 @@ namespace ZuLuCommerce.Models
         public virtual DbSet<Shipper> Shippers { get; set; }
         public virtual DbSet<Supplier> Suppliers { get; set; }
         public virtual DbSet<Topic> Topics { get; set; }
+        public virtual DbSet<ProductFeature> ProductFeatures { get; set; }
+        public virtual DbSet<EmployeeLevel> EmployeeLevels { get; set; }
+        public virtual DbSet<Employee> Employees { get; set; }
     }
 }

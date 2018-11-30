@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PagedList;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -11,6 +12,7 @@ using ZuLuCommerce.Models;
 
 namespace ZuLuCommerce.Areas.ADMIN.Controllers
 {
+    [Authorize(Roles = "Admin,Manager")]
     public class ProductsController : Controller
     {
         private eCommerceEntities db = new eCommerceEntities();
@@ -78,10 +80,62 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
             }
         }
         // GET: ADMIN/Products
-        public ActionResult Index()
+        public ActionResult Index(int? page, string kw, string sort)
         {
-            var products = db.Products.Include(p => p.Category).Include(p => p.Supplier);
-            return View(products.ToList());
+            int pageNumber = page ?? 1;
+            int pageSize = 6;
+            //select all
+            var p = db.Products.OrderBy(x => x.Id).Include(c=>c.Category).Include(d=>d.Supplier);
+            //search
+            if (!string.IsNullOrEmpty(kw))
+            {
+                p = p.Where(x => x.Id.ToString().Equals(kw) || x.Name.ToLower().Contains(kw.ToLower()));
+                ViewBag.kw = kw;
+            }
+            //sort
+
+            //ViewBag.sortTopic = "topic_asc";
+            if (string.IsNullOrEmpty(sort))
+            {
+                ViewBag.sort = "id_asc";
+
+            }
+            else
+            {
+                ViewBag.sort = sort;
+            }
+            switch (sort)
+            {
+                case "id_asc":
+                    p = p.OrderBy(x => x.Id);
+                    ViewBag.sortId = "id_desc";
+                    break;
+                case "id_desc":
+                    p = p.OrderByDescending(x => x.Id);
+                    ViewBag.sortId = "id_asc";
+                    break;
+                case "name_asc":
+                    p = p.OrderBy(x => x.Name);
+                    ViewBag.sortName = "name_desc";
+                    break;
+                case "name_desc":
+                    p = p.OrderByDescending(x => x.Name);
+                    ViewBag.sortName = "name_asc";
+                    break;
+                case "category_asc":
+                    p = p.OrderBy(x => x.Category.Name);
+                    ViewBag.sortTopic = "category_desc";
+                    break;
+                case "category_desc":
+                    p = p.OrderByDescending(x => x.Category.Name);
+                    ViewBag.sortTopic = "category_asc";
+                    break;
+            }
+            ViewBag.sortId = sort ?? "id_desc";
+            ViewBag.sortName = sort ?? "name_desc";
+            ViewBag.sortTopic = sort ?? "topic_desc";
+
+            return View(p.ToPagedList(pageNumber, pageSize));
         }
 
         // GET: ADMIN/Products/Details/5

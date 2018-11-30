@@ -66,3 +66,19 @@
 .single-slide-menu .img-full:hover{
     border:1px solid gray
 }
+
+
+/*-------------product details page end ------------------*/
+
+/*-----------user status--------------*/
+.user-online{
+    /*font-weight:bolder;*/
+    /*font-size:20px;*/
+}
+    .user-online span {
+        color: limegreen;
+     
+    }
+.user-offline{
+    opacity:.8;
+}

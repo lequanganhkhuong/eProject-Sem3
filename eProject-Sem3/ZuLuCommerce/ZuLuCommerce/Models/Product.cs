@@ -25,6 +25,7 @@ namespace ZuLuCommerce.Models
             this.Pictures = new HashSet<Picture>();
             this.Ratings = new HashSet<Rating>();
             this.RecommendProducts = new HashSet<RecommendProduct>();
+            this.ProductFeatures = new HashSet<ProductFeature>();
         }
     
         public int Id { get; set; }
@@ -55,5 +56,7 @@ namespace ZuLuCommerce.Models
         public virtual ICollection<Rating> Ratings { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<RecommendProduct> RecommendProducts { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ProductFeature> ProductFeatures { get; set; }
     }
 }

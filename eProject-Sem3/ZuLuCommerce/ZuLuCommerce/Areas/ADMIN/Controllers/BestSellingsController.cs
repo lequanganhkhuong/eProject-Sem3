@@ -7,18 +7,35 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using ZuLuCommerce.Models;
-
+using PagedList;
 namespace ZuLuCommerce.Areas.ADMIN.Controllers
 {
     public class BestSellingsController : Controller
     {
         private eCommerceEntities db = new eCommerceEntities();
-
-        // GET: ADMIN/BestSellings
-        public ActionResult Index()
+        public ActionResult RemoveProduct(int id)
         {
-            var bestSellings = db.BestSellings.Include(b => b.Product);
-            return View(bestSellings.ToList());
+            try
+            {
+                var p = db.BestSellings.Find(id);
+                db.BestSellings.Remove(p);
+                db.SaveChanges();
+                return Content("OK");
+            }
+            catch (Exception ex)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            
+        }
+        // GET: ADMIN/BestSellings
+        public ActionResult Index(int? page)
+        {
+            int pageNumber = page ?? 1;
+            int pageSize = 6;
+            var bestSellings = db.BestSellings.Include(b => b.Product).OrderBy(x=>x.Id);
+            
+            return View(bestSellings.ToPagedList(pageNumber, pageSize));
         }
 
         // GET: ADMIN/BestSellings/Details/5

@@ -52,19 +52,35 @@
         </dd>
 
         <dt>
+            @Html.DisplayNameFor(model => model.ShippingFee)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ShippingFee)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ShippingAddress)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ShippingAddress)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ShippingCity)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ShippingCity)
+        </dd>
+
+        <dt>
             @Html.DisplayNameFor(model => model.Customer.FirstName)
         </dt>
 
         <dd>
             @Html.DisplayFor(model => model.Customer.FirstName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Employee.FirstName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Employee.FirstName)
         </dd>
 
         <dt>
@@ -81,6 +97,14 @@
 
         <dd>
             @Html.DisplayFor(model => model.Shipment.ShippingAddress)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Employee.FirstName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Employee.FirstName)
         </dd>
 
     </dl>

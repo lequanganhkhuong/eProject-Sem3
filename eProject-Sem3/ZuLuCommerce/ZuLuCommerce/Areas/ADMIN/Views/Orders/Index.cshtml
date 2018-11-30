@@ -27,16 +27,25 @@
             @Html.DisplayNameFor(model => model.Tax)
         </th>
         <th>
+            @Html.DisplayNameFor(model => model.ShippingFee)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ShippingAddress)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ShippingCity)
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.Customer.FirstName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Employee.FirstName)
-        </th>
-        <th>
-            @Html.DisplayName("Order status")
+            @Html.DisplayNameFor(model => model.OrderStatus.Name)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Shipment.ShippingAddress)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Employee.FirstName)
         </th>
         <th></th>
     </tr>
@@ -59,16 +68,25 @@
             @Html.DisplayFor(modelItem => item.Tax)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Customer.FirstName)
+            @Html.DisplayFor(modelItem => item.ShippingFee)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Employee.FirstName)
+            @Html.DisplayFor(modelItem => item.ShippingAddress)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ShippingCity)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Customer.FirstName)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.OrderStatus.Name)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Shipment.ShippingAddress)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Employee.FirstName)
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |

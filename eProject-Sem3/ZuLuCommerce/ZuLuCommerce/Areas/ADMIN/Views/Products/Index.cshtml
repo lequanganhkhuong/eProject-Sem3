@@ -1,75 +1,147 @@
-﻿@model IEnumerable<ZuLuCommerce.Models.Product>
-
+﻿@model PagedList.IPagedList<ZuLuCommerce.Models.Product>
+@using PagedList.Mvc
 @{
     ViewBag.Title = "Index";
 }
+<h2>Products list</h2>
 
-<h2>Index</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Price)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Discount)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Stock)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Description)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Thumbnail)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Category.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Supplier.Name)
-        </th>
-        <th></th>
-    </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Price)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Discount)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Stock)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Description)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Thumbnail)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Category.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Supplier.Name)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
+    <p>
+        @Html.ActionLink("Create New", "Create")
+    </p>
+@using (Html.BeginForm())
+{
+    <div class="row">
+        <div class="col-md-6 col-12">
+            <label>Search </label>
+            <div class="row" style="padding-left:12px">
+               
+                @Html.Editor("kw", new { htmlAttributes = new { @class = "form-control", @placeholder = "Search by name or id" } })
+                
+            </div>
+
+        </div>
+        <div class="col-md-6 col-12">
+            
+                <label>Sort by</label>
+                <div class="row">
+                    <select  name="sort" class="form-control select2  w-p100">
+                        
+                        <option value="name_asc">Name A->Z</option>
+                        <option value="name_desc">Name Z->A</option>
+                        <option value="id_asc">Id ascend</option>
+                        <option value="id_desc">Id descend</option>
+                        <option value="category_asc">Category ascend</option>
+                        <option value="category_desc">Category descend</option>
+
+                    </select>
+                    
+                </div>
+
+            
+        </div>
+
+    </div>
+    <input type="submit" value="Submit" class="col-md-2 col-2 form-control" />
 }
+   
 
-</table>
+    <table class="table">
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Price
+            </th>
+            <th>
+                Discount
+            </th>
+            <th>
+                In Stock
+            </th>
+
+            <th>
+                Thumbnail
+            </th>
+            <th>
+                Category
+            </th>
+            <th>
+                Supplier
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Discount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Stock)
+                </td>
+
+                <td>
+                    @{
+                        string src = "/Uploads/image-not-available.jpg";//default
+                  
+                        if (item.Thumbnail != null)
+                        {
+                            var pic = item.Pictures.Where(x => x.ProductId == item.Id && x.URL != item.Thumbnail).FirstOrDefault();
+                            if (pic != null)
+                            {
+                                src = "/Uploads/Products/" + item.Id + "/" + item.Thumbnail;
+                          
+                            }
+                        }
+                        else
+                        {
+                            var pic = item.Pictures.Where(x => x.ProductId == item.Id).ToList();
+                            if (pic != null)
+                            {
+                                src = "/Uploads/Products/" + item.Id + "/" + item.Thumbnail;
+                            
+                            }
+                        }
+
+                    }
+                 
+                    <img style="height:100px;width:auto" class="img-responsive" src="@src" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Category.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Supplier.Name)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                </td>
+            </tr>
+        }
+
+    </table>
+
+    <div class="page-list">
+        <div style="text-align:center;left:50%;position:relative;transform:translateX(-50%)" class="pagedListContainer">
+            @Html.PagedListPager(Model, page => Url.Action("Index", new { page, kw = ViewBag.kw, sort = ViewBag.sort }))
+        </div>
+    </div>
+@section Scripts {
+   <script>
+       //$(document).ready(function () {
+       //    $("#sort").
+       //});
+    </script>
+}

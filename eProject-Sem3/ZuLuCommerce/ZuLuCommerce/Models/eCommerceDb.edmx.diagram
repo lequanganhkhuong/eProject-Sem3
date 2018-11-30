@@ -12,7 +12,6 @@
         <EntityTypeShape EntityType="eCommerceModel.Category" Width="1.5" PointX="3" PointY="12" />
         <EntityTypeShape EntityType="eCommerceModel.Comment" Width="1.5" PointX="7.5" PointY="15.625" />
         <EntityTypeShape EntityType="eCommerceModel.Customer" Width="1.5" PointX="3" PointY="3.625" />
-        <EntityTypeShape EntityType="eCommerceModel.Employee" Width="1.5" PointX="6" PointY="33.25" />
         <EntityTypeShape EntityType="eCommerceModel.GroupItem" Width="1.5" PointX="10.5" PointY="8.125" />
         <EntityTypeShape EntityType="eCommerceModel.Group" Width="1.5" PointX="8.25" PointY="6.125" />
         <EntityTypeShape EntityType="eCommerceModel.Level" Width="1.5" PointX="3.75" PointY="34.25" />
@@ -40,8 +39,6 @@
         <AssociationConnector Association="eCommerceModel.FK_Comments_Comments" />
         <AssociationConnector Association="eCommerceModel.FK_Comments_Products" />
         <AssociationConnector Association="eCommerceModel.FK_Orders_Customers" />
-        <AssociationConnector Association="eCommerceModel.FK_Employees_Levels" />
-        <AssociationConnector Association="eCommerceModel.FK_Orders_Employees" />
         <AssociationConnector Association="eCommerceModel.FK_GroupItems_Groups" />
         <AssociationConnector Association="eCommerceModel.FK_GroupItems_Products" />
         <AssociationConnector Association="eCommerceModel.FK_OrderDetails_Orders" />
@@ -54,7 +51,15 @@
         <AssociationConnector Association="eCommerceModel.FK_RecommendProducts_Products" />
         <AssociationConnector Association="eCommerceModel.FK_Shipments_ShipmentStatuses" />
         <AssociationConnector Association="eCommerceModel.FK_Shipments_Shippers" />
-      </Diagram>
+        <EntityTypeShape EntityType="eCommerceModel.ProductFeature" Width="1.5" PointX="7.5" PointY="19.75" />
+        <AssociationConnector Association="eCommerceModel.FK_ProductFeatures_Products" />
+        <EntityTypeShape EntityType="eCommerceModel.EmployeeLevel" Width="1.5" PointX="8.25" PointY="34.125" />
+        <AssociationConnector Association="eCommerceModel.FK_EmployeeLevels_Levels" />
+        <EntityTypeShape EntityType="eCommerceModel.Employee" Width="1.5" PointX="6" PointY="32.875" />
+        <AssociationConnector Association="eCommerceModel.FK_EmployeeLevels_Employees" />
+        <AssociationConnector Association="eCommerceModel.FK_Employees_Levels" />
+        <AssociationConnector Association="eCommerceModel.FK_Orders_Employees" />
+        </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
 </edmx:Edmx>

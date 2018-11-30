@@ -46,7 +46,7 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,FirstName,LastName,Phone,Address,Email,Birthday")] Customer customer)
+        public ActionResult Create([Bind(Include = "Id,FirstName,LastName,Phone,Address,Email,Birthday,IsRegistered")] Customer customer)
         {
             if (ModelState.IsValid)
             {
@@ -78,7 +78,7 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,FirstName,LastName,Phone,Address,Email,Birthday")] Customer customer)
+        public ActionResult Edit([Bind(Include = "Id,FirstName,LastName,Phone,Address,Email,Birthday,IsRegistered")] Customer customer)
         {
             if (ModelState.IsValid)
             {

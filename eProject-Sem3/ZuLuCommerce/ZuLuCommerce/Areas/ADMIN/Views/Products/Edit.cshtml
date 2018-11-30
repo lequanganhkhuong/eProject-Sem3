@@ -7,10 +7,10 @@
 <h2>Edit</h2>
 
 
-@using (Html.BeginForm(null,null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
         <h4>Product</h4>
         <hr />
@@ -81,12 +81,12 @@
                 <div>
                     @if (Model.Thumbnail != null)
                     {
-                        <img id="thumbnail" style="border:1px solid black; margin:10px 0 10px 0;height:200px" src="~/Uploads/Products/@Model.Id/@Model.Thumbnail"/>
+                        <img id="thumbnail" style="border:1px solid black; margin:10px 0 10px 0;height:200px" src="~/Uploads/Products/@Model.Id/@Model.Thumbnail" />
                     }
                 </div>
             </div>
         </div>
-        
+
         <div class="form-group">
             @Html.Label("Images", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -101,14 +101,14 @@
                                 src = "/Uploads/Products/" + Model.Id + "/" + pic.URL;
                             }
                         }
-                        <img src="@src" height="100"  />
+                        <img src="@src" height="100" />
                         <button type="button" class="btnRemovePic" picid="@pic.Id"><span class="glyphicon glyphicon-remove"></span></button>
                         <button type="button" class="btnSetThumbnail" url="@pic.URL" picid="@pic.Id">Set as thumbnail</button>
                     </div>
 
 
-                }
-               
+                            }
+
             </div>
         </div>
         <div class="form-group">
@@ -124,7 +124,7 @@
             </div>
         </div>
     </div>
-}
+                            }
 
 <div>
     @Html.ActionLink("Back to List", "Index")
@@ -134,7 +134,6 @@
     <script>
         $(document).ready(function () {
             $(".btnRemovePic").click(function () {
-
                 var btn = $(this);
                 var picid = btn.attr("picid");
                 if (confirm("Are you sure to delete this picture?")) {
@@ -157,7 +156,7 @@
                 $.post("/ADMIN/Products/SetThumbnail/" + picid, function (response) {
                     if (response == "OK") {
                         $(".thumbnail").val(url);
-                       
+
                         var src = "/Uploads/Products/" +@Model.Id + "/" + url;
                         $("#thumbnail").prop("src", src);
                     }
@@ -165,11 +164,7 @@
                         alert("Bay roi`!");
                     }
                 });
-
             });
         });
-</script>
+    </script>
 }
-
-
-

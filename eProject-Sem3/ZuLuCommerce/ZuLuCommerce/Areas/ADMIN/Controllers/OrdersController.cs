@@ -13,11 +13,11 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
     public class OrdersController : Controller
     {
         private eCommerceEntities db = new eCommerceEntities();
-
+        [Authorize(Roles ="Sale,Admin,Manager")]
         // GET: ADMIN/Orders
         public ActionResult Index()
         {
-            var orders = db.Orders.Include(o => o.Customer).Include(o => o.Employee).Include(o => o.OrderStatus).Include(o => o.Shipment);
+            var orders = db.Orders.Include(o => o.Customer).Include(o => o.OrderStatus).Include(o => o.Shipment).Include(o => o.Employee);
             return View(orders.ToList());
         }
 
@@ -40,9 +40,9 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
         public ActionResult Create()
         {
             ViewBag.CustomerId = new SelectList(db.Customers, "Id", "FirstName");
-            ViewBag.EmployeeId = new SelectList(db.Employees, "Id", "FirstName");
             ViewBag.StatusId = new SelectList(db.OrderStatuses, "Id", "Name");
             ViewBag.ShipmentId = new SelectList(db.Shipments, "Id", "ShippingAddress");
+            ViewBag.EmployeeId = new SelectList(db.Employees, "Id", "FirstName");
             return View();
         }
 
@@ -51,7 +51,7 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,CreatedDate,StatusId,Description,PaymentType,CustomerId,EmployeeId,ShipmentId,Discount,Tax")] Order order)
+        public ActionResult Create([Bind(Include = "Id,CreatedDate,StatusId,Description,PaymentType,CustomerId,EmployeeId,ShipmentId,Discount,Tax,ShippingFee,ShippingAddress,ShippingCity")] Order order)
         {
             if (ModelState.IsValid)
             {
@@ -61,9 +61,9 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
             }
 
             ViewBag.CustomerId = new SelectList(db.Customers, "Id", "FirstName", order.CustomerId);
-            ViewBag.EmployeeId = new SelectList(db.Employees, "Id", "FirstName", order.EmployeeId);
             ViewBag.StatusId = new SelectList(db.OrderStatuses, "Id", "Name", order.StatusId);
             ViewBag.ShipmentId = new SelectList(db.Shipments, "Id", "ShippingAddress", order.ShipmentId);
+            ViewBag.EmployeeId = new SelectList(db.Employees, "Id", "FirstName", order.EmployeeId);
             return View(order);
         }
 
@@ -80,9 +80,9 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
                 return HttpNotFound();
             }
             ViewBag.CustomerId = new SelectList(db.Customers, "Id", "FirstName", order.CustomerId);
-            ViewBag.EmployeeId = new SelectList(db.Employees, "Id", "FirstName", order.EmployeeId);
             ViewBag.StatusId = new SelectList(db.OrderStatuses, "Id", "Name", order.StatusId);
             ViewBag.ShipmentId = new SelectList(db.Shipments, "Id", "ShippingAddress", order.ShipmentId);
+            ViewBag.EmployeeId = new SelectList(db.Employees, "Id", "FirstName", order.EmployeeId);
             return View(order);
         }
 
@@ -91,7 +91,7 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,CreatedDate,StatusId,Description,PaymentType,CustomerId,EmployeeId,ShipmentId,Discount,Tax")] Order order)
+        public ActionResult Edit([Bind(Include = "Id,CreatedDate,StatusId,Description,PaymentType,CustomerId,EmployeeId,ShipmentId,Discount,Tax,ShippingFee,ShippingAddress,ShippingCity")] Order order)
         {
             if (ModelState.IsValid)
             {
@@ -100,9 +100,9 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
                 return RedirectToAction("Index");
             }
             ViewBag.CustomerId = new SelectList(db.Customers, "Id", "FirstName", order.CustomerId);
-            ViewBag.EmployeeId = new SelectList(db.Employees, "Id", "FirstName", order.EmployeeId);
             ViewBag.StatusId = new SelectList(db.OrderStatuses, "Id", "Name", order.StatusId);
             ViewBag.ShipmentId = new SelectList(db.Shipments, "Id", "ShippingAddress", order.ShipmentId);
+            ViewBag.EmployeeId = new SelectList(db.Employees, "Id", "FirstName", order.EmployeeId);
             return View(order);
         }
 

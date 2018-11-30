@@ -1,0 +1,77 @@
+﻿@model ZuLuCommerce.Models.Employee
+
+<div class="col-6 col-md-6 col-lg-2">
+
+    <div class="box box-body box-outline-dark rounded">
+        <div class="flexbox align-items-center">
+            @*<label class="toggler toggler-yellow">*@
+            @{
+                if (!Model.IsOnline)
+                {
+                    DateTime lastonline = Model.LastLogin.HasValue ? Model.LastLogin.Value : DateTime.Now;
+                    var l = (DateTime.Now - lastonline);
+                    if (l.Seconds != 0)
+                    {
+                        var time = "";
+
+                        if (l.Seconds < 60)
+                        {
+                            time = l.Seconds + " seconds";
+                        }
+                        if (l.Minutes >= 1)
+                        {
+                            time = l.Minutes + " minutes";
+                        }
+                        if (l.Hours >= 1)
+                        {
+                            time = l.Hours + " hours";
+                        }
+                        if (l.Days > 1)
+                        {
+                            time = l.Days + " days";
+                        }
+                        <p class="user-offline">@time ago</p>
+                            @*<p class="user-offline"><span class=" fa fa-circle"></span></p>*@
+                    }
+                    if (l.Seconds == 0)
+                    {
+                        <p class="user-offline">Never</p>
+                    }
+                }
+                else
+                {
+                    <p class="user-online"><span class=" fa fa-circle"></span>  @*Online*@</p>
+
+                }
+            }
+
+                @*<input type="checkbox">
+                <i class="fa fa-star"></i>*@
+            @*</label>*@
+            <div class="dropdown">
+                <a data-toggle="dropdown" href="#" aria-expanded="false"><i class="ion-android-more-vertical"></i></a>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href=@Url.Action("Edit","Employees", new { id = Model.Id})><i class="fa fa-fw fa-user"></i> Edit</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href=@Url.Action("Delete","Employees", new { id = Model.Id})><i class="fa fa-fw fa-remove"></i> Remove</a>
+                </div>
+            </div>
+        </div>
+        <div class="text-center pt-3">
+            <a href=@Url.Action("Details","Employees", new { id = Model.Id})>
+                @{
+                    var src = "/Uploads/default-avatar.jpg";
+                    if (Model.Avatar != null && !Model.Avatar.Equals("") && File.Exists(Server.MapPath("~/Uploads/Employees/" + Model.Id + "/" + Model.Avatar)))
+                    {
+                        src = "/Uploads/Employees/" + Model.Id + "/" + Model.Avatar;
+                    }
+
+                }
+             
+                <img class="avatar avatar-xxl" src="@src" alt="">
+            </a>
+            <h5 class="mt-15 mb-0"><a href=@Url.Action("Details","Employees", new { id = Model.Id})>@Model.FirstName @Model.LastName</a></h5>
+            <span>@Model.Level.LevelName</span>
+        </div>
+    </div>
+</div>

@@ -1,5 +1,5 @@
 ﻿@model ZuLuCommerce.Models.Order
-@using ZuLuCommerce.Models
+
 @{
     ViewBag.Title = "Details";
 }
@@ -51,6 +51,30 @@
         </dd>
 
         <dt>
+            @Html.DisplayNameFor(model => model.ShippingFee)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ShippingFee)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ShippingAddress)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ShippingAddress)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ShippingCity)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ShippingCity)
+        </dd>
+
+        <dt>
             @Html.DisplayNameFor(model => model.Customer.FirstName)
         </dt>
 
@@ -59,15 +83,7 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Employee.FirstName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Employee.FirstName)
-        </dd>
-
-        <dt>
-            @Html.DisplayName("Order status")
+            @Html.DisplayNameFor(model => model.OrderStatus.Name)
         </dt>
 
         <dd>
@@ -81,27 +97,15 @@
         <dd>
             @Html.DisplayFor(model => model.Shipment.ShippingAddress)
         </dd>
+
         <dt>
-            @Html.DisplayName("Order Items: ")
+            @Html.DisplayNameFor(model => model.Employee.FirstName)
         </dt>
+
         <dd>
-            @{
-                eCommerceEntities db = new eCommerceEntities();
-                <div class="row">
-                    @foreach(var od in db.OrderDetails.Where(x=>x.OrderId == Model.Id).ToList())
-                    {
-
-                    <div class="col-md-4" style="text-align:center">
-                        <p>@od.ProductName</p>
-                        <img style="width:200px" src="~/Uploads/Products/@od.ProductId/@od.Product.Thumbnail" />
-                    </div>
-
-
-
-                    }
-                </div>
-            }
+            @Html.DisplayFor(model => model.Employee.FirstName)
         </dd>
+
     </dl>
 </div>
 <p>

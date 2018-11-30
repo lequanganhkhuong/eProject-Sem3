@@ -71,6 +71,14 @@
           <Property Name="Birthday" Type="datetime" />
           <Property Name="IsRegistered" Type="bit" Nullable="false" />
         </EntityType>
+        <EntityType Name="EmployeeLevels">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EmployeeId" Type="int" Nullable="false" />
+          <Property Name="LevelId" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="Employees">
           <Key>
             <PropertyRef Name="Id" />
@@ -81,12 +89,15 @@
           <Property Name="Phone" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Address" Type="nvarchar" MaxLength="200" Nullable="false" />
           <Property Name="Email" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Gender" Type="varchar" MaxLength="10" />
           <Property Name="Birthday" Type="datetime" Nullable="false" />
           <Property Name="Username" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Password" Type="nvarchar" MaxLength="200" Nullable="false" />
           <Property Name="LevelId" Type="int" Nullable="false" />
+          <Property Name="Avatar" Type="varchar" MaxLength="300" />
           <Property Name="LastLogin" Type="datetime" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="IsOnline" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="GroupItems">
           <Key>
@@ -156,6 +167,20 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ProductId" Type="int" Nullable="false" />
           <Property Name="URL" Type="varchar" MaxLength="500" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ProductFeatures">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProductId" Type="int" Nullable="false" />
+          <Property Name="ScreenSize" Type="decimal" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="StorageType" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="StorageCap" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="Graphic" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="Processor" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="OS" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="BatteryLife" Type="decimal" Precision="18" Scale="0" Nullable="false" />
         </EntityType>
         <EntityType Name="Products">
           <Key>
@@ -345,6 +370,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_EmployeeLevels_Employees">
+          <End Role="Employees" Type="Self.Employees" Multiplicity="1" />
+          <End Role="EmployeeLevels" Type="Self.EmployeeLevels" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employees">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="EmployeeLevels">
+              <PropertyRef Name="EmployeeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EmployeeLevels_Levels">
+          <End Role="Levels" Type="Self.Levels" Multiplicity="1" />
+          <End Role="EmployeeLevels" Type="Self.EmployeeLevels" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Levels">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="EmployeeLevels">
+              <PropertyRef Name="LevelId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Employees_Levels">
           <End Role="Levels" Type="Self.Levels" Multiplicity="1" />
           <End Role="Employees" Type="Self.Employees" Multiplicity="*" />
@@ -465,6 +514,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_ProductFeatures_Products">
+          <End Role="Products" Type="Self.Products" Multiplicity="1" />
+          <End Role="ProductFeatures" Type="Self.ProductFeatures" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Products">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ProductFeatures">
+              <PropertyRef Name="ProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Products_Categories">
           <End Role="Categories" Type="Self.Categories" Multiplicity="1" />
           <End Role="Products" Type="Self.Products" Multiplicity="*" />
@@ -557,6 +618,7 @@
           <EntitySet Name="Categories" EntityType="Self.Categories" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Comments" EntityType="Self.Comments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Customers" EntityType="Self.Customers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EmployeeLevels" EntityType="Self.EmployeeLevels" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Employees" EntityType="Self.Employees" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GroupItems" EntityType="Self.GroupItems" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Groups" EntityType="Self.Groups" Schema="dbo" store:Type="Tables" />
@@ -565,6 +627,7 @@
           <EntitySet Name="Orders" EntityType="Self.Orders" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OrderStatuses" EntityType="Self.OrderStatuses" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Pictures" EntityType="Self.Pictures" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ProductFeatures" EntityType="Self.ProductFeatures" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Products" EntityType="Self.Products" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Ratings" EntityType="Self.Ratings" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RecommendProducts" EntityType="Self.RecommendProducts" Schema="dbo" store:Type="Tables" />
@@ -609,6 +672,14 @@
             <End Role="Products" EntitySet="Products" />
             <End Role="Comments" EntitySet="Comments" />
           </AssociationSet>
+          <AssociationSet Name="FK_EmployeeLevels_Employees" Association="Self.FK_EmployeeLevels_Employees">
+            <End Role="Employees" EntitySet="Employees" />
+            <End Role="EmployeeLevels" EntitySet="EmployeeLevels" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EmployeeLevels_Levels" Association="Self.FK_EmployeeLevels_Levels">
+            <End Role="Levels" EntitySet="Levels" />
+            <End Role="EmployeeLevels" EntitySet="EmployeeLevels" />
+          </AssociationSet>
           <AssociationSet Name="FK_Employees_Levels" Association="Self.FK_Employees_Levels">
             <End Role="Levels" EntitySet="Levels" />
             <End Role="Employees" EntitySet="Employees" />
@@ -648,6 +719,10 @@
           <AssociationSet Name="FK_Pictures_Products" Association="Self.FK_Pictures_Products">
             <End Role="Products" EntitySet="Products" />
             <End Role="Pictures" EntitySet="Pictures" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProductFeatures_Products" Association="Self.FK_ProductFeatures_Products">
+            <End Role="Products" EntitySet="Products" />
+            <End Role="ProductFeatures" EntitySet="ProductFeatures" />
           </AssociationSet>
           <AssociationSet Name="FK_Products_Categories" Association="Self.FK_Products_Categories">
             <End Role="Categories" EntitySet="Categories" />
@@ -690,7 +765,6 @@
           <EntitySet Name="Categories" EntityType="eCommerceModel.Category" />
           <EntitySet Name="Comments" EntityType="eCommerceModel.Comment" />
           <EntitySet Name="Customers" EntityType="eCommerceModel.Customer" />
-          <EntitySet Name="Employees" EntityType="eCommerceModel.Employee" />
           <EntitySet Name="GroupItems" EntityType="eCommerceModel.GroupItem" />
           <EntitySet Name="Groups" EntityType="eCommerceModel.Group" />
           <EntitySet Name="Levels" EntityType="eCommerceModel.Level" />
@@ -754,14 +828,6 @@
             <End Role="Customer" EntitySet="Customers" />
             <End Role="Order" EntitySet="Orders" />
           </AssociationSet>
-          <AssociationSet Name="FK_Employees_Levels" Association="eCommerceModel.FK_Employees_Levels">
-            <End Role="Level" EntitySet="Levels" />
-            <End Role="Employee" EntitySet="Employees" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Orders_Employees" Association="eCommerceModel.FK_Orders_Employees">
-            <End Role="Employee" EntitySet="Employees" />
-            <End Role="Order" EntitySet="Orders" />
-          </AssociationSet>
           <AssociationSet Name="FK_GroupItems_Groups" Association="eCommerceModel.FK_GroupItems_Groups">
             <End Role="Group" EntitySet="Groups" />
             <End Role="GroupItem" EntitySet="GroupItems" />
@@ -810,7 +876,30 @@
             <End Role="Shipper" EntitySet="Shippers" />
             <End Role="Shipment" EntitySet="Shipments" />
           </AssociationSet>
-        </EntityContainer>
+          <EntitySet Name="ProductFeatures" EntityType="eCommerceModel.ProductFeature" />
+          <AssociationSet Name="FK_ProductFeatures_Products" Association="eCommerceModel.FK_ProductFeatures_Products">
+            <End Role="Product" EntitySet="Products" />
+            <End Role="ProductFeature" EntitySet="ProductFeatures" />
+          </AssociationSet>
+          <EntitySet Name="EmployeeLevels" EntityType="eCommerceModel.EmployeeLevel" />
+          <AssociationSet Name="FK_EmployeeLevels_Levels" Association="eCommerceModel.FK_EmployeeLevels_Levels">
+            <End Role="Level" EntitySet="Levels" />
+            <End Role="EmployeeLevel" EntitySet="EmployeeLevels" />
+          </AssociationSet>
+          <EntitySet Name="Employees" EntityType="eCommerceModel.Employee" />
+          <AssociationSet Name="FK_EmployeeLevels_Employees" Association="eCommerceModel.FK_EmployeeLevels_Employees">
+            <End Role="Employee" EntitySet="Employees" />
+            <End Role="EmployeeLevel" EntitySet="EmployeeLevels" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Employees_Levels" Association="eCommerceModel.FK_Employees_Levels">
+            <End Role="Level" EntitySet="Levels" />
+            <End Role="Employee" EntitySet="Employees" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Orders_Employees" Association="eCommerceModel.FK_Orders_Employees">
+            <End Role="Employee" EntitySet="Employees" />
+            <End Role="Order" EntitySet="Orders" />
+          </AssociationSet>
+          </EntityContainer>
         <EntityType Name="Account">
           <Key>
             <PropertyRef Name="Id" />
@@ -894,25 +983,6 @@
           <NavigationProperty Name="Accounts" Relationship="eCommerceModel.FK_Accounts_Customers" FromRole="Customer" ToRole="Account" />
           <NavigationProperty Name="Orders" Relationship="eCommerceModel.FK_Orders_Customers" FromRole="Customer" ToRole="Order" />
         </EntityType>
-        <EntityType Name="Employee">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="FirstName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="LastName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Phone" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Address" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="Email" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Birthday" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="Username" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Password" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="LevelId" Type="Int32" Nullable="false" />
-          <Property Name="LastLogin" Type="DateTime" Precision="3" />
-          <Property Name="IsActive" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Level" Relationship="eCommerceModel.FK_Employees_Levels" FromRole="Employee" ToRole="Level" />
-          <NavigationProperty Name="Orders" Relationship="eCommerceModel.FK_Orders_Employees" FromRole="Employee" ToRole="Order" />
-        </EntityType>
         <EntityType Name="GroupItem">
           <Key>
             <PropertyRef Name="Id" />
@@ -939,6 +1009,7 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="LevelName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="EmployeeLevels" Relationship="eCommerceModel.FK_EmployeeLevels_Levels" FromRole="Level" ToRole="EmployeeLevel" />
           <NavigationProperty Name="Employees" Relationship="eCommerceModel.FK_Employees_Levels" FromRole="Level" ToRole="Employee" />
         </EntityType>
         <EntityType Name="OrderDetail">
@@ -973,10 +1044,10 @@
           <Property Name="ShippingAddress" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="ShippingCity" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Customer" Relationship="eCommerceModel.FK_Orders_Customers" FromRole="Order" ToRole="Customer" />
-          <NavigationProperty Name="Employee" Relationship="eCommerceModel.FK_Orders_Employees" FromRole="Order" ToRole="Employee" />
           <NavigationProperty Name="OrderDetails" Relationship="eCommerceModel.FK_OrderDetails_Orders" FromRole="Order" ToRole="OrderDetail" />
           <NavigationProperty Name="OrderStatus" Relationship="eCommerceModel.FK_Orders_OrderStatuses" FromRole="Order" ToRole="OrderStatus" />
           <NavigationProperty Name="Shipment" Relationship="eCommerceModel.FK_Orders_Shipments" FromRole="Order" ToRole="Shipment" />
+          <NavigationProperty Name="Employee" Relationship="eCommerceModel.FK_Orders_Employees" FromRole="Order" ToRole="Employee" />
         </EntityType>
         <EntityType Name="OrderStatus">
           <Key>
@@ -1018,6 +1089,7 @@
           <NavigationProperty Name="Supplier" Relationship="eCommerceModel.FK_Products_Suppliers" FromRole="Product" ToRole="Supplier" />
           <NavigationProperty Name="Ratings" Relationship="eCommerceModel.FK_Ratings_Products" FromRole="Product" ToRole="Rating" />
           <NavigationProperty Name="RecommendProducts" Relationship="eCommerceModel.FK_RecommendProducts_Products" FromRole="Product" ToRole="RecommendProduct" />
+          <NavigationProperty Name="ProductFeatures" Relationship="eCommerceModel.FK_ProductFeatures_Products" FromRole="Product" ToRole="ProductFeature" />
         </EntityType>
         <EntityType Name="Rating">
           <Key>
@@ -1239,30 +1311,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Employees_Levels">
-          <End Type="eCommerceModel.Level" Role="Level" Multiplicity="1" />
-          <End Type="eCommerceModel.Employee" Role="Employee" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Level">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Employee">
-              <PropertyRef Name="LevelId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Orders_Employees">
-          <End Type="eCommerceModel.Employee" Role="Employee" Multiplicity="0..1" />
-          <End Type="eCommerceModel.Order" Role="Order" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Employee">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Order">
-              <PropertyRef Name="EmployeeId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_GroupItems_Groups">
           <End Type="eCommerceModel.Group" Role="Group" Multiplicity="1" />
           <End Type="eCommerceModel.GroupItem" Role="GroupItem" Multiplicity="*" />
@@ -1407,6 +1455,114 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="ProductFeature">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProductId" Type="Int32" Nullable="false" />
+          <Property Name="ScreenSize" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="StorageType" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="StorageCap" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Graphic" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Processor" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="OS" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="BatteryLife" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <NavigationProperty Name="Product" Relationship="eCommerceModel.FK_ProductFeatures_Products" FromRole="ProductFeature" ToRole="Product" />
+        </EntityType>
+        <Association Name="FK_ProductFeatures_Products">
+          <End Type="eCommerceModel.Product" Role="Product" Multiplicity="1" />
+          <End Type="eCommerceModel.ProductFeature" Role="ProductFeature" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Product">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ProductFeature">
+              <PropertyRef Name="ProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="EmployeeLevel">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EmployeeId" Type="Int32" Nullable="false" />
+          <Property Name="LevelId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Level" Relationship="eCommerceModel.FK_EmployeeLevels_Levels" FromRole="EmployeeLevel" ToRole="Level" />
+          <NavigationProperty Name="Employee" Relationship="eCommerceModel.FK_EmployeeLevels_Employees" FromRole="EmployeeLevel" ToRole="Employee" />
+        </EntityType>
+        <Association Name="FK_EmployeeLevels_Levels">
+          <End Type="eCommerceModel.Level" Role="Level" Multiplicity="1" />
+          <End Type="eCommerceModel.EmployeeLevel" Role="EmployeeLevel" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Level">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="EmployeeLevel">
+              <PropertyRef Name="LevelId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Employee">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FirstName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LastName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Phone" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Address" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Gender" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Birthday" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Username" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="LevelId" Type="Int32" Nullable="false" />
+          <Property Name="Avatar" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="LastLogin" Type="DateTime" Precision="3" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="IsOnline" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="EmployeeLevels" Relationship="eCommerceModel.FK_EmployeeLevels_Employees" FromRole="Employee" ToRole="EmployeeLevel" />
+          <NavigationProperty Name="Level" Relationship="eCommerceModel.FK_Employees_Levels" FromRole="Employee" ToRole="Level" />
+          <NavigationProperty Name="Orders" Relationship="eCommerceModel.FK_Orders_Employees" FromRole="Employee" ToRole="Order" />
+        </EntityType>
+        <Association Name="FK_EmployeeLevels_Employees">
+          <End Type="eCommerceModel.Employee" Role="Employee" Multiplicity="1" />
+          <End Type="eCommerceModel.EmployeeLevel" Role="EmployeeLevel" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="EmployeeLevel">
+              <PropertyRef Name="EmployeeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Employees_Levels">
+          <End Type="eCommerceModel.Level" Role="Level" Multiplicity="1" />
+          <End Type="eCommerceModel.Employee" Role="Employee" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Level">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Employee">
+              <PropertyRef Name="LevelId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Orders_Employees">
+          <End Type="eCommerceModel.Employee" Role="Employee" Multiplicity="0..1" />
+          <End Type="eCommerceModel.Order" Role="Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Employee">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Order">
+              <PropertyRef Name="EmployeeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1476,24 +1632,6 @@
             <EntityTypeMapping TypeName="eCommerceModel.Customer">
               <MappingFragment StoreEntitySet="Customers">
                 <ScalarProperty Name="IsRegistered" ColumnName="IsRegistered" />
-                <ScalarProperty Name="Birthday" ColumnName="Birthday" />
-                <ScalarProperty Name="Email" ColumnName="Email" />
-                <ScalarProperty Name="Address" ColumnName="Address" />
-                <ScalarProperty Name="Phone" ColumnName="Phone" />
-                <ScalarProperty Name="LastName" ColumnName="LastName" />
-                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Employees">
-            <EntityTypeMapping TypeName="eCommerceModel.Employee">
-              <MappingFragment StoreEntitySet="Employees">
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="LastLogin" ColumnName="LastLogin" />
-                <ScalarProperty Name="LevelId" ColumnName="LevelId" />
-                <ScalarProperty Name="Password" ColumnName="Password" />
-                <ScalarProperty Name="Username" ColumnName="Username" />
                 <ScalarProperty Name="Birthday" ColumnName="Birthday" />
                 <ScalarProperty Name="Email" ColumnName="Email" />
                 <ScalarProperty Name="Address" ColumnName="Address" />
@@ -1664,6 +1802,51 @@
             <EntityTypeMapping TypeName="eCommerceModel.Topic">
               <MappingFragment StoreEntitySet="Topics">
                 <ScalarProperty Name="TopicName" ColumnName="TopicName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProductFeatures">
+            <EntityTypeMapping TypeName="eCommerceModel.ProductFeature">
+              <MappingFragment StoreEntitySet="ProductFeatures">
+                <ScalarProperty Name="BatteryLife" ColumnName="BatteryLife" />
+                <ScalarProperty Name="OS" ColumnName="OS" />
+                <ScalarProperty Name="Processor" ColumnName="Processor" />
+                <ScalarProperty Name="Graphic" ColumnName="Graphic" />
+                <ScalarProperty Name="StorageCap" ColumnName="StorageCap" />
+                <ScalarProperty Name="StorageType" ColumnName="StorageType" />
+                <ScalarProperty Name="ScreenSize" ColumnName="ScreenSize" />
+                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EmployeeLevels">
+            <EntityTypeMapping TypeName="eCommerceModel.EmployeeLevel">
+              <MappingFragment StoreEntitySet="EmployeeLevels">
+                <ScalarProperty Name="LevelId" ColumnName="LevelId" />
+                <ScalarProperty Name="EmployeeId" ColumnName="EmployeeId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Employees">
+            <EntityTypeMapping TypeName="eCommerceModel.Employee">
+              <MappingFragment StoreEntitySet="Employees">
+                <ScalarProperty Name="IsOnline" ColumnName="IsOnline" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="LastLogin" ColumnName="LastLogin" />
+                <ScalarProperty Name="Avatar" ColumnName="Avatar" />
+                <ScalarProperty Name="LevelId" ColumnName="LevelId" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="Birthday" ColumnName="Birthday" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
