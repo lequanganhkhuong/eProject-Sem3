@@ -79,13 +79,140 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
         }
+        //public List<Product> Filter(string filter)
+        //{
+        //    var p = db.Products.OrderBy(x => x.Id).Include(c => c.Category).Include(d => d.Supplier);
+        //    if (!string.IsNullOrEmpty(filter))
+        //    {
+        //        var flag = filter.Split('-');
+        //        if (flag[0].Equals("sup"))
+        //        {
+        //            p = p.Where(x => x.Supplier.Name.Equals(flag[1]));
+        //            return p.ToList();
+        //        }
+
+        //    }
+        //    return p.ToList();
+          
+        //}
         // GET: ADMIN/Products
-        public ActionResult Index(int? page, string kw, string sort)
+        public ActionResult Index(int? page, string kw, string sort, string supplier,string category, string price,string discount)
         {
             int pageNumber = page ?? 1;
             int pageSize = 6;
             //select all
             var p = db.Products.OrderBy(x => x.Id).Include(c=>c.Category).Include(d=>d.Supplier);
+            
+            
+            //filter
+            //supplier filter
+            if (string.IsNullOrEmpty(supplier))
+            {
+                ViewBag.supplier = "allsup";
+                supplier = "allsup";
+            }
+            else
+            {
+                ViewBag.supplier = supplier;
+            }
+            if (supplier.Equals("allsup"))
+            {
+                p = db.Products.OrderBy(x => x.Id).Include(c => c.Category).Include(d => d.Supplier);
+                //if (!category.Equals("allcat"))
+                //{
+                //    p = db.Products.Where(x => x.Category.Name == category);
+                //}
+            }
+            else
+            {
+                sort = "id_asc";
+                p = db.Products.Where(x => x.Supplier.Name == supplier);
+       
+            }
+            //category filter
+            if (string.IsNullOrEmpty(category))
+            {
+                ViewBag.category = "allcat";
+                category = "allcat";
+            }
+            else
+            {
+                ViewBag.category = category;
+            }
+            if (category.Equals("allcat"))
+            {
+                if (supplier.Equals("allsup"))
+                {
+                    p = db.Products.OrderBy(x => x.Id).Include(c => c.Category).Include(d => d.Supplier);
+                }
+                else
+                {
+                    sort = "id_asc";
+                    p = db.Products.Where(x => x.Supplier.Name == supplier);
+                }
+            }
+            else
+            {
+                if (supplier.Equals("allsup"))
+                {
+                    p = db.Products.Where(x => x.Category.Name == category);
+                }
+                else
+                {
+                    p = p.Where(x => x.Category.Name == category);
+                    
+                }
+                   
+            }
+            //filter price
+            if (string.IsNullOrEmpty(price))
+            {
+                ViewBag.price = "allprice";
+                price = "allprice";
+            }
+            else
+            {
+                ViewBag.price = price;
+            }
+            switch (price)
+            {
+                case "allprice":
+                    p = p.Where(x => x.Price >0);
+                    ViewBag.sortId = "id_desc";
+                    break;
+                case "0-1mil":
+                    p = p.Where(x => x.Price > 0 && x.Price < 1000000);
+                    ViewBag.sortId = "id_desc";
+                    break;
+                case "1-5mil":
+                    p = p.Where(x => x.Price > 1000000 && x.Price < 5000000);
+                    ViewBag.sortId = "id_desc";
+                    break;
+                case "5-10mil":
+                    p = p.Where(x => x.Price > 5000000 && x.Price < 10000000);
+                    ViewBag.sortId = "id_desc";
+                    break;
+                case "10-20mil":
+                    p = p.Where(x => x.Price > 10000000 && x.Price < 20000000);
+                    ViewBag.sortId = "id_desc";
+                    break;
+                case "20milup":
+                    p = p.Where(x => x.Price > 20000000);
+                    ViewBag.sortId = "id_desc";
+                    break;
+            }
+
+            //filter discount
+            //if (string.IsNullOrEmpty(discount))
+            //{
+            //    ViewBag.discount = "alldiscount";
+            //    discount = "alldiscount";
+            //}
+            //else
+            //{
+            //    ViewBag.discount = discount;
+            //}
+
             //search
             if (!string.IsNullOrEmpty(kw))
             {
@@ -134,6 +261,10 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
             ViewBag.sortId = sort ?? "id_desc";
             ViewBag.sortName = sort ?? "name_desc";
             ViewBag.sortTopic = sort ?? "topic_desc";
+
+            
+
+
 
             return View(p.ToPagedList(pageNumber, pageSize));
         }

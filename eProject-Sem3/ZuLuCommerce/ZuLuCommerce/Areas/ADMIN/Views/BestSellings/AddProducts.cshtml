@@ -1,0 +1,179 @@
+﻿@model PagedList.IPagedList<ZuLuCommerce.Models.Product>
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Add best selling products";
+}
+
+<h2>Add best selling products</h2>
+
+
+
+@using (Html.BeginForm("AddProducts", "BestSellings", FormMethod.Get))
+{
+    <div class="row">
+        <div class="col-md-6 col-12">
+            <label>Search </label>
+            <div class="row" style="padding-left:12px">
+
+                @Html.Editor("kw", new { htmlAttributes = new { @class = "form-control", @placeholder = "Search by name or id" } })
+
+            </div>
+
+        </div>
+        <div class="col-md-6 col-12">
+
+            <label>Sort by</label>
+            <div class="row">
+                <select name="sort" id="sort" class="form-control select2  w-p100">
+
+                    <option value="name_asc">Name A->Z</option>
+                    <option value="name_desc">Name Z->A</option>
+                    <option value="id_asc">Id ascend</option>
+                    <option value="id_desc">Id descend</option>
+                    <option value="category_asc">Category ascend</option>
+                    <option value="category_desc">Category descend</option>
+
+                </select>
+
+            </div>
+
+
+        </div>
+
+    </div>
+    <input type="submit" value="Submit" class="col-md-2 col-2 form-control" />
+}
+
+
+<table class="table">
+    <tr>
+        <th>
+            Name
+        </th>
+        <th>
+            Price
+        </th>
+        <th>
+            Discount
+        </th>
+        <th>
+            In Stock
+        </th>
+
+        <th>
+            Thumbnail
+        </th>
+        <th>
+            Category
+        </th>
+        <th>
+            Supplier
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Discount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Stock)
+            </td>
+
+            <td>
+                @{
+                    string src = "/Uploads/image-not-available.jpg";//default
+
+                    if (item.Thumbnail != null)
+                    {
+                        var pic = item.Pictures.Where(x => x.ProductId == item.Id && x.URL != item.Thumbnail).FirstOrDefault();
+                        if (pic != null)
+                        {
+                            src = "/Uploads/Products/" + item.Id + "/" + item.Thumbnail;
+
+                        }
+                    }
+                    else
+                    {
+                        var pic = item.Pictures.Where(x => x.ProductId == item.Id).ToList();
+                        if (pic != null)
+                        {
+                            src = "/Uploads/Products/" + item.Id + "/" + item.Thumbnail;
+
+                        }
+                    }
+
+                }
+
+                <img style="height:100px;width:auto" class="img-responsive" src="@src" />
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Category.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Supplier.Name)
+            </td>
+            <td>
+                <button pid="@item.Id"  class="addbtn btn btn-info">Add products</button>
+            </td>
+        </tr>
+     }
+
+</table>
+
+<div class="page-list">
+    <div style="text-align:center;left:50%;position:relative;transform:translateX(-50%)" class="pagedListContainer">
+        @Html.PagedListPager(Model, page => Url.Action("AddProducts", new { page, kw = ViewBag.kw, sort = ViewBag.sort }))
+    </div>
+</div>
+
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $(".addbtn").on("click", function () {
+                var btn = $(this);
+                var pid = btn.attr("pid");
+                var url = btn.attr("url");
+                $.post("/ADMIN/BestSellings/AddProduct/" + pid, function (response) {
+                    if (response == "OK") {
+                        $.toast({
+                            heading: 'Info',
+                            text: 'Product is added to best selling list',
+                            position: 'top-right',
+                            loaderBg: '#ff6849',
+                            icon: 'info',
+                            hideAfter: 2500,
+                            stack: 6
+                        });
+                        btn.parent().parent().remove();
+                    }
+                    else {
+                        $.toast({
+                            heading: 'Failed',
+                            text: 'Please try again later',
+                            position: 'top-right',
+                            loaderBg: '#ff6849',
+                            icon: 'error',
+                            hideAfter: 3500
+
+                        });
+                    }
+                });
+
+
+            });
+        });
+    </script>
+    }

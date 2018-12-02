@@ -1,21 +1,21 @@
 ﻿@model PagedList.IPagedList<ZuLuCommerce.Models.Product>
 @using PagedList.Mvc
+@using ZuLuCommerce.Models
 @{
     ViewBag.Title = "Index";
+    eCommerceEntities db = new eCommerceEntities();
 }
 <h2>Products list</h2>
 
 
 
-    <p>
-        @Html.ActionLink("Create New", "Create")
-    </p>
+<a href=@Url.Action("Create") class="btn btn-success">Add new product</a>
 @using (Html.BeginForm())
 {
     <div class="row">
         <div class="col-md-6 col-12">
             <label>Search </label>
-            <div class="row" style="padding-left:12px">
+            <div class="row" style="padding:0 12px">
                
                 @Html.Editor("kw", new { htmlAttributes = new { @class = "form-control", @placeholder = "Search by name or id" } })
                 
@@ -25,9 +25,8 @@
         <div class="col-md-6 col-12">
             
                 <label>Sort by</label>
-                <div class="row">
-                    <select  name="sort" class="form-control select2  w-p100">
-                        
+                <div class="row" style="padding:0 12px">
+                    <select name="sort" id="sort" class="form-control select2  w-p100">
                         <option value="name_asc">Name A->Z</option>
                         <option value="name_desc">Name Z->A</option>
                         <option value="id_asc">Id ascend</option>
@@ -41,11 +40,72 @@
 
             
         </div>
-
+        
     </div>
-    <input type="submit" value="Submit" class="col-md-2 col-2 form-control" />
+    <div class="row">
+        <div class="col-md-12 col-12">
+          
+            <label>Filter by:</label>
+            <div class="row">
+            
+                <div class="col-md-3 col-6">
+                    <select id="supplier" name="supplier" class="form-control select2 dropdown-filter  w-p100">
+                        @{
+                            <option value="allsup" selected="selected">All suppliers</option>
+                            foreach (var sup in db.Suppliers)
+                            {
+                                <option value="@sup.Name">@sup.Name</option>
+                            }
+                        }
+
+                    </select>
+                </div>
+                <div class="col-md-3 col-6">
+                    <select id="category" name="category" class="form-control dropdown-filter select2  w-p100">
+                        @{
+                            <option value="allcat" selected="selected">All categories</option>
+                            foreach (var cat in db.Categories.OrderBy(x=>x.Name))
+                            {
+                                <option value="@cat.Name">@cat.Name</option>
+                            }
+                           
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3 col-6">
+                    <select id="price" name="price" class="form-control dropdown-filter select2  w-p100">
+                        @{
+                            <option value="allprice" selected="selected">All price</option>
+                            <option value="0-1mil">below 1mil</option>
+                            <option value="1-5mil">1mil-5mil</option>
+                            <option value="5-10mil">5mil-10mil</option>
+                            <option value="10-20mil">10mil-20mil</option>
+                            <option value="20milup">above 20mil</option>
+                        }
+                    </select>
+                </div>
+                @*<div class="col-md-3 col-6">
+                    <select id="discount" class="form-control dropdown-filter select2  w-p100">
+                        @{
+                            <option value="alldiscount" selected="selected">All discount</option>
+                            <option value="0-5%">Below 5%</option>
+                            <option value="5-10%">5 - 10%</option>
+                            <option value="10-15%">10 - 15%</option>
+                            <option value="15-20%">15 - 20%</option>
+                            <option value="10-15%">above 20%</option>
+                        }
+                    </select>
+                </div>*@
+            </div>
+            
+        </div>
+    </div>
+    <input type="submit" value="Submit" class="btn btn-success" />
 }
-   
+
+    <button class="btn btn-danger" id="clear">Clear</button>
+
+  
 
     <table class="table">
         <tr>
@@ -140,8 +200,14 @@
     </div>
 @section Scripts {
    <script>
-       //$(document).ready(function () {
-       //    $("#sort").
-       //});
+       $(document).ready(function () {
+           $("#supplier").val("@ViewBag.supplier");
+           $("#category").val("@ViewBag.category");
+           $("#price").val("@ViewBag.price");
+           $("#clear").click(function () {
+
+           });
+           
+       });
     </script>
 }

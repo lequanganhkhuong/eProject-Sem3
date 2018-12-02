@@ -837,6 +837,8 @@
     <Content Include="Content\admin\admin\admin\unique\02\unique-admin\assets\vendor_components\Ionicons\css\ionicons.css" />
     <Content Include="Content\admin\admin\admin\unique\02\unique-admin\assets\vendor_components\jquery-slimscroll\jquery.slimscroll.js" />
     <Content Include="Content\admin\admin\admin\unique\02\unique-admin\assets\vendor_components\jquery-sparkline\dist\jquery.sparkline.js" />
+    <Content Include="Content\admin\admin\admin\unique\02\unique-admin\assets\vendor_components\jquery-toast-plugin-master\src\jquery.toast.css" />
+    <Content Include="Content\admin\admin\admin\unique\02\unique-admin\assets\vendor_components\jquery-toast-plugin-master\src\jquery.toast.js" />
     <Content Include="Content\admin\admin\admin\unique\02\unique-admin\assets\vendor_components\jquery.peity\jquery.peity.js" />
     <Content Include="Content\admin\admin\admin\unique\02\unique-admin\assets\vendor_components\jquery\dist\jquery.js" />
     <Content Include="Content\admin\admin\admin\unique\02\unique-admin\assets\vendor_components\linea-icons\linea.css" />
@@ -879,6 +881,8 @@
     <Content Include="Content\admin\admin\admin\unique\02\unique-admin\support-system-dashboard\css\skins\_all-skins.css" />
     <Content Include="Content\admin\admin\admin\unique\02\unique-admin\support-system-dashboard\js\demo.js" />
     <Content Include="Content\admin\admin\admin\unique\02\unique-admin\support-system-dashboard\js\pages\dashboard.js" />
+    <Content Include="Content\admin\admin\admin\unique\02\unique-admin\support-system-dashboard\js\pages\notification.js" />
+    <Content Include="Content\admin\admin\admin\unique\02\unique-admin\support-system-dashboard\js\pages\toastr.js" />
     <Content Include="Content\admin\admin\admin\unique\02\unique-admin\support-system-dashboard\js\template.js" />
     <Content Include="Content\admin\admin\MyCss.css" />
     <Content Include="Content\admin\css\animate.css" />
@@ -1036,10 +1040,7 @@
     <Content Include="Areas\ADMIN\Views\Topics\Details.cshtml" />
     <Content Include="Areas\ADMIN\Views\Topics\Edit.cshtml" />
     <Content Include="Areas\ADMIN\Views\Topics\Index.cshtml" />
-    <Content Include="Areas\ADMIN\Views\BestSellings\Create.cshtml" />
-    <Content Include="Areas\ADMIN\Views\BestSellings\Delete.cshtml" />
-    <Content Include="Areas\ADMIN\Views\BestSellings\Details.cshtml" />
-    <Content Include="Areas\ADMIN\Views\BestSellings\Edit.cshtml" />
+    <Content Include="Areas\ADMIN\Views\BestSellings\AddProducts.cshtml" />
     <Content Include="Areas\ADMIN\Views\BestSellings\Index.cshtml" />
     <Content Include="Areas\ADMIN\Views\RecommendProducts\Create.cshtml" />
     <Content Include="Areas\ADMIN\Views\RecommendProducts\Delete.cshtml" />

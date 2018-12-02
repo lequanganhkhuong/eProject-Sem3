@@ -17,7 +17,7 @@ namespace ZuLuCommerce.Areas.ADMIN
             context.MapRoute(
                 "ADMIN_default",
                 "ADMIN/{controller}/{action}/{id}",
-                new { controller = "Products", action = "Index", id = UrlParameter.Optional },
+                new { controller = "Dashboard", action = "Index", id = UrlParameter.Optional },
                 new string[] { "ZuluCommerce.Areas.ADMIN.Controllers" }
             );
         }
