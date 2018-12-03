@@ -27,6 +27,8 @@ namespace ZuLuCommerce.Models
         public string Password { get; set; }
         public int CustomerId { get; set; }
         public bool IsActive { get; set; }
+        public string RegisterToken { get; set; }
+        public Nullable<System.DateTime> RegisterDate { get; set; }
     
         public virtual Customer Customer { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

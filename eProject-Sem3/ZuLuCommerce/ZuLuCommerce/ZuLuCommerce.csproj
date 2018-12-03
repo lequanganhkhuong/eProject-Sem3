@@ -306,6 +306,7 @@
       <DependentUpon>eCommerceDb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\VM\LocalCartVM.cs" />
+    <Compile Include="Models\VM\RegisterVM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -1153,6 +1154,9 @@
     <Content Include="Views\Shared\_ProductItems2.cshtml" />
     <Content Include="Views\Carts\Index.cshtml" />
     <Content Include="Views\Customers\Login.cshtml" />
+    <Content Include="Views\Customers\Register.cshtml" />
+    <Content Include="Views\Customers\Activate.cshtml" />
+    <Content Include="Views\Customers\ConfirmEmail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -12,7 +12,44 @@ namespace ZuLuCommerce.Controllers
     public class ProductsController : Controller
     {
         eCommerceEntities db = new eCommerceEntities();
+        public ActionResult UserRating(string str)
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Content("NotLogin");
+            }
+            try
+            {
+                int cur_acc = int.Parse(User.Identity.Name);
+                var acc = db.Accounts.Find(cur_acc);
+                var cus = db.Customers.Where(x => x.Id == acc.CustomerId).FirstOrDefault();
+                var rate = int.Parse(str.Split('-')[0]);
+                var productid = int.Parse((str.Split('-')[1]));
+                var check = db.Ratings.Where(x => x.Id == cur_acc && x.ProductId == productid).FirstOrDefault();
+                if(check == null)
+                {
+                    Rating r = new Rating()
+                    {
+                        ProductId = productid,
+                        UserId = cus.Id,
+                        Rating1 = rate
+                    };
+                    db.Ratings.Add(r);
+                    
+                }
+                else
+                {
+                    check.Rating1 = rate;
+                }
 
+            }
+            catch (Exception ex)
+            {
+                
+            }
+            db.SaveChanges();
+            return Content("OK");
+        }
         // GET: Products
         public ActionResult Index(int? page)
         {

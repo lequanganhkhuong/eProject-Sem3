@@ -27,10 +27,10 @@ namespace ZuLuCommerce.Models
         public int UserId { get; set; }
         public Nullable<System.DateTime> DateComment { get; set; }
     
-        public virtual Account Account { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Comment> Comments1 { get; set; }
         public virtual Comment Comment1 { get; set; }
         public virtual Product Product { get; set; }
+        public virtual Account Account { get; set; }
     }
 }

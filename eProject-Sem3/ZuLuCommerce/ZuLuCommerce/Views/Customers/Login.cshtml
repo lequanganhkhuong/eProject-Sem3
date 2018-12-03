@@ -29,11 +29,12 @@
                 <div class="login">
                     <div class="login-form-container">
                         <div class="login-form">
-                            <form action="#">
+                            <form method="post">
                                 <label>Username</label>
-                                <input name="user-name" type="text">
+                                <input name="Loginname" type="text">
                                 <label>Password</label>
-                                <input name="user-password" type="password">
+                                <input name="Password" type="password">
+                                <p style="color:red">@ViewBag.Message</p>
                                 <div class="button-box">
                                     <div class="login-toggle-btn">
                                         <input type="checkbox">
@@ -44,7 +45,7 @@
                                 </div>
                             </form>
                             <div class="no-account">
-                                <a href="register.html">No account? Create one here</a>
+                                <a href=@Url.Action("Register","Customers")>No account? Create one here</a>
                             </div>
                         </div>
                     </div>

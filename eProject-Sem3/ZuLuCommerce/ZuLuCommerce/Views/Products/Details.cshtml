@@ -271,36 +271,25 @@
                             <div class="review-page-comment">
                                 <div class="review-comment">
                                     <h2>Write your review</h2>
-                                    <ul class="pro-comments-rating">
-                                        <li>
-                                            <label>Quality</label>
-                                            <div class="single-product-reviews">
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star"></i>
-                                                <i class="fa fa-star"></i>
-                                            </div>
-                                        </li>
-                                    </ul>
+
+                                    <label>Your rating:   </label>
+                                    <span id="rate1" rate="1" class="fa fa-star"></span>
+                                    <span id="rate2" rate="2" class="fa fa-star"></span>
+                                    <span id="rate3" rate="3" class="fa fa-star"></span>
+                                    <span id="rate4" rate="4" class="fa fa-star"></span>
+                                    <span id="rate5" rate="5" class="fa fa-star"></span>
+
                                 </div>
                                 <div class="review-form">
-                                    <form action="#">
-                                        <label>Title for your review<sup class="required">*</sup></label>
-                                        <input type="text" placeholder="Title Here" name="title">
-                                        <label>your review<sup class="required">*</sup></label>
-                                        <textarea id="content" name="content"></textarea>
-                                        <label>Your name<sup class="required">*</sup></label>
-                                        <input type="text" placeholder="Your Name" name="title">
-                                        <div class="send-your-review">
-                                            <p class="required-fields"><sup>*</sup> Required fields</p>
-                                            <div class="send-cancel-btn">
-                                                <button class="send-btn">Send</button>
-                                                or
-                                                <button class="cancel-btn">Cancel</button>
-                                            </div>
+                                    <label>Your review<sup class="required">*</sup></label>
+                                    <textarea id="content" name="content"></textarea>
+                                    <div class="send-your-review">
+
+                                        <div class="send-cancel-btn">
+                                            <button class="send-btn">Send</button>
+
                                         </div>
-                                    </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -800,10 +789,70 @@
                 }
 
                 CartItemsCount();
-                
-            });
 
-        
+            });
+            $("#rate1").hover(function () {
+                $(this).css("color", "orange");
+            }, function () {
+                $(this).css("color", "black");
+            });
+            $("#rate2").hover(function () {
+                $("#rate1, #rate2").each(function () {
+                    $(this).css("color", "orange");
+                });
+
+            }, function () {
+                $("#rate1, #rate2").each(function () {
+                    $(this).css("color", "black");
+                });
+
+            });
+            $("#rate3").hover(function () {
+                $("#rate1, #rate2,#rate3").each(function () {
+                    $(this).css("color", "orange");
+                });
+            }, function () {
+                $("#rate1, #rate2,#rate3").each(function () {
+                    $(this).css("color", "black");
+                });
+                });
+            $("#rate4").hover(function () {
+                $("#rate1, #rate2,#rate3,#rate4").each(function () {
+                    $(this).css("color", "orange");
+                });
+            }, function () {
+                $("#rate1, #rate2,#rate3,#rate4").each(function () {
+                    $(this).css("color", "black");
+                });
+            });
+            $("#rate5").hover(function () {
+                $("#rate1, #rate2,#rate3,#rate4,#rate5").each(function () {
+                    $(this).css("color", "orange");
+                });
+            }, function () {
+                $("#rate1, #rate2,#rate3,#rate4,#rate5").each(function () {
+                    $(this).css("color", "black");
+                });
+                });
+            $("#rate1, #rate2,#rate3,#rate4,#rate5").each(function () {
+                $(this).click(function () {
+                    var btn = $(this);
+                    var ratenumber = btn.attr("rate");
+                    var str = ratenumber + "-" + @Model.Id;
+                    $.post("/Products/UserRating/" + str, function (response) {
+                    if (response == "OK") {
+                        alert("You have successfully rated this product "+ ratenumber + " star(s)!");
+                        for (i = ratenumber; i > 0; i--) {
+                            $("#rate" + i).css("color", "orange");
+                        }
+                    }
+                    if (response == "NotLogin"){
+                        alert("Please login to continue!");
+                    }
+                });
+                });
+
+            });
         });
 </script>
 

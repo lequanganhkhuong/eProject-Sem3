@@ -18,11 +18,23 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
         // GET: Admin/Account/Login
         public ActionResult Login()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                int cur = int.Parse(User.Identity.Name);
+                var emp = db.Employees.Where(x => x.Id == cur).SingleOrDefault();
+                emp.IsOnline = false;
+                emp.LastLogin = DateTime.Now;
+                db.SaveChanges();
+                FormsAuthentication.SignOut();
+            }
             return View();
         }
         [HttpPost]
         public ActionResult Login(string Loginname, string Password)
         {
+            
+            
+
             var emp = db.Employees.Where(x => x.Username.Equals(Loginname)).SingleOrDefault();
             if (emp != null)
             {

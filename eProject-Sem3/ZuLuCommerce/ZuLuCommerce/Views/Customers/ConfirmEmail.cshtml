@@ -1,0 +1,72 @@
+﻿@model ZuLuCommerce.Models.Account
+@using ZuLuCommerce.Models
+@{
+    ViewBag.Title = "ConfirmEmail";
+    var db = new eCommerceEntities();
+}
+
+<h2>ConfirmEmail</h2>
+@{ 
+    var user = db.Customers.Where(x => x.Id == Model.CustomerId).FirstOrDefault();
+
+}
+<div class="confirm-email-wrapper">
+@{
+     DateTime date = Model.RegisterDate.HasValue ? Model.RegisterDate.Value : DateTime.Now;
+     if ((DateTime.Now - date).Hours < 24)
+     {
+        <div class="introduction">
+
+            <h3>Hello @user.LastName, welcome to our shop</h3>
+            <p>
+                We have sent an email to your registered email address, please check the mail and follow the link
+                we provided to activate your account. Please confirm your email within 24h before your account is blocked.
+            </p>
+
+        </div>
+        <div class="resend-email">
+            <p>
+                Haven't receive your email?
+            </p>
+            <label>Click here to resend your email</label>
+            <button id="resend" class="btn btn-success">Resend email</button>
+            <p id="result"></p>
+        </div>
+        
+    }
+    else
+    {
+        <div class="introduction">
+
+            <h3>Hello @user.LastName, welcome to our shop</h3>
+            <p>
+                The token to activate your account has expired. Please contact customer support to active your account.
+            </p>
+
+        </div>
+    
+    }
+}
+
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#resend").click(function () {
+                var btn = $(this);
+                var id = @Model.Id;
+            
+                $.post("/Customers/ResendToken/" + id, function (response) {
+                    if (response == "OK") {
+                        $("#result").html("We have re-sent your activation link, please check your email");
+                    }
+                    else {
+                        alert("Bay roi`!");
+                    }
+                });
+            });
+        });
+    </script>
+    
+}

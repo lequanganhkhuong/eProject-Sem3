@@ -66,12 +66,18 @@
 .single-slide-menu .img-full:hover{
     border:1px solid gray
 }
-
-
+.review-form label{
+    margin-right:20px
+}.review-form span {
+    color: white;
+    cursor:pointer;
+}
+.checked{
+    color:orange
+}
 /*-------------product details page end ------------------*/
-
 /*-----------user status--------------*/
-.user-online{
+.user-online {
     /*font-weight:bolder;*/
     /*font-size:20px;*/
 }

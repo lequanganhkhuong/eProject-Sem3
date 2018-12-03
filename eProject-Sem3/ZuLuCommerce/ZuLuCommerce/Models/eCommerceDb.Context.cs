@@ -25,7 +25,6 @@ namespace ZuLuCommerce.Models
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<Account> Accounts { get; set; }
         public virtual DbSet<BestSelling> BestSellings { get; set; }
         public virtual DbSet<CartItem> CartItems { get; set; }
         public virtual DbSet<Cart> Carts { get; set; }
@@ -50,5 +49,6 @@ namespace ZuLuCommerce.Models
         public virtual DbSet<ProductFeature> ProductFeatures { get; set; }
         public virtual DbSet<EmployeeLevel> EmployeeLevels { get; set; }
         public virtual DbSet<Employee> Employees { get; set; }
+        public virtual DbSet<Account> Accounts { get; set; }
     }
 }
