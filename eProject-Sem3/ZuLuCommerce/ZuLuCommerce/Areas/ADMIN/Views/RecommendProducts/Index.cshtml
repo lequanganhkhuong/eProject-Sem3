@@ -1,33 +1,117 @@
-﻿@model IEnumerable<ZuLuCommerce.Models.RecommendProduct>
-
+﻿@model PagedList.IPagedList<ZuLuCommerce.Models.RecommendProduct>
+@using PagedList.Mvc
 @{
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
+<h2>Best selling products list</h2>
+<a href=@Url.Action("AddProducts", "RecommendProducts") class="btn btn-info">Add products</a>
+<div class="box" style="padding:15px">
+    <div class="box-header with-border">
+        <h3 class="box-title">Found @ViewBag.resultcount result(s)</h3>
+    </div>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Product.Name)
-        </th>
-        <th></th>
-    </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Product.Name)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
+    <table class="table table-hover table-bordered">
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Price
+            </th>
+            <th>
+                Stock
+            </th>
+            <th>
+                Category
+            </th>
+            <th>
+                Thumbnail
+            </th>
+            <th>
+                Remove
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Product.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Product.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Product.Stock)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Product.Category.Name)
+                </td>
+                <td>
+                    @{
+                        string src = "/Uploads/image-not-available.jpg";//default
+
+                        if (item.Product.Thumbnail != null)
+                        {
+                            var pic = item.Product.Pictures.Where(x => x.ProductId == item.Product.Id && x.URL != item.Product.Thumbnail).FirstOrDefault();
+                            if (pic != null)
+                            {
+                                src = "/Uploads/Products/" + item.ProductId + "/" + item.Product.Thumbnail;
+
+                            }
+                        }
+                        else
+                        {
+                            var pic = item.Product.Pictures.Where(x => x.ProductId == item.Id).ToList();
+                            if (pic != null)
+                            {
+                                src = "/Uploads/Products/" + item.Product.Id + "/" + item.Product.Thumbnail;
+
+                            }
+                        }
+
+                    }
+
+                    <img style="height:100px;width:auto" class="img-responsive" src="@src" />
+                </td>
+                <td>
+                    <button pid="@item.Id" class='removeitem'>Remove</button>
+                </td>
+
+
+            </tr>
+                        }
+
+    </table>
+    <div class="page-list">
+        <div style="text-align:center;left:50%;position:relative;transform:translateX(-50%)" class="pagedListContainer">
+            @Html.PagedListPager(Model, page => Url.Action("Index", new { page, kw = ViewBag.kw, sort = ViewBag.sort }))
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $(".removeitem").click(function () {
+                var btn = $(this);
+                var pid = btn.attr("pid");
+                if (confirm("Are you sure to remove this product?")) {
+                    $.post("/ADMIN/RecommendProducts/RemoveProduct/" + pid, function (response) {
+                        if (response == "OK") {
+                            btn.parent().parent().remove();
+                        }
+                        else {
+                            alert("Bay roi`!");
+                        }
+                    });
+                }
+            });
+        });
+
+    </script>
 }
-
-</table>

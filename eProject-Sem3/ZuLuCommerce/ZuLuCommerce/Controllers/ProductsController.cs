@@ -14,6 +14,8 @@ namespace ZuLuCommerce.Controllers
         eCommerceEntities db = new eCommerceEntities();
         public ActionResult UserRating(string str)
         {
+            var rate = int.Parse(str.Split('-')[0]);
+            var productid = int.Parse((str.Split('-')[1]));
             if (!User.Identity.IsAuthenticated)
             {
                 return Content("NotLogin");
@@ -22,16 +24,18 @@ namespace ZuLuCommerce.Controllers
             {
                 int cur_acc = int.Parse(User.Identity.Name);
                 var acc = db.Accounts.Find(cur_acc);
-                var cus = db.Customers.Where(x => x.Id == acc.CustomerId).FirstOrDefault();
-                var rate = int.Parse(str.Split('-')[0]);
-                var productid = int.Parse((str.Split('-')[1]));
-                var check = db.Ratings.Where(x => x.Id == cur_acc && x.ProductId == productid).FirstOrDefault();
+                if(acc == null)
+                {
+                    return Content("current user not exist");
+                }
+               
+                var check = db.Ratings.Where(x => x.UserId == acc.Id && x.ProductId == productid).FirstOrDefault();
                 if(check == null)
                 {
                     Rating r = new Rating()
                     {
                         ProductId = productid,
-                        UserId = cus.Id,
+                        UserId = acc.Id,
                         Rating1 = rate
                     };
                     db.Ratings.Add(r);
@@ -41,25 +45,103 @@ namespace ZuLuCommerce.Controllers
                 {
                     check.Rating1 = rate;
                 }
-
+                db.SaveChanges();
+                return Content("OK");
             }
             catch (Exception ex)
             {
-                
+                return Content(ex.Message);
+                //return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            db.SaveChanges();
-            return Content("OK");
+            
+        }
+        public ActionResult UserComment(string comment)
+        {
+            var content = comment.Split('-')[0];
+            var productid = int.Parse((comment.Split('-')[1]));
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Content("NotLogin");
+            }
+            try
+            {
+                var cur_acc = int.Parse(User.Identity.Name);
+                var acc = db.Accounts.Find(cur_acc);
+                if (acc == null)
+                {
+                    return Content("current user not exist");
+                }
+                Comment c = new Comment()
+                {
+                    ProductId = productid,
+                    UserId = acc.Id,
+                    Content = content,
+                    ParentId = null,
+                    DateComment = DateTime.Now
+                };
+                db.Comments.Add(c);
+                db.SaveChanges();
+                return Content("OK");
+            }
+            catch
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            
+        }
+        public ActionResult UserReplyComment(string comment)
+        {
+            var content = comment.Split('-')[0];
+            var productid = int.Parse((comment.Split('-')[1]));
+            var parentid = int.Parse((comment.Split('-')[2]));
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Content("NotLogin");
+            }
+            try
+            {
+                var cur_acc = int.Parse(User.Identity.Name);
+                var acc = db.Accounts.Find(cur_acc);
+                if (acc == null)
+                {
+                    return Content("current user not exist");
+                }
+                Comment c = new Comment()
+                {
+                    ProductId = productid,
+                    UserId = acc.Id,
+                    Content = content,
+                    ParentId = parentid,
+                    DateComment = DateTime.Now
+                };
+                db.Comments.Add(c);
+                db.SaveChanges();
+                return Content("OK");
+            }
+            catch
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
         }
         // GET: Products
         public ActionResult Index(int? page)
         {
             int pageSize = 6;
             int pageNumber = page ?? 1;
-            var products = db.Products.OrderBy(x => x.Id);
+            var products = db.Products.Where(x=>x.IsActive).OrderBy(x => x.Id);
             return View(products.ToPagedList(pageNumber, pageSize));
         }
         //GET:  Products/Category/id
-        public ActionResult Category(int id)
+        public ActionResult Categories(int id, int? page)
+        {
+            int pageSize = 9;
+            int pageNumber = page ?? 1;
+            var products = db.Products.Where(x => x.CategoryId == id && x.IsActive).OrderBy(x => x.Id);
+
+            return View(products.ToPagedList(pageNumber, pageSize));
+        }
+        public ActionResult Topics(int id)
         {
             var product = db.Products.Where(x => x.CategoryId == id);
             return View(product.ToList());
@@ -82,6 +164,11 @@ namespace ZuLuCommerce.Controllers
             {
                 return HttpNotFound();
             }
+            if (!product.IsActive)
+            {
+                return HttpNotFound();
+            }
+            ViewBag.features = db.ProductFeatures.Where(x => x.ProductId == id).SingleOrDefault();
             return View(product);
         }
     }

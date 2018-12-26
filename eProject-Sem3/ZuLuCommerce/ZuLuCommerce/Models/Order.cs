@@ -21,6 +21,7 @@ namespace ZuLuCommerce.Models
         }
     
         public int Id { get; set; }
+        public string Codenname { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public int StatusId { get; set; }
         public string Description { get; set; }
@@ -32,13 +33,14 @@ namespace ZuLuCommerce.Models
         public decimal Tax { get; set; }
         public Nullable<decimal> ShippingFee { get; set; }
         public string ShippingAddress { get; set; }
-        public string ShippingCity { get; set; }
+        public Nullable<int> ShippingCity { get; set; }
     
-        public virtual Customer Customer { get; set; }
+        public virtual CityShippingFee CityShippingFee { get; set; }
+        public virtual Employee Employee { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
         public virtual OrderStatus OrderStatus { get; set; }
         public virtual Shipment Shipment { get; set; }
-        public virtual Employee Employee { get; set; }
+        public virtual Customer Customer { get; set; }
     }
 }

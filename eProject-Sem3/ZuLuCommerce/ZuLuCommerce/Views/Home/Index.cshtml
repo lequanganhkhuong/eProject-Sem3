@@ -1,24 +1,760 @@
-﻿<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS, and JavaScript.</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-</div>
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>ASP.NET Web API is a framework that makes it easy to build HTTP services that reach
-        a broad range of clients, including browsers and mobile devices. ASP.NET Web API
-        is an ideal platform for building RESTful applications on the .NET Framework.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301870">Learn more &raquo;</a></p>
+﻿@using ZuLuCommerce.Models
+@{ 
+    var db = new eCommerceEntities();
+    var banner = ViewBag.banner as IEnumerable<BannerProduct>;
+    var bestselling = ViewBag.bestselling as IEnumerable<BestSelling>;
+    var recommend = ViewBag.recommend as IEnumerable<RecommendProduct>;
+    var specialdeal = ViewBag.specdeal as IEnumerable<SpecialDeal>;
+    var newarrival = ViewBag.newarrival as IEnumerable<NewProduct>;
+
+    
+    
+}
+    <div class="wrapper">
+    
+        <!--Slider Area Start-->
+        <div class="slider-area transparent-bg slider-style-4">
+            <div class="container">
+                
+                <div class="row">
+                    <div class="col-md-12 col-lg-3">
+                        <!--Category Menu Start-->
+                        <div class="category-menu">
+                            <div class="category-heading">
+                                <h2 class="categories-toggle"><span>categories</span><i class="ion-ios-arrow-down"></i></h2>
+                            </div>
+                            <div id="cate-toggle" class="category-menu-list">
+                                <ul>
+                                    @{
+                                        foreach (var topic in db.Topics)
+                                        {
+                                            <li class="right-menu">
+                                                <a href=@Url.Action("Topics","Products",new { id=topic.Id})>@topic.TopicName</a>
+                                                <!--Category Dropdown Menu Start-->
+                                                <ul class="cat-dropdown">
+                                                    @{
+                                                        var cat = db.Categories.Where(x => x.TopicId == topic.Id);
+                                                        foreach (var c in cat)
+                                                        {
+                                                            <li><a href=@Url.Action("Categories","Products",new { id = c.Id})>@c.Name</a></li>
+                                                        }
+                                                    }
+                                                </ul>
+                                                <!--Category Dropdown Menu Start-->
+                                            </li>
+                                        };
+                                    }
+                                    
+                                  
+                                   
+                                </ul>
+                            </div>
+                        </div>
+                        <!--Category Menu End-->
+                    </div>
+                    <div class="col-md-12 col-lg-9">
+                        <div class="hero-slider hero-slider-4 owl-carousel">
+                            @{
+                                foreach (var b in banner)
+                                {
+                                    var src = "/Uploads/Banner/" + b.Id + "/" + b.PictureUrl;
+                                    var productname = b.Product.Name.Split(' ');
+                                    var s = productname.Count() / 2;
+                                    var name1 = "";
+                                    var name2 = "";
+                                    for (int i = 0; i < s; i++)
+                                    {
+                                        name1 += productname[i] + " ";
+                                    }
+                                    for(int i = productname.Count() -1; i >= s; i--)
+                                    {
+                                        name2 = " " + productname[i] + name2;
+                                    }
+                                        <!--Single Slider Start-->
+                                        <div class="single-slider" style="background-image: url(@src)">
+                                            <div class="hero-slider-content ">
+                                                <h3 class="slow-animation1">@name1</h3>
+                                                <h3 class="slow-animation2">@name2</h3>
+                                                <p class="small-text1">@b.Description1</p>
+                                                <p class="small-text2">@b.Description2</p>
+                                                <div class="slider-btn white-btn2 mt-50">
+                                                    <a href=@Url.Action("Details","Products",new { id = b.ProductId})>Shop Now</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--Single Slider End-->
+                                }
+                            }
+                            
+                           
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Slider Area End-->
+        <!--Home Sidebar Layout Start-->
+        <div class="home-sidebar-layout mt-60">
+            <div class="container">
+                <div class="row">
+                    <!--Home Left Sidebar Start-->
+                    <div class="col-lg-3 order-lg-1 col-md-12 order-2">
+                        <div class="home-left-sidebar">
+                            <!--Feature2 Area Start-->
+                            <div class="feature2-area mb-50">
+                                <!--Single Feature2 Start-->
+                                <div class="single-fature2 style-4">
+                                    
+                                    <div class="feature2-text">
+                                        <h3>Money Back</h3>
+                                        <p>30 days money back!</p>
+                                    </div>
+                                </div>
+                                <!--Single Feature2 End-->
+                                <!--Single Feature2 Start-->
+                                <div class="single-fature2 style-4">
+                                  
+                                    <div class="feature2-text">
+                                        <h3>Free Shipping</h3>
+                                        <p>Free shipping within Da Nang</p>
+                                    </div>
+                                </div>
+                                <!--Single Feature2 End-->
+                                <!--Single Feature2 Start-->
+                                <div class="single-fature2 style-4">
+                                   
+                                    <div class="feature2-text">
+                                        <h3>Support 24/7</h3>
+                                        <p>We support online 24 hrs</p>
+                                    </div>
+                                </div>
+                                <!--Single Feature2 End-->
+                                <!--Single Feature2 Start-->
+                                <div class="single-fature2 style-4">
+                                    
+                                    <div class="feature2-text">
+                                        <h3>Payment Method</h3>
+                                        <p>Secure Payment</p>
+                                    </div>
+                                </div>
+                                <!--Single Feature2 End-->
+                            </div>
+                            <!--Feature2 Area End-->
+                         
+                        </div>
+                    </div>
+                    <!--Home Left Sidebar End-->
+                    <!--Home Right Sidebar Start-->
+                    <div class="col-lg-9 order-lg-2 col-md-12 order-1">
+                        <div class="home-right-sidebar">
+                            <!--Deal Of Day Product Start-->
+                            <div class="deal-of-day-product mb-75">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <!--Section Title Start-->
+                                        <div class="section-title3">
+                                            <h2>Deals of the week</h2>
+                                        </div>
+                                        <!--Section Title End-->
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="deal-product-active home-4-style owl-carousel">
+                                        @{
+                                            foreach (var s in specialdeal)
+                                            {
+                                                <div class="col-md-12">
+                                                    <!--Single Product Start-->
+                                                    <div class="single-product style-4">
+                                                        <div class="product-img" style="height:230px;text-align:center">
+
+                                                            <a href=@Url.Action("Details", "Products", new { id = s.Product.Id })>
+                                                                @{
+                                                                    string src = "/Uploads/image-not-available.jpg";//default
+                                                                    string hover = "/Uploads/image-not-available.jpg";//default
+                                                                    if (s.Product.Thumbnail != null && File.Exists(Server.MapPath("~/Uploads/Products/" + s.Product.Id + "/" + s.Product.Thumbnail)))
+                                                                    {
+                                                                        var pic = s.Product.Pictures.Where(x => x.ProductId == s.Product.Id && x.URL != s.Product.Thumbnail).FirstOrDefault();
+                                                                        if (pic != null)
+                                                                        {
+                                                                            src = "/Uploads/Products/" + s.Product.Id + "/" + s.Product.Thumbnail;
+                                                                            hover = "/Uploads/Products/" + s.Product.Id + "/" + pic.URL;
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        var pic = s.Product.Pictures.Where(x => x.ProductId == s.Product.Id).ToList();
+                                                                        if (pic != null)
+                                                                        {
+                                                                            src = "/Uploads/Products/" + s.Product.Id + "/" + pic.FirstOrDefault().URL;
+                                                                            hover = "/Uploads/Products/" + s.Product.Id + "/" + pic.LastOrDefault().URL;
+                                                                        }
+                                                                    }
+
+                                                                }
+                                                                <img class="first-img" src="@src" alt="@s.Product.Name">
+                                                                <img class="hover-img" src="@hover" alt="@s.Product.Name">
+                                                            </a>
+                                                            @{
+                                                                if (s.Product.Stock == 0)
+                                                                {
+                                                                    <span class="sticker" style="background-color:red">Out of stock!</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    if (db.NewProducts.Select(x => x.ProductId).Contains(s.Product.Id) && !db.SpecialDeals.Where(x => x.StartDate < DateTime.Now && x.EndDate > DateTime.Now && x.IsActive).Select(x => x.ProductId).Contains(s.Product.Id))
+                                                                    {
+                                                                        <span class="sticker" style="background-color:orange">New!</span>
+                                                                    }
+                                                                    if (db.BestSellings.Select(x => x.ProductId).Contains(s.Product.Id) && !db.SpecialDeals.Where(x => x.StartDate < DateTime.Now && x.EndDate > DateTime.Now && x.IsActive).Select(x => x.ProductId).Contains(s.Product.Id))
+                                                                    {
+                                                                        <span class="sticker" style="background-color:orange">Best selling!</span>
+                                                                    }
+                                                                    if (db.RecommendProducts.Select(x => x.ProductId).Contains(s.Product.Id) && !db.SpecialDeals.Where(x => x.StartDate < DateTime.Now && x.EndDate > DateTime.Now && x.IsActive).Select(x => x.ProductId).Contains(s.Product.Id))
+                                                                    {
+                                                                        <span class="sticker" style="background-color:#b200ff">Recommended products!</span>
+                                                                    }
+                                                                    if (db.SpecialDeals.Where(x => x.StartDate < DateTime.Now && x.EndDate > DateTime.Now && x.IsActive).Select(x => x.ProductId).Contains(s.Product.Id))
+                                                                    {
+                                                                        <span class="sticker" style="background-color:#1e56a0">Great discount!</span>
+                                                                    }
+                                                                }
+
+                                                            }
+
+                                                            <div class="product-action">
+                                                                <ul>
+                                                                    @{
+                                                                        var specdeal = db.SpecialDeals.Where(x => x.IsActive && x.EndDate > DateTime.Now && x.StartDate < DateTime.Now && x.ProductId == s.Product.Id).SingleOrDefault();
+                                                                        var discount_price = s.Product.Price;
+                                                                        var price = discount_price;
+                                                                        if (specdeal != null)
+                                                                        {
+                                                                            if (specdeal.Discount != 0)
+                                                                            {
+                                                                                price -= s.Product.Price * specdeal.Discount / 100;
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                price -= s.Product.Price * s.Product.Discount / 100;
+                                                                            }
+                                                                            if (!User.Identity.IsAuthenticated)
+                                                                            {
+                                                                                <li><a class="quick-add-to-cart" pid="@s.Product.Id" pstock="@s.Product.Stock" pthumbnail="@s.Product.Thumbnail" pname="@s.Product.Name" pprice="@price" title="Add to cart" href="#"><i class="ion-bag"></i></a></li>
+                                                                            }
+                                                                            if (User.Identity.IsAuthenticated)
+                                                                            {
+                                                                                <li><a class="login-quick-add-to-cart" pid="@s.Product.Id" pstock="@s.Product.Stock" pthumbnail="@s.Product.Thumbnail" pname="@s.Product.Name" pprice="@price" title="Add to cart" href="#"><i class="ion-bag"></i></a></li>
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            price -= s.Product.Price * s.Product.Discount / 100;
+                                                                            if (!User.Identity.IsAuthenticated)
+                                                                            {
+                                                                                <li><a class="quick-add-to-cart" pid="@s.Product.Id" pstock="@s.Product.Stock" pthumbnail="@s.Product.Thumbnail" pname="@s.Product.Name" pprice="@price" title="Add to cart" href="#"><i class="ion-bag"></i></a></li>
+                                                                            }
+                                                                            if (User.Identity.IsAuthenticated)
+                                                                            {
+                                                                                <li><a class="login-quick-add-to-cart" pid="@s.Product.Id" pstock="@s.Product.Stock" pthumbnail="@s.Product.Thumbnail" pname="@s.Product.Name" pprice="@price" title="Add to cart" href="#"><i class="ion-bag"></i></a></li>
+                                                                            }
+                                                                        }
+                                                                    }
+
+                                                                    <li><a title="Quick View" href="#open-modal" data-toggle="modal"><i class="ion-eye"></i></a></li>
+                                                                    <li><a title="Compare" href="#"><i class="ion-ios-copy-outline"></i></a></li>
+                                                                </ul>
+                                                            </div>
+
+
+                                                        </div>
+
+                                                        <div class="product-content">
+                                                            <h4>
+                                                                @{
+
+                                                                    string productname = s.Product.Name;
+                                                                    if (productname.Length > 25)
+                                                                    {
+                                                                        productname = productname.Substring(0, 25);
+
+                                                                        productname += "...";
+                                                                    }
+                                                                }
+                                                                <a href="@Url.Action("Details","Products",new { id = s.Product.Id})">@productname</a>
+                                                            </h4>
+                                                            @{
+
+                                                                if (specdeal != null)
+                                                                {
+                                                                    if (specdeal.Discount != 0)
+                                                                    {
+                                                                        discount_price -= s.Product.Price * specdeal.Discount / 100;
+                                                                        <div class="product-price">
+                                                                            <span class="regular-price">@s.Product.Price.ToString("N0")</span>
+                                                                            <span class="price">@discount_price.ToString("N0") VND</span>
+                                                                        </div>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        discount_price -= s.Product.Price * s.Product.Discount / 100;
+                                                                        if (s.Product.Discount == 0)
+                                                                        {
+                                                                            <div class="product-price">
+                                                                                <span class="price">@s.Product.Price.ToString("N0") VND</span>
+                                                                            </div>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <div class="product-price">
+                                                                                <span class="regular-price">@s.Product.Price.ToString("N0")</span>
+                                                                                <span class="price">@discount_price.ToString("N0") VND</span>
+                                                                            </div>
+                                                                        }
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    discount_price -= s.Product.Price * s.Product.Discount / 100;
+                                                                    if (s.Product.Discount == 0)
+                                                                    {
+                                                                        <div class="product-price">
+                                                                            <span class="price">@s.Product.Price.ToString("N0") VND</span>
+                                                                        </div>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <div class="product-price">
+                                                                            <span class="regular-price">@s.Product.Price.ToString("N0")</span>
+                                                                            <span class="price">@discount_price.ToString("N0") VND</span>
+                                                                        </div>
+                                                                    }
+                                                                }
+
+
+
+                                                            }
+
+                                                            <div class="product-reviews" style="color:black">
+                                                                @{
+                                                                    var productRate = db.Ratings.Where(x => x.ProductId == s.Product.Id).ToList();
+                                                                    var count = productRate.Count();
+                                                                    if (count != 0)
+                                                                    {
+                                                                        var total = productRate.Select(x => x.Rating1).Sum();
+                                                                        var rate = total / count;
+                                                                        if (rate != 0)
+                                                                        {
+                                                                            var check = "color:orange";
+                                                                            if (rate >= 1)
+                                                                            {
+                                                                                check = "color:orange";
+                                                                            }
+                                                                            <i class="fa fa-star" style="@check"></i>
+                                                                            check = "";
+                                                                            if (rate >= 2)
+                                                                            {
+                                                                                check = "color:orange";
+                                                                            }
+                                                                            <i class="fa fa-star" style="@check"></i>
+                                                                            check = "";
+                                                                            if (rate >= 3)
+                                                                            {
+                                                                                check = "color:orange";
+                                                                            }
+                                                                            <i class="fa fa-star" style="@check"></i>
+                                                                            check = "";
+                                                                            if (rate >= 4)
+                                                                            {
+                                                                                check = "color:orange";
+                                                                            }
+                                                                            <i class="fa fa-star" style="@check"></i>
+                                                                            check = "";
+                                                                            if (rate >= 5)
+                                                                            {
+                                                                                check = "color:orange";
+                                                                            }
+                                                                            <i class="fa fa-star" style="@check"></i>
+
+                                                                        }
+
+                                                                    }
+                                                                    else if (count == 0)
+                                                                    {
+                                                                        <i class="fa fa-star"></i>
+                                                                        <i class="fa fa-star"></i>
+                                                                        <i class="fa fa-star"></i>
+                                                                        <i class="fa fa-star"></i>
+                                                                        <i class="fa fa-star"></i>
+
+                                                                    }
+
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                        <div class="product-countdown-box">
+                                                            <div class="pro-countdown" data-countdown="@s.EndDate.ToString("yyyy/MM/dd")"></div>
+                                                        </div>
+                                                    </div>
+                                                    <!--Single Product End-->
+                                                </div>
+                                                                    }
+                                        }
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Deal Of Day Product End-->
+                          
+                         
+                        </div>
+                    </div>
+                    <!--Home Right Sidebar End-->
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 col-md-12">
+                        <!--Product Tab Area Start-->
+                        <div class="product-tab-area mb-50">
+                            <div class="row">
+                                <div class="col-12">
+                                    <ul class="nav product-tab-menu tab-style-4">
+                                        <li><a class="active" data-toggle="tab" href="#fd-product">Featured Products</a></li>
+                                        <li><a data-toggle="tab" href="#bestseller">Bestseller</a></li>
+                                        <li><a data-toggle="tab" href="#new">New Arrival</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <!--Featured And New Product Tab Content Start-->
+                                            <div class="tab-content">
+                                                <div class="tab-pane fade " id="new">
+                                                    <div class="all-single-product">
+                                                        <div class="row">
+                                                            <div class="deal-product-active4 owl-carousel">
+
+                                                                @{
+
+                                                                    foreach (var b in newarrival)
+                                                                    {
+                                                                        var p = b.Product;
+                                                                        @Html.Partial("_ProductItems", p);
+                                                                    }
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="tab-pane fade" id="bestseller">
+                                                    <div class="all-single-product">
+                                                        <div class="row">
+                                                            <div class="deal-product-active4 owl-carousel">
+                                                               
+                                                                    @{ 
+                                                                        
+                                                                        foreach(var b in bestselling)
+                                                                        {
+                                                                            var p = b.Product;
+                                                                            @Html.Partial("_ProductItems", p);
+                                                                        }
+                                                                    }
+                                                                    
+                                                               
+                                                                
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="tab-pane fade show active" id="fd-product">
+                                                    <div class="all-single-product">
+                                                        <div class="row">
+                                                            <div class="deal-product-active4 owl-carousel">
+                                                                
+                                                                    @{
+
+                                                                        foreach (var b in recommend)
+                                                                        {
+                                                                            var p = b.Product;
+                                                                            @Html.Partial("_ProductItems", p);
+                                                                        }
+                                                                    }
+                                                               
+                                                                
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--Featured And New Product Tab Content End-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Product Tab Area End-->
+                        <!--category Product Area Start-->
+                        @{
+                            foreach (var t in db.Topics)
+                            {
+                                if (db.Products.Where(x => x.Category.TopicId == t.Id).Count() > 0)
+                                {
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="product-area mt-55">
+                                                <div class="container">
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <!--Section Title Start-->
+                                                            <div class="section-title">
+                                                                <h2>@t.TopicName :</h2>
+                                                            </div>
+                                                            <!--Section Title End-->
+                                                        </div>
+                                                    </div>
+                                                    <div class="product-block-content">
+                                                        <div class="row">
+                                                            <div class="deal-product-active4 owl-carousel">
+                                                                @{
+                                                                   
+                                                                        foreach (var b in db.Products.Where(x => x.Category.TopicId == t.Id && x.IsActive))
+                                                                        {
+
+                                                                            @Html.Partial("_ProductItems", b);
+                                                                        }
+
+                                                                        
+                                                                    <div class="col-md-12">
+                                                                        
+                                                                    </div>
+                                                                }
+
+
+
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                    
+                                                                        }
+
+                                                                    }
+                        }
+                        
+                        
+                        
+                        <!--category Product Area End-->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Home Sidebar Layout End-->
+        <!-- Brand Area Start -->
+        <div class="brand-area">
+            <div class="container">
+                <div class="brand-block-content white-bg">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="brand-active home-3 owl-carousel">
+                                <!--Single Brand Start-->
+                                <div class="single-brand">
+                                    <a href="#"><img src="img/brand/brand1.jpg" alt=""></a>
+                                </div>
+                                <!--Single Brand End-->
+                                <!--Single Brand Start-->
+                                <div class="single-brand">
+                                    <a href="#"><img src="img/brand/brand2.jpg" alt=""></a>
+                                </div>
+                                <!--Single Brand End-->
+                                <!--Single Brand Start-->
+                                <div class="single-brand">
+                                    <a href="#"><img src="img/brand/brand3.jpg" alt=""></a>
+                                </div>
+                                <!--Single Brand End-->
+                                <!--Single Brand Start-->
+                                <div class="single-brand">
+                                    <a href="#"><img src="img/brand/brand4.jpg" alt=""></a>
+                                </div>
+                                <!--Single Brand End-->
+                                <!--Single Brand Start-->
+                                <div class="single-brand">
+                                    <a href="#"><img src="img/brand/brand5.jpg" alt=""></a>
+                                </div>
+                                <!--Single Brand End-->
+                                <!--Single Brand Start-->
+                                <div class="single-brand">
+                                    <a href="#"><img src="img/brand/brand2.jpg" alt=""></a>
+                                </div>
+                                <!--Single Brand End-->
+                                <!--Single Brand Start-->
+                                <div class="single-brand">
+                                    <a href="#"><img src="img/brand/brand1.jpg" alt=""></a>
+                                </div>
+                                <!--Single Brand End-->
+                                <!--Single Brand Start-->
+                                <div class="single-brand">
+                                    <a href="#"><img src="img/brand/brand4.jpg" alt=""></a>
+                                </div>
+                                <!--Single Brand End-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Brand Area End -->
+      
+      
+        <!-- Modal Area Strat -->
+        <div class="modal fade" id="open-modal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <!--Modal Img-->
+                            <div class="col-md-5">
+                                <!--Modal Tab Content Start-->
+                                <div class="tab-content product-details-large" id="myTabContent">
+                                    <div class="tab-pane fade show active" id="single-slide1" role="tabpanel" aria-labelledby="single-slide-tab-1">
+                                        <!--Single Product Image Start-->
+                                        <div class="single-product-img img-full">
+                                            <img src="img/single-product/large/large1.jpg" alt="">
+                                        </div>
+                                        <!--Single Product Image End-->
+                                    </div>
+                                    <div class="tab-pane fade" id="single-slide2" role="tabpanel" aria-labelledby="single-slide-tab-2">
+                                        <!--Single Product Image Start-->
+                                        <div class="single-product-img img-full">
+                                            <img src="img/single-product/large/large2.jpg" alt="">
+                                        </div>
+                                        <!--Single Product Image End-->
+                                    </div>
+                                    <div class="tab-pane fade" id="single-slide3" role="tabpanel" aria-labelledby="single-slide-tab-3">
+                                        <!--Single Product Image Start-->
+                                        <div class="single-product-img img-full">
+                                            <img src="img/single-product/large/large3.jpg" alt="">
+                                        </div>
+                                        <!--Single Product Image End-->
+                                    </div>
+                                    <div class="tab-pane fade" id="single-slide4" role="tabpanel" aria-labelledby="single-slide-tab-4">
+                                        <!--Single Product Image Start-->
+                                        <div class="single-product-img img-full">
+                                            <img src="img/single-product/large/large4.jpg" alt="">
+                                        </div>
+                                        <!--Single Product Image End-->
+                                    </div>
+                                </div>
+                                <!--Modal Content End-->
+                                <!--Modal Tab Menu Start-->
+                                <div class="single-product-menu">
+                                    <div class="nav single-slide-menu" role="tablist">
+                                        <div class="single-tab-menu img-full">
+                                            <a class="active" data-toggle="tab" id="single-slide-tab-1" href="#single-slide1"><img src="img/single-product/small/small1.jpg" alt=""></a>
+                                        </div>
+                                        <div class="single-tab-menu img-full">
+                                            <a data-toggle="tab" id="single-slide-tab-2" href="#single-slide2"><img src="img/single-product/small/small2.jpg" alt=""></a>
+                                        </div>
+                                        <div class="single-tab-menu img-full">
+                                            <a data-toggle="tab" id="single-slide-tab-3" href="#single-slide3"><img src="img/single-product/small/small3.jpg" alt=""></a>
+                                        </div>
+                                        <div class="single-tab-menu img-full">
+                                            <a data-toggle="tab" id="single-slide-tab-4" href="#single-slide4"><img src="img/single-product/small/small4.jpg" alt=""></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Modal Tab Menu End-->
+                            </div>
+                            <!--Modal Img-->
+                            <!--Modal Content-->
+                            <div class="col-md-7">
+                                <div class="single-product-content">
+                                    <h1 class="single-product-name">Printed Chiffon Dress</h1>
+                                    <div class="single-product-reviews">
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                    </div>
+                                    <div class="single-product-price">
+                                        <div class="product-discount">
+                                            <span class="regular-price">$20.50</span>
+                                            <span class="price">$16.40</span>
+                                            <span class="discount">-20%</span>
+                                        </div>
+                                    </div>
+                                    <div class="product-info">
+                                        <p>Long printed dress with thin adjustable straps. V-neckline and wiring under the bust with ruffles at the bottom of the dress.</p>
+                                    </div>
+                                    <div class="single-product-action">
+                                        <form action="#">
+                                            <div class="product-variants">
+                                                <div class="product-variants-item">
+                                                    <span class="control-label">Size</span>
+                                                    <select class="nice-select" name="size">
+                                                        <option value="1">S</option>
+                                                        <option value="2">M</option>
+                                                        <option value="3">X</option>
+                                                        <option value="4">XL</option>
+                                                    </select>
+                                                </div>
+                                                <div class="product-variants-item">
+                                                    <span class="control-label">Color</span>
+                                                    <select class="nice-select" name="color">
+                                                        <option value="1">Red</option>
+                                                        <option value="2">Green</option>
+                                                        <option value="3">Blue</option>
+                                                        <option value="4">White</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="product-add-to-cart">
+                                                <span class="control-label">Quantity</span>
+                                                <div class="cart-plus-minus">
+                                                    <input class="cart-plus-minus-box" type="text" name="qtybutton" value="0">
+                                                </div>
+                                                <div class="add">
+                                                    <button class="add-to-cart"><i class="zmdi zmdi-shopping-cart-plus"></i> add-to-cart</button>
+                                                    <span class="product-availability"><i class="zmdi zmdi-check"></i> In stock</span>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Modal Content-->
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <!--Single Product Share-->
+                        <div class="single-product-share">
+                            <ul>
+                                <li class="categories-title">Share :</li>
+                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+                                <li><a href="#"><i class="fa fa-pinterest"></i></a></li>
+                            </ul>
+                        </div>
+                        <!--Single Product Share-->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal Area End -->
     </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301871">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301872">Learn more &raquo;</a></p>
-    </div>
-</div>
+
+
+
+

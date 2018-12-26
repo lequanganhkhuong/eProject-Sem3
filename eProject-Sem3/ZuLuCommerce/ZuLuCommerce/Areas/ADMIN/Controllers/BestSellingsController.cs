@@ -8,11 +8,14 @@ using System.Web;
 using System.Web.Mvc;
 using ZuLuCommerce.Models;
 using PagedList;
+
 namespace ZuLuCommerce.Areas.ADMIN.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class BestSellingsController : Controller
     {
         private eCommerceEntities db = new eCommerceEntities();
+      
         public ActionResult RemoveProduct(int id)
         {
             try
@@ -53,20 +56,190 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
             int pageNumber = page ?? 1;
             int pageSize = 6;
             var bestSellings = db.BestSellings.Include(b => b.Product).OrderBy(x => x.Id);
-
+            ViewBag.resultcount = bestSellings.Count();
             return View(bestSellings.ToPagedList(pageNumber, pageSize));
         }
 
 
         // GET: ADMIN/BestSellings/AddProducts
-        public ActionResult AddProducts(int? page, string kw, string sort)
+        public ActionResult AddProducts(int? page, string kw, string sort, string supplier, string category, string price, string discount, string isactive)
         {
-            int pn = page ?? 1;
-            int ps = 6;
+            
+            int pageNumber = page ?? 1;
+            int pageSize = 6;
             //select all
             var p = db.Products.OrderBy(x => x.Id).Include(c => c.Category).Include(d => d.Supplier);
-            p = from c in p
-                    where !(from o in db.BestSellings select o.ProductId).Contains(c.Id) select c ;
+
+
+
+            //filter
+            //supplier filter
+            if (string.IsNullOrEmpty(supplier))
+            {
+                ViewBag.supplier = "allsup";
+                supplier = "allsup";
+            }
+            else
+            {
+                ViewBag.supplier = supplier;
+            }
+            if (supplier.Equals("allsup"))
+            {
+                p = db.Products.OrderBy(x => x.Id).Include(c => c.Category).Include(d => d.Supplier);
+
+            }
+            else
+            {
+                sort = "id_asc";
+                p = db.Products.Where(x => x.Supplier.Name == supplier);
+
+            }
+            //category filter
+            if (string.IsNullOrEmpty(category))
+            {
+                ViewBag.category = "allcat";
+                category = "allcat";
+            }
+            else
+            {
+                ViewBag.category = category;
+            }
+            if (category.Equals("allcat"))
+            {
+                if (supplier.Equals("allsup"))
+                {
+                    p = db.Products.OrderBy(x => x.Id).Include(c => c.Category).Include(d => d.Supplier);
+                }
+                else
+                {
+                    sort = "id_asc";
+                    p = db.Products.Where(x => x.Supplier.Name == supplier);
+                }
+            }
+            else
+            {
+                if (supplier.Equals("allsup"))
+                {
+                    p = db.Products.Where(x => x.Category.Name == category);
+                }
+                else
+                {
+                    p = p.Where(x => x.Category.Name == category);
+
+                }
+
+            }
+            //filter isactive
+            if (string.IsNullOrEmpty(isactive))
+            {
+                ViewBag.isactive = "none";
+                isactive = "none";
+            }
+            else
+            {
+                ViewBag.isactive = isactive;
+            }
+            if (!isactive.Equals("none"))
+            {
+                sort = "id_asc";
+                switch (isactive)
+                {
+                    case "active":
+                        p = p.Where(x => x.IsActive);
+                        break;
+                    case "notactive":
+                        p = p.Where(x => !x.IsActive);
+                        break;
+                }
+            }
+            else
+            {
+                if (category.Equals("allcat"))
+                {
+                    if (supplier.Equals("allsup"))
+                    {
+                        p = db.Products.OrderBy(x => x.Id).Include(c => c.Category).Include(d => d.Supplier);
+                    }
+                    else
+                    {
+                        sort = "id_asc";
+                        p = db.Products.Where(x => x.Supplier.Name == supplier);
+                    }
+                }
+                else
+                {
+                    if (supplier.Equals("allsup"))
+                    {
+                        p = db.Products.Where(x => x.Category.Name == category);
+                    }
+                    else
+                    {
+                        p = p.Where(x => x.Category.Name == category);
+
+                    }
+
+                }
+            }
+
+            //filter price
+            if (string.IsNullOrEmpty(price))
+            {
+                ViewBag.price = "allprice";
+                price = "allprice";
+            }
+            else
+            {
+                ViewBag.price = price;
+            }
+            switch (price)
+            {
+                case "allprice":
+                    p = p.Where(x => x.Price > 0);
+                    break;
+                case "0-1mil":
+                    p = p.Where(x => x.Price > 0 && x.Price < 1000000);
+                    break;
+                case "1-5mil":
+                    p = p.Where(x => x.Price > 1000000 && x.Price < 5000000);
+                    break;
+                case "5-10mil":
+                    p = p.Where(x => x.Price > 5000000 && x.Price < 10000000);
+                    break;
+                case "10-20mil":
+                    p = p.Where(x => x.Price > 10000000 && x.Price < 20000000);
+                    break;
+                case "20milup":
+                    p = p.Where(x => x.Price > 20000000);
+                    break;
+            }
+
+            //filter discount
+            if (string.IsNullOrEmpty(discount))
+            {
+                ViewBag.discount = "none";
+                discount = "none";
+            }
+            else
+            {
+                ViewBag.discount = discount;
+            }
+            switch (discount)
+            {
+                case "none":
+                    p = p.Where(x => x.Discount >= 0);
+                    break;
+                case "0-10":
+                    p = p.Where(x => x.Discount >= 0 && x.Discount <= 10);
+                    break;
+                case "10-20":
+                    p = p.Where(x => x.Discount >= 10 && x.Discount < 20);
+                    break;
+
+                case "20up":
+                    p = p.Where(x => x.Discount > 20);
+                    break;
+            }
+
             //search
             if (!string.IsNullOrEmpty(kw))
             {
@@ -89,36 +262,30 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
             {
                 case "id_asc":
                     p = p.OrderBy(x => x.Id);
-                    ViewBag.sortId = "id_desc";
                     break;
                 case "id_desc":
                     p = p.OrderByDescending(x => x.Id);
-                    ViewBag.sortId = "id_asc";
                     break;
                 case "name_asc":
                     p = p.OrderBy(x => x.Name);
-                    ViewBag.sortName = "name_desc";
                     break;
                 case "name_desc":
                     p = p.OrderByDescending(x => x.Name);
-                    ViewBag.sortName = "name_asc";
                     break;
                 case "category_asc":
                     p = p.OrderBy(x => x.Category.Name);
-                    ViewBag.sortTopic = "category_desc";
                     break;
                 case "category_desc":
                     p = p.OrderByDescending(x => x.Category.Name);
-                    ViewBag.sortTopic = "category_asc";
                     break;
             }
-            ViewBag.sortId = sort ?? "id_desc";
-            ViewBag.sortName = sort ?? "name_desc";
-            ViewBag.sortTopic = sort ?? "topic_desc";
 
-            return View(p.ToPagedList(pn, ps));
-
-            //return View();
+            p = from c in p
+                where !db.BestSellings.Select(x => x.ProductId).Contains(c.Id)
+                select c;
+            p = p.Where(x => x.IsActive);
+            ViewBag.resultcount = p.Count();
+            return View(p.ToPagedList(pageNumber, pageSize));
         }
 
         // POST: ADMIN/BestSellings/Create

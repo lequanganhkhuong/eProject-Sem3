@@ -1,51 +1,61 @@
-﻿@model IEnumerable<ZuLuCommerce.Models.Account>
-
+﻿@model PagedList.IPagedList<ZuLuCommerce.Models.Account>
+@using PagedList.Mvc
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Customer account list";
 }
 
-<h2>Index</h2>
+<h2>Customer accounts</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Username)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Password)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.IsActive)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Customer.FirstName)
-        </th>
-        <th></th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Username)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Password)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.IsActive)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Customer.FirstName)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
+<div class="box">
+@using (Html.BeginForm())
+{
+    <div class="form-group">
+        <label>Search </label>
+        @Html.Editor("kw", new { htmlAttributes = new { @class = "form-control", @placeholder = "Search by username or id" } })
+        <input type="submit" value="Submit" class="btn btn-success" style="margin:10px 0" />
+    </div>
 }
+</div>
+<div class="box">
+    <table class="table table-bordered table-hover">
+        <tr>
+            <th>
+                Username
+            </th>
 
-</table>
+            <th>
+                Is active
+            </th>
+            <th>
+                Customer's First Name
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Username)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsActive)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Customer.FirstName)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.Id })
+                </td>
+            </tr>
+        }
+
+    </table>
+    <div class="page-list">
+        <div style="text-align:center;left:50%;position:relative;transform:translateX(-50%)" class="pagedListContainer">
+            @Html.PagedListPager(Model, page => Url.Action("Index", new { page,kw = ViewBag.kw }))
+        </div>
+    </div>
+</div>

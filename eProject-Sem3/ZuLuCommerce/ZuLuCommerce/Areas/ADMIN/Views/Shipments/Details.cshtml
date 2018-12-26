@@ -7,9 +7,16 @@
 <h2>Details</h2>
 
 <div>
-    <h4>Shipment</h4>
+    <h4>Shipment</h4><span><a class="btn btn-success" style="margin-left:30px" href=@Url.Action("Details","Orders",new { id= ViewBag.orderid})>Go to order detail</a></span>
     <hr />
     <dl class="dl-horizontal">
+        <dt>
+           Order codename
+        </dt>
+
+        <dd>
+            @ViewBag.order 
+        </dd>
         <dt>
             @Html.DisplayNameFor(model => model.ShippedDate)
         </dt>

@@ -1,0 +1,52 @@
+﻿@model ZuLuCommerce.Models.ProductFeature
+
+<div class="modal-header">
+    <h4 class="modal-title" id="myModalLabel">@Model.Product.Name's features</h4>
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+</div>
+<div class="modal-body">
+
+        <div class="form-horizontal">
+           <div class="row">
+               @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+               @Html.HiddenFor(model => model.Id)
+               <div class="form-group col-md-6">
+                   <label>Screen size:</label>
+                   <input type="text" class="form-control" id="ScreenSize" value="@Model.ScreenSize" />
+               </div>
+               <div class="form-group col-md-6">
+                   <label>Storage type:</label>
+                   <input type="text" class="form-control" id="StorageType" value="@Model.StorageType" />
+               </div>
+               <div class="form-group col-md-6">
+                   <label>Storage cap:</label>
+                   <input type="text" class="form-control" id="StorageCap" value="@Model.StorageCap" />
+               </div>
+               <div class="form-group col-md-6">
+                   <label>Graphic:</label>
+                   <input type="text" class="form-control" id="Graphic" value="@Model.Graphic" />
+               </div>
+               <div class="form-group col-md-6">
+                   <label>Processor:</label>
+                   <input type="text" class="form-control" id="Processor" value="@Model.Processor" />
+               </div>
+               <div class="form-group col-md-6">
+                   <label>OS:</label>
+                   <input type="text" class="form-control" id="OS" value="@Model.OS" />
+               </div>
+               <div class="form-group col-md-6">
+                   <label>Battery life:</label>
+                   <input type="text" class="form-control" id="BatteryLife" value="@Model.BatteryLife" />
+               </div>
+               <div class="col-md-offset-2 col-md-10">
+                   <button id="SaveProductFeature" class="btn btn-success">Save</button>
+               </div>
+           </div>
+        
+
+       </div>
+   
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-info waves-effect" data-dismiss="modal">Close</button>
+</div>

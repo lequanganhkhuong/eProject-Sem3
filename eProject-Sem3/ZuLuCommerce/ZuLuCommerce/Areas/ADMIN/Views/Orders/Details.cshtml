@@ -1,114 +1,394 @@
-﻿@model ZuLuCommerce.Models.Order
-
+﻿@model Tuple<ZuLuCommerce.Models.Order, IEnumerable<ZuLuCommerce.Models.OrderDetail>>
+@using ZuLuCommerce.Models
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Order details";
 }
 
 <h2>Details</h2>
+<div class="col-lg-12 col-12">
+    <div class="box box-default">
+        <div class="box-header">
+            <h3>Manage order</h3>
+            @{
+                if (Model.Item1.StatusId == 1)
+                {
 
-<div>
-    <h4>Order</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.CreatedDate)
-        </dt>
+                    <a href="#" class="btn btn-success" id="ship" style="margin-bottom:10px" data-toggle="modal" data-target="#myModal">Deliver order</a>
+                    <div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                @{
+                                    Shipment sm = new Shipment()
+                                    {
+                                        ShippedDate = null,
+                                        ShippingAddress = Model.Item1.ShippingAddress,
+                                        ShippingCity = Model.Item1.CityShippingFee.CityName,
+                                        ShippingFee = Model.Item1.ShippingFee ?? 0,
 
-        <dd>
-            @Html.DisplayFor(model => model.CreatedDate)
-        </dd>
+                                    };
+                                }
+                                @Html.Partial("_CreateOrderShipment", sm)
+                            </div>
+                        </div>
+                    </div>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
+                }
+                if (Model.Item1.StatusId != 3 && Model.Item1.StatusId != 4)
+                {
+                    <button class="btn btn-danger" style="float:right" oid="@Model.Item1.Id" id="cancel">Cancel order</button>
 
-        <dd>
-            @Html.DisplayFor(model => model.Description)
-        </dd>
+                }
+                if (Model.Item1.StatusId == 2)
+                {
+                    <button class="btn btn-info" style="float:right" oid="@Model.Item1.Id" id="complete">Complete order</button>
+                }
+            }
+           
+            
+            
+        </div>
+        <div class="box-body">
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item"> <a class="nav-link active" data-toggle="tab" href="#home" role="tab"><span class="hidden-sm-up"><i class="ion-home"></i></span> <span class="hidden-xs-down">Order's info</span></a> </li>
+                <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#profile" role="tab"><span class="hidden-sm-up"><i class="ion-person"></i></span> <span class="hidden-xs-down">Order's items</span></a> </li>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.PaymentType)
-        </dt>
+            </ul>
+            <!-- Tab panes -->
+            <div class="tab-content tabcontent-border">
+                <div class="tab-pane active" id="home" role="tabpanel">
+                    <div class="pad">
+                      
+                            <dl class="dl-horizontal">
+                                <dt>
+                                    Codename
+                                </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.PaymentType)
-        </dd>
+                                <dd>
+                                    @Html.DisplayFor(model => model.Item1.Codenname)
+                                </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Discount)
-        </dt>
+                                <dt>
+                                    CreatedDate
+                                </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Discount)
-        </dd>
+                                <dd>
+                                    @Html.DisplayFor(model => model.Item1.CreatedDate)
+                                </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Tax)
-        </dt>
+                                <dt>
+                                    Description
+                                </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Tax)
-        </dd>
+                                <dd>
+                                    @{ 
+                                        if(Model.Item1.Description == null)
+                                        {
+                                            <p>None</p>
+                                        }
+                                        else
+                                        {
+                                            @Html.DisplayFor(model => model.Item1.Description)
+                                        }
+                                    }
+                                    
+                                </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.ShippingFee)
-        </dt>
+                                <dt>
+                                    PaymentType
+                                </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.ShippingFee)
-        </dd>
+                                <dd>
+                                    @Html.DisplayFor(model => model.Item1.PaymentType)
+                                </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.ShippingAddress)
-        </dt>
+                                <dt>
+                                    Discount
+                                </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.ShippingAddress)
-        </dd>
+                                <dd>
+                                    @{ 
+                                        if(Model.Item1.Discount == null)
+                                        {
+                                            <p>0</p>
+                                        }
+                                        else
+                                        {
+                                           @Html.DisplayFor(model => model.Item1.Discount)
+                                        }
+                                    }
+                                    
+                                </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.ShippingCity)
-        </dt>
+                                <dt>
+                                    Tax
+                                </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.ShippingCity)
-        </dd>
+                                <dd>
+                                    @Html.DisplayFor(model => model.Item1.Tax)
+                                </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Customer.FirstName)
-        </dt>
+                                <dt>
+                                   Shipping Fee
+                                </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Customer.FirstName)
-        </dd>
+                                <dd>
+                                    @Html.DisplayFor(model => model.Item1.ShippingFee)
+                                </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.OrderStatus.Name)
-        </dt>
+                                <dt>
+                                    Shipping Address
+                                </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.OrderStatus.Name)
-        </dd>
+                                <dd>
+                                    @Html.DisplayFor(model => model.Item1.ShippingAddress)
+                                </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Shipment.ShippingAddress)
-        </dt>
+                                <dt>
+                                    City Name
+                                </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Shipment.ShippingAddress)
-        </dd>
+                                <dd>
+                                    @Html.DisplayFor(model => model.Item1.CityShippingFee.CityName)
+                                </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Employee.FirstName)
-        </dt>
+                                <dt>
+                                    Customer Name
+                                </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Employee.FirstName)
-        </dd>
+                                <dd>
+                                    <p> @Model.Item1.Customer.FirstName  @Model.Item1.Customer.LastName</p>
+                                </dd>
 
-    </dl>
+                                <dt>
+                                    Employee
+                                </dt>
+
+                                <dd>
+                                    @{
+                                        if (Model.Item1.EmployeeId == null)
+                                        {
+                                           <p>None</p> 
+                                        }
+                                        else
+                                        {
+                                           @Html.DisplayFor(model => model.Item1.Employee.Username)
+                                        }
+                                    }
+                                    
+                                </dd>
+
+                                <dt>
+                                    Status
+                                </dt>
+
+                                <dd>
+                                    @{
+                                        if (Model.Item1.StatusId == 1)
+                                        {
+                                            <span id="status" class="label label-warning">Pending</span>
+                                        }
+                                        if (Model.Item1.StatusId == 2)
+                                        {
+                                            <span id="status" class="label label-inverse">Delivering</span>
+                                        }
+                                        if (Model.Item1.StatusId == 3)
+                                        {
+                                            <span id="status" class="label label-success">Complete</span>
+                                        }
+                                        if (Model.Item1.StatusId == 4)
+                                        {
+                                            <span id="status" class="label label-danger">Canceled</span>
+                                        }
+                                    }
+                                   
+                                </dd>
+
+                                <dt>
+                                    Shipment
+                                </dt>
+
+                                <dd>
+                                    @{
+                                        if (Model.Item1.ShipmentId == null)
+                                        {
+                                            <p>None</p>
+                                        }
+                                        else
+                                        {
+                                            @Html.DisplayFor(model => model.Item1.ShipmentId)
+                                        }
+                                    }
+                                    
+                                </dd>
+
+                            </dl>
+                        </div>
+                   
+                </div>
+                <div class="tab-pane pad" id="profile" role="tabpanel">
+                    <div class="pad">
+                        <table class="table">
+                            <tr>
+                                <th>
+                                    Product name
+                                </th>
+                                <th>
+                                    Image
+                                </th>
+                                <th>
+                                    Quantity
+                                </th>
+                                <th>
+                                    Price
+                                </th>
+                                <th>
+                                    Description
+                                </th>
+                            </tr>
+
+                            @foreach (var item in Model.Item2)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ProductName)
+                                    </td>
+                                    <td>
+                                   
+                                        @{
+                                            string src = "/Uploads/image-not-available.jpg";//default
+
+                                            if (item.Product.Thumbnail != null)
+                                            {
+                                                var pic = item.Product.Pictures.Where(x => x.ProductId == item.ProductId).FirstOrDefault();
+                                                if (pic != null && !pic.URL.Equals("") && File.Exists(Server.MapPath("~/Uploads/Products/" + item.Product.Id + "/" + item.Product.Thumbnail)))
+                                                {
+                                                    src = "/Uploads/Products/" + item.ProductId + "/" + item.Product.Thumbnail;
+
+                                                }
+                                            }
+                                            else
+                                            {
+                                                var pic = item.Product.Pictures.Where(x => x.ProductId == item.Id).ToList();
+                                                if (pic != null)
+                                                {
+                                                    src = "/Uploads/Products/" + item.Product.Id + "/" + item.Product.Thumbnail;
+
+                                                }
+                                            }
+
+                                        }
+
+                                        <img style="height:80px;width:auto;" class="img-responsive" src="@src" />
+                                    </td>
+                                   
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Quantity)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Price)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Description)
+                                    </td>
+                                </tr>
+                            }
+
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-pane pad" id="messages" role="tabpanel">3</div>
+            </div>
+        </div>
+        <!-- /.box-body -->
+    </div>
+    <!-- /.box -->
 </div>
+
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Item1.Id }) |
     @Html.ActionLink("Back to List", "Index")
 </p>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#orderid").val(@Model.Item1.Id);
+            $("#cancel").click(function () {
+                var btn = $(this);
+                var id = btn.attr("oid");
+                if (confirm("Are you sure to cancel this order?")) {
+                    $.post("/ADMIN/Orders/CancelOrder?id=" + id, function (response) {
+                        if (response == "OK") {
+                            $.toast({
+                                heading: 'Info',
+                                text: 'This order is canceled',
+                                position: 'top-right',
+                                loaderBg: '#ff6849',
+                                icon: 'info',
+                                hideAfter: 2500,
+                                stack: 6
+                            });
+
+                            $("#status").removeClass();
+                            $("#status").addClass("label label-danger");
+                            $("#status").html("Canceled");
+                            $("#complete").remove();
+                            btn.remove();
+                        }
+                        else {
+                            $.toast({
+                                heading: 'Failed',
+                                text: 'Please try again later',
+                                position: 'top-right',
+                                loaderBg: '#ff6849',
+                                icon: 'error',
+                                hideAfter: 3500
+
+                            });
+                        }
+                    })
+                }
+                
+            });
+            $("#complete").click(function () {
+                var btn = $(this);
+                var id = btn.attr("oid");
+                if (confirm("Are you sure to complete this order?")) {
+                    $.post("/ADMIN/Orders/CompleteOrder?id=" + id, function (response) {
+                        if (response == "OK") {
+                            $.toast({
+                                heading: 'Info',
+                                text: 'This order is completed',
+                                position: 'top-right',
+                                loaderBg: '#ff6849',
+                                icon: 'info',
+                                hideAfter: 2500,
+                                stack: 6
+                            });
+
+                            $("#status").removeClass();
+                            $("#status").addClass("label label-success");
+                            $("#status").html("Completed");
+                            btn.remove();
+                            $("#cancel").remove();
+                        }
+                        else {
+                            $.toast({
+                                heading: 'Failed',
+                                text: 'Please try again later',
+                                position: 'top-right',
+                                loaderBg: '#ff6849',
+                                icon: 'error',
+                                hideAfter: 3500
+
+                            });
+                        }
+                    })
+                }
+                
+            });
+          
+        })
+    </script>    
+}

@@ -18,6 +18,7 @@ namespace ZuLuCommerce.Models
         public ShipmentStatus()
         {
             this.Shipments = new HashSet<Shipment>();
+            this.Shippers = new HashSet<Shipper>();
         }
     
         public int Id { get; set; }
@@ -25,5 +26,7 @@ namespace ZuLuCommerce.Models
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Shipment> Shipments { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Shipper> Shippers { get; set; }
     }
 }

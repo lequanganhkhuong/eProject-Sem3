@@ -1,0 +1,266 @@
+﻿@model PagedList.IPagedList<ZuLuCommerce.Models.Product>
+@using PagedList.Mvc
+@using ZuLuCommerce.Models
+@{
+    ViewBag.Title = "Add recommended products";
+    var db = new eCommerceEntities();
+}
+
+<h2>Add best selling products</h2>
+
+
+
+<div class="box" style="padding:20px">
+
+    @using (Html.BeginForm("AddProducts", "RecommendProducts", FormMethod.Get))
+    {
+        <div class="row">
+            <div class="col-md-6 col-12">
+
+                <div class="form-group">
+                    <label>Search </label>
+                    @Html.Editor("kw", new { htmlAttributes = new { @class = "form-control", @placeholder = "Search by name or id" } })
+
+                </div>
+
+            </div>
+            <div class="col-md-6 col-12">
+
+
+                <div class="form-group">
+                    <label>Sort by</label>
+                    <select name="sort" id="sort" class="form-control">
+                        <option value="name_asc">Name A->Z</option>
+                        <option value="name_desc">Name Z->A</option>
+                        <option value="id_asc">Id ascend</option>
+                        <option value="id_desc">Id descend</option>
+                        <option value="category_asc">Category ascend</option>
+                        <option value="category_desc">Category descend</option>
+
+                    </select>
+
+                </div>
+
+
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-md-12 col-12">
+
+                <label>Filter by:</label>
+                <div class="row">
+
+                    <div class="col-md-3 col-6">
+                        <select id="supplier" name="supplier" class="form-control dropdown-filter ">
+                            @{
+                                <option value="allsup" selected="selected">All suppliers</option>
+                                foreach (var sup in db.Suppliers)
+                                {
+                                    <option value="@sup.Name">@sup.Name</option>
+                                }
+                            }
+
+                        </select>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <select id="category" name="category" class="form-control dropdown-filter">
+                            @{
+                                <option value="allcat" selected="selected">All categories</option>
+                                foreach (var cat in db.Categories.OrderBy(x => x.Name))
+                                {
+                                    <option value="@cat.Name">@cat.Name</option>
+                                }
+
+                            }
+                        </select>
+                    </div>
+                    @*<div class="col-md-3 col-6">
+                            <select id="price" name="price" class="form-control dropdown-filter ">
+                                @{
+                                    <option value="allprice" selected="selected">All price</option>
+                                    <option value="0-1mil">below 1mil</option>
+                                    <option value="1-5mil">1mil-5mil</option>
+                                    <option value="5-10mil">5mil-10mil</option>
+                                    <option value="10-20mil">10mil-20mil</option>
+                                    <option value="20milup">above 20mil</option>
+                                }
+                            </select>
+                        </div>*@
+                    <div class="col-md-3 col-6">
+                        <select id="isactive" name="isactive" class="form-control dropdown-filter ">
+                            @{
+                                <option value="none" selected="selected">Is Active</option>
+                                <option value="active">Active</option>
+                                <option value="notactive">Not active</option>
+
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <select id="discount" name="discount" class="form-control dropdown-filter">
+                            @{
+                                <option value="none" selected="selected">All Discount</option>
+                                <option value="0-10">below 10%</option>
+                                <option value="10-20">10-20%</option>
+                                <option value="20up">above 20%</option>
+                            }
+                        </select>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <input type="submit" value="Submit" class="btn btn-success" style="margin:10px 0" />
+                                }
+
+
+</div>
+<a href=@Url.Action("AddProducts","RecommendProducts",new { page=1,kw="",sort="",supplier="",category="",price="",discount="",isactive = ""}) class="btn btn-danger" id="clear" style="width:130px">Clear all filter</a>
+
+<div class="box">
+    <div class="box-header with-border">
+        <h3 class="box-title">Found @ViewBag.resultcount result(s)</h3>
+    </div>
+    <table class="table table-hover table-bordered">
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Price
+            </th>
+            <th>
+                Discount
+            </th>
+            <th>
+                In Stock
+            </th>
+
+            <th>
+                Thumbnail
+            </th>
+            <th>
+                Category
+            </th>
+            <th>
+                Supplier
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Discount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Stock)
+                </td>
+
+                <td>
+                    @{
+                        string src = "/Uploads/image-not-available.jpg";//default
+
+                        if (item.Thumbnail != null)
+                        {
+                            var pic = item.Pictures.Where(x => x.ProductId == item.Id && x.URL != item.Thumbnail).FirstOrDefault();
+                            if (pic != null)
+                            {
+                                src = "/Uploads/Products/" + item.Id + "/" + item.Thumbnail;
+
+                            }
+                        }
+                        else
+                        {
+                            var pic = item.Pictures.Where(x => x.ProductId == item.Id).ToList();
+                            if (pic != null)
+                            {
+                                src = "/Uploads/Products/" + item.Id + "/" + item.Thumbnail;
+
+                            }
+                        }
+
+                    }
+
+                    <img style="height:100px;width:auto" class="img-responsive" src="@src" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Category.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Supplier.Name)
+                </td>
+                <td>
+                    <button pid="@item.Id" class="addbtn btn btn-info">Add products</button>
+                </td>
+            </tr>
+                        }
+
+    </table>
+
+    <div class="page-list">
+        <div style="text-align:center;left:50%;position:relative;transform:translateX(-50%)" class="pagedListContainer">
+            @Html.PagedListPager(Model, page => Url.Action("AddProducts", new { page, kw = ViewBag.kw, sort = ViewBag.sort }))
+        </div>
+    </div>
+</div>
+
+
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $(".addbtn").on("click", function () {
+                var btn = $(this);
+                var pid = btn.attr("pid");
+                var url = btn.attr("url");
+                $.post("/ADMIN/RecommendProducts/AddProduct/" + pid, function (response) {
+                    if (response == "OK") {
+                        $.toast({
+                            heading: 'Info',
+                            text: 'Product is added to best selling list',
+                            position: 'top-right',
+                            loaderBg: '#ff6849',
+                            icon: 'info',
+                            hideAfter: 2500,
+                            stack: 6
+                        });
+                        btn.parent().parent().remove();
+                    }
+                    else {
+                        $.toast({
+                            heading: 'Failed',
+                            text: 'Please try again later',
+                            position: 'top-right',
+                            loaderBg: '#ff6849',
+                            icon: 'error',
+                            hideAfter: 3500
+
+                        });
+                    }
+                });
+
+
+            });
+            $("#supplier").val("@ViewBag.supplier");
+           $("#sort").val("@ViewBag.sort");
+           $("#category").val("@ViewBag.category");
+           $("#price").val("@ViewBag.price");
+             $("#isactive").val("@ViewBag.isactive");
+           $("#discount").val("@ViewBag.discount");
+        });
+    </script>
+}

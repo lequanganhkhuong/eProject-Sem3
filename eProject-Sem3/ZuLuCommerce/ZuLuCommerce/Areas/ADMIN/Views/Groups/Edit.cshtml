@@ -1,55 +1,430 @@
-﻿@model ZuLuCommerce.Models.Group
-
+﻿@model Tuple<ZuLuCommerce.Models.Group, PagedList.IPagedList<ZuLuCommerce.Models.Product>, PagedList.IPagedList<ZuLuCommerce.Models.Product>>
+@using PagedList.Mvc
+@using ZuLuCommerce.Models
 @{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "Edit " + Model.Item1.Name;
+    var db = new eCommerceEntities();
 }
 
 <h2>Edit</h2>
+<div class="box">
+    @using (Html.BeginForm("Edit", "Groups", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
 
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>Group</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.Id)
+        <div class="form-horizontal">
+         
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.Item1.Id)
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.Item1.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Item1.Name, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Item1.Name, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.Item1.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Item1.Description, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Item1.Description, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <div class="checkbox">
-                    @Html.EditorFor(model => model.IsActive)
-                    @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.Item1.IsActive, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <div class="checkbox">
+                        @Html.EditorFor(model => model.Item1.IsActive)
+                        @Html.ValidationMessageFor(model => model.Item1.IsActive, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Save" class="btn btn-default" />
                 </div>
             </div>
         </div>
+    }
+</div>
 
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+<div class="box" style="padding:20px">
+    @using (Html.BeginForm("Edit", "Groups", FormMethod.Get))
+    {
+
+        <div class="row">
+            <div class="col-md-6 col-12">
+
+                <div class="form-group">
+                    <label>Search </label>
+                    @Html.Editor("kw", new { htmlAttributes = new { @class = "form-control", @placeholder = "Search by name or id" } })
+
+                </div>
+
+            </div>
+            <div class="col-md-6 col-12">
+
+
+                <div class="form-group">
+                    <label>Sort by</label>
+                    <select name="sort" id="sort" class="form-control">
+                        <option value="name_asc">Name A->Z</option>
+                        <option value="name_desc">Name Z->A</option>
+                        <option value="id_asc">Id ascend</option>
+                        <option value="id_desc">Id descend</option>
+                        <option value="category_asc">Category ascend</option>
+                        <option value="category_desc">Category descend</option>
+
+                    </select>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 col-12">
+
+                <label>Filter by:</label>
+                <div class="row">
+
+                    <div class="col-md-3 col-6">
+                        <select id="supplier" name="supplier" class="form-control dropdown-filter ">
+                            @{
+                                <option value="allsup" selected="selected">All suppliers</option>
+                                foreach (var sup in db.Suppliers)
+                                {
+                                    <option value="@sup.Name">@sup.Name</option>
+                                }
+                            }
+
+                        </select>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <select id="category" name="category" class="form-control dropdown-filter">
+                            @{
+                                <option value="allcat" selected="selected">All categories</option>
+                                foreach (var cat in db.Categories.OrderBy(x => x.Name))
+                                {
+                                    <option value="@cat.Name">@cat.Name</option>
+                                }
+
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-3 col-6">
+                            <select id="price" name="price" class="form-control dropdown-filter">
+                                @{
+                                    <option value="allprice" selected="selected">All price</option>
+                                    <option value="0-1mil">below 1mil</option>
+                                    <option value="1-5mil">1mil-5mil</option>
+                                    <option value="5-10mil">5mil-10mil</option>
+                                    <option value="10-20mil">10mil-20mil</option>
+                                    <option value="20milup">above 20mil</option>
+                                }
+                            </select>
+                        </div>
+                    @*<div class="col-md-3 col-6">
+                        <select id="isactive" name="isactive" class="form-control dropdown-filter">
+                            @{
+                                <option value="none" selected="selected">Is Active</option>
+                                <option value="active">Active</option>
+                                    <option value="notactive">Not active</option>
+
+                            }
+                        </select>
+                    </div>*@
+                    <div class="col-md-3 col-6">
+                        <select id="discount" name="discount" class="form-control dropdown-filter">
+                            @{
+                                <option value="none" selected="selected">All Discount</option>
+                                <option value="0-10">below 10%</option>
+                                <option value="10-20">10-20%</option>
+                                <option value="20up">above 20%</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
             </div>
         </div>
-    </div>
-}
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
+        <input type="submit" value="Submit" class="btn btn-success" style="margin:10px 0" />
+                                }
+
+
 </div>
+<a href=@Url.Action("Edit","Groups",new {id=Model.Item1.Id, page=1,kw="",sort="",supplier="",category="",price="",discount=""}) class="btn btn-danger" id="clear" style="width:130px">Clear all filter</a>
+
+<div class="col-lg-12 col-12">
+    <div class="box box-default">
+       <div class="box-header">
+           <h3>Manage product in this group</h3>
+           
+       </div>
+        <div class="box-body">
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item"> <a class="nav-link active" data-toggle="tab" href="#home" role="tab"><span class="hidden-sm-up"><i class="ion-home"></i></span> <span class="hidden-xs-down">Add products</span></a> </li>
+                <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#profile" role="tab"><span class="hidden-sm-up"><i class="ion-person"></i></span> <span class="hidden-xs-down">Remove products</span></a> </li>
+                
+            </ul>
+            <!-- Tab panes -->
+            <div class="tab-content tabcontent-border">
+                <div class="tab-pane active" id="home" role="tabpanel">
+                    <div class="pad">
+                        Found @ViewBag.resultcount product
+                        <table class="table">
+                            <tr>
+                                <th>
+                                    Name
+                                </th>
+                                <th>
+                                    Price
+                                </th>
+                                <th>
+                                    Discount
+                                </th>
+                                <th>
+                                    In Stock
+                                </th>
+
+                                <th>
+                                    Thumbnail
+                                </th>
+                                <th>
+                                    Category
+                                </th>
+                                <th>
+                                    Supplier
+                                </th>
+                                <th></th>
+                            </tr>
+
+                            @foreach (var item in Model.Item2.ToList())
+                            {
+                                <tr>
+                                    <td>
+                                        Name
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Price)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Discount)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Stock)
+                                    </td>
+
+                                    <td>
+                                        @{
+                                            string src = "/Uploads/image-not-available.jpg";//default
+
+                                            if (item.Thumbnail != null)
+                                            {
+                                                var pic = item.Pictures.Where(x => x.ProductId == item.Id && x.URL != item.Thumbnail).FirstOrDefault();
+                                                if (pic != null)
+                                                {
+                                                    src = "/Uploads/Products/" + item.Id + "/" + item.Thumbnail;
+
+                                                }
+                                            }
+                                            else
+                                            {
+                                                var pic = item.Pictures.Where(x => x.ProductId == item.Id).ToList();
+                                                if (pic != null)
+                                                {
+                                                    src = "/Uploads/Products/" + item.Id + "/" + item.Thumbnail;
+
+                                                }
+                                            }
+
+                                        }
+
+                                        <img style="height:100px;width:auto" class="img-responsive" src="@src" />
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Category.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Supplier.Name)
+                                    </td>
+                                    <td>
+                                        <button gid="@Model.Item1.Id" pid="@item.Id" class="addbtn btn btn-info">Add products</button>
+                                    </td>
+                                </tr>
+                                            }
+
+                        </table>
+                        <div class="page-list">
+                            <div style="text-align:center;left:50%;position:relative;transform:translateX(-50%)" class="pagedListContainer">
+                                @Html.PagedListPager(Model.Item2, page => Url.Action("Edit", new { page, kw = ViewBag.kw, sort = ViewBag.sort }))
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane pad" id="profile" role="tabpanel">
+                    <div class="pad">
+                        Found @ViewBag.groupitems product
+                        <table class="table">
+                            <tr>
+                                <th>
+                                    Name
+                                </th>
+                                <th>
+                                    Price
+                                </th>
+                                <th>
+                                    Stock
+                                </th>
+                                <th>
+                                    Category
+                                </th>
+                                <th>
+                                    Thumbnail
+                                </th>
+                                <th>
+                                    Remove
+                                </th>
+                                <th></th>
+                            </tr>
+                          
+                            @foreach (var item in Model.Item3)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Price)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Stock)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Category.Name)
+                                    </td>
+                                    <td>
+                                        @{
+                                            string src = "/Uploads/image-not-available.jpg";//default
+
+                                            if (item.Thumbnail != null)
+                                            {
+                                                var pic = item.Pictures.Where(x => x.ProductId == item.Id && x.URL != item.Thumbnail).FirstOrDefault();
+                                                if (pic != null)
+                                                {
+                                                    src = "/Uploads/Products/" + item.Id + "/" + item.Thumbnail;
+
+                                                }
+                                            }
+                                            else
+                                            {
+                                                var pic = item.Pictures.Where(x => x.ProductId == item.Id).ToList();
+                                                if (pic != null)
+                                                {
+                                                    src = "/Uploads/Products/" + item.Id + "/" + item.Thumbnail;
+
+                                                }
+                                            }
+
+                                        }
+
+                                        <img style="height:100px;width:auto" class="img-responsive" src="@src" />
+                                    </td>
+                                    <td>
+                                        <button gid="@Model.Item1.Id" pid="@item.Id" class='removeitem btn btn-danger'>Remove</button>
+                                    </td>
+
+
+                                </tr>
+                                            }
+
+                        </table>
+                        <div class="page-list">
+                            <div style="text-align:center;left:50%;position:relative;transform:translateX(-50%)" class="pagedListContainer">
+                                @Html.PagedListPager(Model.Item3, page => Url.Action("Edit", new { page, kw = ViewBag.kw, sort = ViewBag.sort }))
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane pad" id="messages" role="tabpanel">3</div>
+            </div>
+        </div>
+        <!-- /.box-body -->
+    </div>
+    <!-- /.box -->
+</div>
+<!-- /.col -->
+<div>
+    <a href=@Url.Action("Index") class="btn btn-success" style="margin:10px 0">Back to List</a>
+
+</div>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $(".addbtn").on("click", function () {
+                var btn = $(this);
+                var pid = btn.attr("pid");
+                var gid = btn.attr("gid");
+
+                $.post("/ADMIN/Groups/AddProduct?pid=" + pid + "&gid=" + gid, function (response) {
+                    if (response == "OK") {
+                        $.toast({
+                            heading: 'Info',
+                            text: 'Product is added to this group',
+                            position: 'top-right',
+                            loaderBg: '#ff6849',
+                            icon: 'info',
+                            hideAfter: 2500,
+                            stack: 6
+                        });
+                        btn.parent().parent().remove();
+
+                    }
+                    else {
+                        $.toast({
+                            heading: 'Failed',
+                            text: 'Please try again later',
+                            position: 'top-right',
+                            loaderBg: '#ff6849',
+                            icon: 'error',
+                            hideAfter: 3500
+
+                        });
+                    }
+                });
+
+
+            });
+            $(".removeitem").click(function () {
+                var btn = $(this);
+                var pid = btn.attr("pid");
+                var gid = btn.attr("gid");
+                if (confirm("Are you sure to remove this product?")) {
+                    $.post("/ADMIN/Groups/RemoveProduct?pid=" + pid + "&gid=" + gid, function (response) {
+                        if (response == "OK") {
+                            btn.parent().parent().remove();
+                        }
+                        else {
+                            alert("Bay roi`!");
+                        }
+                    });
+                }
+            });
+           $("#supplier").val("@ViewBag.supplier");
+           $("#sort").val("@ViewBag.sort");
+           $("#category").val("@ViewBag.category");
+           @*$("#price").val("@ViewBag.price");*@
+           $("#isactive").val("@ViewBag.isactive");
+           $("#discount").val("@ViewBag.discount");
+        });
+    </script>
+}

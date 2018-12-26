@@ -1,63 +1,105 @@
-﻿@model IEnumerable<ZuLuCommerce.Models.Shipment>
-
+﻿@model PagedList.IPagedList<ZuLuCommerce.Models.Shipment>
+@using PagedList.Mvc
 @{
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
+<h2>Shipment list</h2>
+<div class="box">
+    @using (Html.BeginForm())
+    {
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.ShippedDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ShippingAddress)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ShippingCity)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ShippingFee)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ShipmentStatus.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Shipper.FirstName)
-        </th>
-        <th></th>
-    </tr>
+        <div class="col-md-6 col-12">
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.ShippedDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ShippingAddress)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ShippingCity)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ShippingFee)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ShipmentStatus.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Shipper.FirstName)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
+            <div class="form-group">
+                <label>Search </label>
+                @Html.Editor("kw", new { htmlAttributes = new { @class = "form-control", @placeholder = "Search by id" } })
 
-</table>
+            </div>
+            <input type="submit" value="Submit" class="btn btn-success" style="margin:10px 0" />
+        </div>
+    }
+</div>
+<div class="box">
+    <table class="table table-hover table-bordered">
+        <tr>
+            <th>
+                Shipped Date
+            </th>
+            <th>
+                Shipping Address
+            </th>
+            <th>
+                Shipping City
+            </th>
+            <th>
+                Fee
+            </th>
+            <th>
+                Status
+            </th>
+            <th>
+                Shipper Name
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ShippedDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ShippingAddress)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ShippingCity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ShippingFee)
+                </td>
+                <td>
+                    @{
+                        if (item.StatusId == 1)
+                        {
+                            <span id="status" class="label label-warning">Pending</span>
+                        }
+                        if (item.StatusId == 2)
+                        {
+                            <span id="status" class="label label-inverse">Delivering</span>
+                        }
+                        if (item.StatusId == 3)
+                        {
+                            <span id="status" class="label label-success">Complete</span>
+                        }
+                        if (item.StatusId == 4)
+                        {
+                            <span id="status" class="label label-danger">Canceled</span>
+                        }
+                    }
+
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Shipper.FirstName)
+                </td>
+                <td>
+                    @{
+                        if (item.StatusId != 3 && item.StatusId != 4)
+                        {
+                            @Html.ActionLink("Edit", "Edit", new { id = item.Id })
+                        }
+                    }
+
+                    @Html.ActionLink("Details", "Details", new { id = item.Id })
+                </td>
+            </tr>
+                        }
+
+    </table>
+    <div class="page-list">
+        <div style="text-align:center;left:50%;position:relative;transform:translateX(-50%)" class="pagedListContainer">
+            @Html.PagedListPager(Model, page => Url.Action("Index", new { page, kw = ViewBag.kw, sort = ViewBag.sort }))
+        </div>
+    </div>
+</div>

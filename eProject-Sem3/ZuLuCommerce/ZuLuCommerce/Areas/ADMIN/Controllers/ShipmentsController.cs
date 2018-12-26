@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PagedList;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -10,15 +11,23 @@ using ZuLuCommerce.Models;
 
 namespace ZuLuCommerce.Areas.ADMIN.Controllers
 {
+    [Authorize(Roles ="Admin,Manager,Sale")]
     public class ShipmentsController : Controller
     {
         private eCommerceEntities db = new eCommerceEntities();
 
         // GET: ADMIN/Shipments
-        public ActionResult Index()
+        public ActionResult Index(int? page, string kw)
         {
-            var shipments = db.Shipments.Include(s => s.ShipmentStatus).Include(s => s.Shipper);
-            return View(shipments.ToList());
+            int pageNumber = page ?? 1;
+            int pageSize = 10;
+            var shipments = db.Shipments.OrderBy(x=>x.Id).Include(s => s.ShipmentStatus).Include(s => s.Shipper);
+            if (!string.IsNullOrEmpty(kw))
+            {
+                int id = int.Parse(kw);
+                shipments = shipments.Where(x => x.Id == id);
+            }
+            return View(shipments.ToPagedList(pageNumber, pageSize));
         }
 
         // GET: ADMIN/Shipments/Details/5
@@ -33,36 +42,13 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
             {
                 return HttpNotFound();
             }
+            var o = db.Orders.Where(x => x.ShipmentId == shipment.Id).SingleOrDefault();
+            ViewBag.order = o.Codenname;
+            ViewBag.orderid = o.Id;
             return View(shipment);
         }
 
-        // GET: ADMIN/Shipments/Create
-        public ActionResult Create()
-        {
-            ViewBag.StatusId = new SelectList(db.ShipmentStatuses, "Id", "Name");
-            ViewBag.ShipperId = new SelectList(db.Shippers, "Id", "FirstName");
-            return View();
-        }
-
-        // POST: ADMIN/Shipments/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,StatusId,ShippedDate,ShippingAddress,ShippingCity,ShippingFee,ShipperId")] Shipment shipment)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Shipments.Add(shipment);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-
-            ViewBag.StatusId = new SelectList(db.ShipmentStatuses, "Id", "Name", shipment.StatusId);
-            ViewBag.ShipperId = new SelectList(db.Shippers, "Id", "FirstName", shipment.ShipperId);
-            return View(shipment);
-        }
-
+        [Authorize(Roles ="Admin,Manager")]
         // GET: ADMIN/Shipments/Edit/5
         public ActionResult Edit(int? id)
         {
@@ -74,6 +60,10 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
             if (shipment == null)
             {
                 return HttpNotFound();
+            }
+            if(shipment.StatusId == 3 || shipment.StatusId == 4)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.NotAcceptable);
             }
             ViewBag.StatusId = new SelectList(db.ShipmentStatuses, "Id", "Name", shipment.StatusId);
             ViewBag.ShipperId = new SelectList(db.Shippers, "Id", "FirstName", shipment.ShipperId);
@@ -98,31 +88,6 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
             return View(shipment);
         }
 
-        // GET: ADMIN/Shipments/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Shipment shipment = db.Shipments.Find(id);
-            if (shipment == null)
-            {
-                return HttpNotFound();
-            }
-            return View(shipment);
-        }
-
-        // POST: ADMIN/Shipments/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            Shipment shipment = db.Shipments.Find(id);
-            db.Shipments.Remove(shipment);
-            db.SaveChanges();
-            return RedirectToAction("Index");
-        }
 
         protected override void Dispose(bool disposing)
         {

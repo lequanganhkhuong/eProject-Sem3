@@ -10,45 +10,76 @@
     var user = db.Customers.Where(x => x.Id == Model.CustomerId).FirstOrDefault();
 
 }
-<div class="confirm-email-wrapper">
-@{
-     DateTime date = Model.RegisterDate.HasValue ? Model.RegisterDate.Value : DateTime.Now;
-     if ((DateTime.Now - date).Hours < 24)
-     {
-        <div class="introduction">
 
-            <h3>Hello @user.LastName, welcome to our shop</h3>
-            <p>
-                We have sent an email to your registered email address, please check the mail and follow the link
-                we provided to activate your account. Please confirm your email within 24h before your account is blocked.
-            </p>
-
+<!--Breadcrumb Area Start-->
+<div class="breadcrumb-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb-content text-center">
+                    <h1 class="breadmome-name">Login</h1>
+                    <ul>
+                        <li><a href=@Url.Action("Index","Home")>Home</a></li>
+                        <li class="active">Comfirm Email</li>
+                    </ul>
+                </div>
+            </div>
         </div>
-        <div class="resend-email">
-            <p>
-                Haven't receive your email?
-            </p>
-            <label>Click here to resend your email</label>
-            <button id="resend" class="btn btn-success">Resend email</button>
-            <p id="result"></p>
-        </div>
-        
-    }
-    else
-    {
-        <div class="introduction">
-
-            <h3>Hello @user.LastName, welcome to our shop</h3>
-            <p>
-                The token to activate your account has expired. Please contact customer support to active your account.
-            </p>
-
-        </div>
-    
-    }
-}
-
+    </div>
 </div>
+<!--Breadcrumb Area End-->
+<!--Login Area Strat-->
+<div class="login-area mt-80">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-12 col-lg-6 col-xl-6 ml-auto mr-auto">
+                <div class="login">
+                    <div class="login-form-container">
+                      
+                           @{
+                               DateTime date = Model.RegisterDate.HasValue ? Model.RegisterDate.Value : DateTime.Now;
+                               if ((DateTime.Now - date).Hours < 24)
+                               {
+                                <div class="introduction">
+
+                                    <h3>Hello @user.LastName, welcome to our shop</h3>
+                                    <p>
+                                        We have sent an email to your registered email address, please check the mail and follow the link
+                                        we provided to activate your account. Please confirm your email within 24h before your account is blocked.
+                                    </p>
+
+                                </div>
+                                <div class="resend-email">
+                                    <p>
+                                        Haven't receive your email?
+                                    </p>
+                                    <label>Click here to resend your email</label>
+                                    <button id="resend" class="btn btn-success">Resend email</button>
+                                    <p id="result"></p>
+                                </div>
+
+                               }
+                               else
+                               {
+                                <div class="introduction">
+
+                                    <h3>Hello @user.LastName, welcome to our shop</h3>
+                                    <p>
+                                        The token to activate your account has expired. Please contact customer support to active your account.
+                                    </p>
+
+                                </div>
+
+                               }
+                        }
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @section Scripts {
     <script>

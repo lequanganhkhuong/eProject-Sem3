@@ -1,6 +1,9 @@
-﻿
+﻿@model IEnumerable<ZuLuCommerce.Models.CartItem>
+@using ZuLuCommerce.Models
 @{
-    ViewBag.Title = "Cart Items";
+    ViewBag.Title = "Your cart";
+    decimal subtotal = 0;
+    decimal total = 0;
 }
 <style>
     tr.header {
@@ -31,6 +34,7 @@
             background-color: #fd7e14;
         }
 </style>
+
 @*<div class="mb-50">*@
     <div class="container">
         <div class="row">
@@ -47,7 +51,41 @@
                         <td align="right">Total</td>
                         <td></td>
                     </tr>
-                    <tbody id="carts"></tbody>
+                    <tbody id="carts">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            decimal price = 0;
+                            var db = new eCommerceEntities();
+                            var specdeal = db.SpecialDeals.Where(x => x.IsActive && x.EndDate > DateTime.Now && x.StartDate < DateTime.Now);
+                            foreach (var item in Model)
+                            {
+
+                                if (specdeal.Select(x => x.ProductId).Contains(item.ProductId))
+                                {
+                                    price = item.Product.Price * (100 - specdeal.Where(x => x.ProductId == item.ProductId).SingleOrDefault().Discount) / 100;
+                                }
+                                else
+                                {
+                                    price = item.Product.Price * (100 - item.Product.Discount) / 100;
+                                }
+                                decimal p = price * item.Quantity;
+                                int intprice = (int)price;
+                                int intp = (int)p;
+                                <tr>
+                                    <td align="center">@item.ProductId</td>
+                                    <td align="center">@item.Product.Name</td>
+                                    <td align="center"><img style='height:80px;width:auto;max-width:150px;' src='/Uploads/Products/@item.ProductId/@item.Product.Thumbnail' /></td>
+                                    <td align="right">@price.ToString("N0")</td>
+                                    <td align='right'><input type='number' price="@intprice" id="@item.Id" class='quantity' value='@item.Quantity' min='1' max='1000'></td>
+                                    <td class="itemtotal" sum="@intp"  align="right">@p.ToString("N0") VND</td>
+
+                                    <td><button id="@item.Id" cartid="@item.CartId" class='removeitem'>Remove</button></td>
+                                </tr>
+                                subtotal += price * item.Quantity;
+                            }
+                             total = subtotal * 110 / 100;
+                        }
+                    </tbody>
                 </table>
 
                 <div class="row">
@@ -56,10 +94,20 @@
                             <h2>Cart totals</h2>
                             <ul>
                                 <li>Subtotal <span id="sumtotal"></span></li>
-                                <li>Total <span id="sumtotal"></span></li>
+                                <li>Total <span id="total"></span></li>
                             </ul>
-                            <div class="btn" id="checkout">Checkout</div>
-                            <div class="btn" id="emptycart">Empty Cart</div>
+                            @{
+                                if (User.Identity.IsAuthenticated)
+                                {
+                                    <a class="btn" id="checkout" href=@Url.Action("Checkout",new { id = User.Identity.Name})>Checkout</a>
+                                }
+                                if (!User.Identity.IsAuthenticated)
+                                {
+                                    <a class="btn" id="checkout" href=@Url.Action("Checkout")>Checkout</a>
+                                }
+                            }
+                            
+                            <a class="btn" id="emptycart" href="#">Empty Cart</a>
                         </div>
                     </div>
                 </div>
@@ -71,189 +119,79 @@
 
         </div>
     </div>
-<!--Feature Area Start-->
-<div class="feature-area mt-80">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4">
-                <!--Single Feature Start-->
-                <div class="single-feature">
-                    <div class="feature-icon">
-                        <i class="icon ion-ios-telephone"></i>
-                    </div>
-                    <div class="feature-content">
-                        <h3>(999) 1234 56789</h3>
-                        <p>Free support line!</p>
-                    </div>
-                </div>
-                <!--Single Feature End-->
-            </div>
-            <div class="col-md-4">
-                <!--Single Feature Start-->
-                <div class="single-feature">
-                    <div class="feature-icon">
-                        <i class="icon ion-email"></i>
-                    </div>
-                    <div class="feature-content">
-                        <h3>(999) 1234 56789</h3>
-                        <p>Free support line!</p>
-                    </div>
-                </div>
-                <!--Single Feature End-->
-            </div>
-            <div class="col-md-4">
-                <!--Single Feature Start-->
-                <div class="single-feature">
-                    <div class="feature-icon">
-                        <i class="icon ion-ios-timer-outline"></i>
-                    </div>
-                    <div class="feature-content">
-                        <h3>(999) 1234 56789</h3>
-                        <p>Free support line!</p>
-                    </div>
-                </div>
-                <!--Single Feature End-->
-            </div>
-        </div>
-    </div>
-</div>
-<!--Feature Area End-->
+@if (!User.Identity.IsAuthenticated)
+{
+    <script>
+        $(document).ready(function () {
+            loadCartItems();
+        })
+    </script>
+}
+@if (User.Identity.IsAuthenticated)
+{
+    <script>
+        $(document).ready(function () {
+            var subtotal = '@subtotal.ToString("N0")';
+            var total = '@total.ToString("N0")';
 
-@*</div>*@
-@*<!--Breadcrumb Area Start-->
-<div class="breadcrumb-area">
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <div class="breadcrumb-content text-center">
-                    <h1 class="breadmome-name">Shopping Cart</h1>
-                    <ul>
-                        <li><a href="index.html">Home</a></li>
-                        <li class="active">Shopping Cart</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!--Breadcrumb Area End-->
-<!--Shopping Cart Area Strat-->
-<div class="Shopping-cart-area mt-80">
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <form action="#">
-                    <div class="table-content table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th class="picaboo-product-remove">remove</th>
-                                    <th class="picaboo-product-thumbnail">images</th>
-                                    <th class="cart-product-name">Product</th>
-                                    <th class="picaboo-product-price">Unit Price</th>
-                                    <th class="picaboo-product-quantity">Quantity</th>
-                                    <th class="picaboo-product-subtotal">Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="picaboo-product-remove"><a href="#"><i class="fa fa-times"></i></a></td>
-                                    <td class="picaboo-product-thumbnail"><a href="#"><img src="img/cart/cart1.jpg" alt=""></a></td>
-                                    <td class="picaboo-product-name"><a href="#">Aliquam lobortis est</a></td>
-                                    <td class="picaboo-product-price"><span class="amount">$70.00</span></td>
-                                    <td class="picaboo-product-quantity">
-                                        <input value="1" type="number">
-                                    </td>
-                                    <td class="product-subtotal"><span class="amount">$70.00</span></td>
-                                </tr>
-                                <tr>
-                                    <td class="picaboo-product-remove"><a href="#"><i class="fa fa-times"></i></a></td>
-                                    <td class="picaboo-product-thumbnail"><a href="#"><img src="img/cart/cart2.jpg" alt=""></a></td>
-                                    <td class="picaboo-product-name"><a href="#">Cras neque metus</a></td>
-                                    <td class="picaboo-product-price"><span class="amount">$60.50</span></td>
-                                    <td class="picaboo-product-quantity">
-                                        <input value="1" type="number">
-                                    </td>
-                                    <td class="product-subtotal"><span class="amount">$60.50</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="coupon-all">
-                                <div class="coupon">
-                                    <input id="coupon_code" class="input-text" name="coupon_code" value="" placeholder="Coupon code" type="text">
-                                    <input class="button" name="apply_coupon" value="Apply coupon" type="submit">
-                                </div>
-                                <div class="coupon2">
-                                    <input class="button" name="update_cart" value="Update cart" type="submit">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-5 ml-auto">
-                            <div class="cart-page-total">
-                                <h2>Cart totals</h2>
-                                <ul>
-                                    <li>Subtotal <span>$130.00</span></li>
-                                    <li>Total <span>$130.00</span></li>
-                                </ul>
-                                <a href="#">Proceed to checkout</a>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-<!--Shopping Cart Area End-->
-<!--Feature Area Start-->
-<div class="feature-area mt-80">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4">
-                <!--Single Feature Start-->
-                <div class="single-feature">
-                    <div class="feature-icon">
-                        <i class="icon ion-ios-telephone"></i>
-                    </div>
-                    <div class="feature-content">
-                        <h3>(999) 1234 56789</h3>
-                        <p>Free support line!</p>
-                    </div>
-                </div>
-                <!--Single Feature End-->
-            </div>
-            <div class="col-md-4">
-                <!--Single Feature Start-->
-                <div class="single-feature">
-                    <div class="feature-icon">
-                        <i class="icon ion-email"></i>
-                    </div>
-                    <div class="feature-content">
-                        <h3>(999) 1234 56789</h3>
-                        <p>Free support line!</p>
-                    </div>
-                </div>
-                <!--Single Feature End-->
-            </div>
-            <div class="col-md-4">
-                <!--Single Feature Start-->
-                <div class="single-feature">
-                    <div class="feature-icon">
-                        <i class="icon ion-ios-timer-outline"></i>
-                    </div>
-                    <div class="feature-content">
-                        <h3>(999) 1234 56789</h3>
-                        <p>Free support line!</p>
-                    </div>
-                </div>
-                <!--Single Feature End-->
-            </div>
-        </div>
-    </div>
-</div>
-<!--Feature Area End-->*@
+            $("#sumtotal").html(subtotal.toLocaleString('en') + " VND");
+            $("#total").html(total.toLocaleString('en') + " VND");
+            $(".quantity").change( function () {
+                var btn = $(this);
+                var id = btn.attr("id");
+                var price = btn.attr("price");
+                var qty = btn.val();
+                var itemtotal = parseInt(price) * parseInt(qty);
+             
+                $.post("/Carts/ChangeQuantityCart?id=" + id + "&qty=" + qty +"&price=" + price, function (response) {
+                    if (response != "There is an error in the server, please try again later!") {
+                        //change sumtotal
+                        var st = 0;
+                        btn.parent().parent().children(".itemtotal").html(parseInt(response).toLocaleString('en') + " VND");
+                        btn.parent().parent().children(".itemtotal").attr("sum",parseInt(response));
+                    
+                        $(".itemtotal").each(function () {
+                            st +=  parseInt($(this).attr("sum"));
+                        });
+                        $("#sumtotal").html("");
+                        $("#sumtotal").html(st.toLocaleString('en') + " VND");
+                        $("#total").html(parseInt(st * 110/100).toLocaleString('en') + " VND");
+                    }
+                    else {
+                        alert(response);
+                    }
+                });
+            });
+
+            $(".removeitem").click(function () {
+                var btn = $(this);
+                var id = btn.attr("id");
+                var cartid = btn.attr("cartid");
+                if (confirm("Are you sure to remove this item?")) {
+                    $.post("/Carts/RemoveFromCart?id=" + id + "&cartid=" + cartid, function (response) {
+                        if (response != "There is an error in the server, please try again later!") {
+                            var count = response.split('-')[0];
+                            var subsum = response.split('-')[1];
+                            var sum = parseInt(subsum) * 110/100;
+                            if (count == "0") {
+                                $(".cart-total").css("background-color", "#919fb3");
+                                $(".cart-total").html(count);
+                            } else {
+                                $(".cart-total").css("background-color", "red");
+                                $(".cart-total").html(count);
+                            }
+                            btn.parent().parent().remove();
+                            $("#sumtotal").html(parseInt(subsum).toLocaleString('en') + " VND");
+                            $("#total").html(sum.toLocaleString('en') + " VND");
+                        }
+                        else {
+                            alert(response);
+                        }
+                    });
+                
+
+                }
+            });
+        })
+    </script>
+}

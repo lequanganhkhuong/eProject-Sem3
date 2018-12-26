@@ -1,6 +1,9 @@
 ﻿body {
 
 }
+.box{
+    padding:15px
+}
 /*------------Admin edit images--------------*/
 .images {
     height: 250px;
@@ -24,7 +27,7 @@
 
     .images .btnSetThumbnail {
         position: absolute;
-        bottom: 5%;
+        bottom: 5px;
         left: 50%;
         transform: translateX(-50%)
     }
@@ -68,13 +71,26 @@
 }
 .review-form label{
     margin-right:20px
-}.review-form span {
-    color: white;
-    cursor:pointer;
 }
-.checked{
-    color:orange
+.review-comment span {
+    color:black;
+    cursor: pointer;
 }
+
+single-product-reviews .checked, .review-comment .checked[style] {
+    color: orange !important;
+}
+/*.reply-hidden{
+    display:none !important;
+}*/
+/*.reply-form{
+    transition: all ease-in-out .3s;
+
+}
+.replies{
+    width:90%;
+    left:0;
+}*/
 /*-------------product details page end ------------------*/
 /*-----------user status--------------*/
 .user-online {

@@ -12,6 +12,14 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
+            @Html.DisplayNameFor(model => model.Codenname)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Codenname)
+        </dd>
+
+        <dt>
             @Html.DisplayNameFor(model => model.CreatedDate)
         </dt>
 
@@ -84,6 +92,14 @@
         </dd>
 
         <dt>
+            @Html.DisplayNameFor(model => model.Employee.FirstName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Employee.FirstName)
+        </dd>
+
+        <dt>
             @Html.DisplayNameFor(model => model.OrderStatus.Name)
         </dt>
 
@@ -97,14 +113,6 @@
 
         <dd>
             @Html.DisplayFor(model => model.Shipment.ShippingAddress)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Employee.FirstName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Employee.FirstName)
         </dd>
 
     </dl>

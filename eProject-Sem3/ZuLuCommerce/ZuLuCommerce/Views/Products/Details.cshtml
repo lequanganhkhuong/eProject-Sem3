@@ -3,6 +3,7 @@
 @using ZuLuCommerce.Models
 @{
     var db = new eCommerceEntities();
+    var features = ViewBag.features as ProductFeature;
 }
 
 @{
@@ -20,7 +21,7 @@
                 <div class="breadcrumb-content text-center">
                     <h1 class="breadmome-name">Single Product</h1>
                     <ul>
-                        <li><a href="index.html">Home</a></li>
+                        <li><a href=@Url.Action("Index","Home")>Home</a></li>
                         <li class="active">Single Product</li>
                     </ul>
                 </div>
@@ -90,80 +91,173 @@
                     </div>
                 </div>
                 <!--Tab Menu End-->
-                @{ 
-                    var discount_price = Model.Price;
-                    discount_price -= Model.Price * Model.Discount / 100;
-                }
-                
-                
             </div>
             <div class="col-md-7">
                 <div class="single-product-content">
                     <h1 class="single-product-name">@Model.Name</h1>
                     <div class="single-product-reviews">
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
+                        @{
+                            var productRate = db.Ratings.Where(x => x.ProductId == Model.Id).ToList();
+                            var count = productRate.Count();
+                            if (count != 0)
+                            {
+                                var total = productRate.Select(x => x.Rating1).Sum();
+                                var rate = total / count;
+                                if (rate != 0)
+                                {
+                                    var check = "color:orange";
+                                    if (rate >= 1)
+                                    {
+                                        check = "color:orange";
+                                    }
+                                    <i class="fa fa-star" style="@check"></i>
+                                    check = "";
+                                    if (rate >= 2)
+                                    {
+                                        check = "color:orange";
+                                    }
+                                    <i class="fa fa-star" style="@check"></i>
+                                    check = "";
+                                    if (rate >= 3)
+                                    {
+                                        check = "color:orange";
+                                    }
+                                    <i class="fa fa-star" style="@check"></i>
+                                    check = "";
+                                    if (rate >= 4)
+                                    {
+                                        check = "color:orange";
+                                    }
+                                    <i class="fa fa-star" style="@check"></i>
+                                    check = "";
+                                    if (rate >= 5)
+                                    {
+                                        check = "color:orange";
+                                    }
+                                    <i class="fa fa-star" style="@check"></i>
+                                    <i style="margin-left:10px">@rate.ToString("N1") -- (by @count users)</i>
+                                }
+
+                            }
+                            if(count == 0)
+                            {
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star"></i>
+                                    <i style="margin-left:10px">No review yet</i>
+                            }
+
+                        }
+                       
                     </div>
                     <div class="single-product-price">
                         <div class="product-discount">
                             @{
-                                if (Model.Discount != 0)
+                                var discount_price = Model.Price;
+                                var specdeal = db.SpecialDeals.Where(x => x.IsActive && x.EndDate > DateTime.Now && x.StartDate < DateTime.Now && x.ProductId == Model.Id).SingleOrDefault();
+                                if (specdeal != null)
                                 {
-                                    <span class="price">@discount_price.ToString("N0") VND</span>
-                                    <span class="discount">-@Model.Discount %</span>
-                                    <div class="product-price">
-                                       <span class="regular-price">@Model.Price.ToString("N0") VND</span>
-                                            
-                                    </div>
+                                    discount_price -= Model.Price * specdeal.Discount / 100;
+                                    if (Model.Discount != 0)
+                                    {
+                                        <span class="price">@discount_price.ToString("N0") VND</span>
+                                        if (specdeal.Discount == 0)
+                                        {
+                                            <span class="discount">-@Model.Discount %</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="discount">-@specdeal.Discount %</span>
+                                        }
+                                        <div class="product-price">
+                                            <span class="regular-price">@Model.Price.ToString("N0") VND</span>
+
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        if (specdeal.Discount == 0)
+                                        {
+                                            <span class="price">@Model.Price.ToString("N0") VND</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="price">@discount_price.ToString("N0") VND</span>
+                                            <span class="discount">-@specdeal.Discount %</span>
+                                            <div class="product-price">
+                                                <span class="regular-price">@Model.Price.ToString("N0") VND</span>
+
+                                            </div>
+                                        }
+                                    }
                                 }
-                                else
+                                if (specdeal == null)
                                 {
-                                    <span class="price">@Model.Price.ToString("N0") VND</span>
-                                    <span class="discount">-@Model.Discount %</span>
+                                    discount_price -= Model.Price * Model.Discount / 100;
+                                    if (Model.Discount != 0)
+                                    {
+                                        <span class="price">@discount_price.ToString("N0") VND</span>
+                                        <span class="discount">-@Model.Discount %</span>
+                                        <div class="product-price">
+                                            <span class="regular-price">@Model.Price.ToString("N0") VND</span>
+
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="price">@Model.Price.ToString("N0") VND</span>
+                                    }
                                 }
+
                             }
                            
                         </div>
                     </div>
                     <div class="product-info">
-                        <p>@Model.Description</p>
+                        <p></p>
                     </div>
                     <div class="single-product-action">
-                        @*<form action="#">*@
-                            @*<div class="product-variants">
-                                <div class="product-variants-item">
-                                    <span class="control-label">Size</span>
-                                    <select class="nice-select" name="size">
-                                        <option value="1">S</option>
-                                        <option value="2">M</option>
-                                        <option value="3">X</option>
-                                        <option value="4">XL</option>
-                                    </select>
-                                </div>
-                                <div class="product-variants-item">
-                                    <span class="control-label">Color</span>
-                                    <select class="nice-select" name="color">
-                                        <option value="1">Red</option>
-                                        <option value="2">Green</option>
-                                        <option value="3">Blue</option>
-                                        <option value="4">White</option>
-                                    </select>
-                                </div>
-                            </div>*@
+                      
+                           
                             <div class="product-add-to-cart">
                                 <span class="control-label">Quantity</span>
                                 <div class="cart-plus-minus">
                                     <input id="quantity" class="cart-plus-minus-box" type="number" @*name="qtybutton"*@ value="0">
                                 </div>
                                 <div class="add">
-                                    <button class="add-to-cart btnAddToCart" pid="@Model.Id" pthumbnail="@Model.Thumbnail" pname="@Model.Name" pprice="@discount_price"><i class="ion-bag"></i> add-to-cart</button>
-                                    <span class="product-availability">In stock</span>
+                                    @if (!User.Identity.IsAuthenticated)
+                                    {
+                                        <button class="add-to-cart btnAddToCart" pid="@Model.Id" pthumbnail="@Model.Thumbnail" pname="@Model.Name" pprice="@discount_price"><i class="ion-bag"></i> add-to-cart</button>
+                                       
+                                            if (Model.Stock == 0)
+                                            {
+                                                <span class="product-availability" style="color:red">Out of stock</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="product-availability">In stock @Model.Stock products left</span>
+                                            }
+                                        
+                                    }
+                                    @if (User.Identity.IsAuthenticated)
+                                    {
+                                        <button class="add-to-cart loginBtnAddToCart" pid="@Model.Id"  pthumbnail="@Model.Thumbnail" pname="@Model.Name" pprice="@discount_price"><i class="ion-bag"></i> add-to-cart</button>
+                                        
+                                            if (Model.Stock == 0)
+                                            {
+                                                <span class="product-availability" style="color:red">Out of stock</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="product-availability">In stock @Model.Stock products left</span>
+                                            }
+                                     }
+                                     
                                 </div>
                             </div>
-                        @*</form>*@
+                        
                         <!--Single Product Share-->
                         <div class="single-product-share mt-20">
                             <ul>
@@ -217,9 +311,15 @@
                         <li>
                             <a class="active" data-toggle="tab" href="#description">Description</a>
                         </li>
-                        <li>
-                            <a data-toggle="tab" href="#product-details">Product Details</a>
-                        </li>
+                        @{
+                            if (Model.Category.Topic.Id == 1 || Model.Category.Topic.Id == 4)
+                            {
+                                <li>
+                                    <a data-toggle="tab" href="#product-details">Product Details</a>
+                                </li>
+                            }
+                        }
+                        
                         <li>
                             <a data-toggle="tab" href="#reviews">Reviews</a>
                         </li>
@@ -229,55 +329,127 @@
                     <div class="tab-content product-review-content-tab mt-30" id="myTabContent-4">
                         <div class="tab-pane fade show active" id="description">
                             <div class="single-product-description">
-                                <p>Fashion has been creating well-designed collections since 2010. The brand offers feminine designs delivering stylish separates and statement dresses which has since evolved into a full ready-to-wear collection in which every item is a vital part of a woman's wardrobe. The result? Cool, easy, chic looks with youthful elegance and unmistakable signature style. All the beautiful pieces are made in Italy and manufactured with the greatest attention. Now Fashion extends to a range of accessories including shoes, hats, belts and more!</p>
+                                <p>@Html.Raw(Model.Description)</p>
                             </div>
                         </div>
-                        <div class="tab-pane fade" id="product-details">
-                            <div class="product-details">
-                                <div class="product-manufacturer">
-                                    <a href="#">
-                                        <img src="img/logo/logo.jpg" alt="">
-                                    </a>
-                                </div>
-                                <div class="product-reference">
-                                    <label class="label">Reference </label> <span class="demo-list">demo_13</span>
-                                </div>
-                                <div class="product-quantities">
-                                    <label class="label">In stock</label> <span class="item">300 Items</span>
-                                </div>
-                                <div class="product-out-of-stock"></div>
-                                <div class="product-features">
-                                    <h3>Data sheet</h3>
-                                    <div class="table-responsive">
-                                        <table class="table">
-                                            <tr>
-                                                <td>Compositions</td>
-                                                <td>Cotton</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Styles</td>
-                                                <td>Casual</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Properties</td>
-                                                <td>Short Sleeve</td>
-                                            </tr>
-                                        </table>
+                        @{
+                            if (Model.Category.Topic.Id == 1 || Model.Category.Topic.Id == 4)
+                            {
+                                <div class="tab-pane fade" id="product-details">
+                                    <div class="product-details">
+                                      
+                                        <div class="product-reference">
+                                            <label class="label">Category </label> <span class="demo-list">@Model.Category.Name</span>
+                                        </div>
+                                        <div class="product-quantities">
+                                            <label class="label">In stock</label> <span class="item">@Model.Stock</span>
+                                        </div>
+                                        <div class="product-out-of-stock"></div>
+                                        <div class="product-features">
+                                            <h3>Product feature</h3>
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <tr>
+                                                        <td>Screen size</td>
+                                                        <td>@features.ScreenSize inches</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Storage type</td>
+                                                        <td>@features.StorageType</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Storage cap</td>
+                                                        <td>@features.StorageCap</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Graphic</td>
+                                                        <td>@features.Graphic</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Processor</td>
+                                                        <td>@features.Processor</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>OS</td>
+                                                        <td>@features.OS</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Battery life</td>
+                                                        <td>@features.BatteryLife</td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
+
+                            }
+                        }
+                        
                         <div class="tab-pane fade" id="reviews">
                             <div class="review-page-comment">
                                 <div class="review-comment">
                                     <h2>Write your review</h2>
-
+                                    
                                     <label>Your rating:   </label>
-                                    <span id="rate1" rate="1" class="fa fa-star"></span>
-                                    <span id="rate2" rate="2" class="fa fa-star"></span>
-                                    <span id="rate3" rate="3" class="fa fa-star"></span>
-                                    <span id="rate4" rate="4" class="fa fa-star"></span>
-                                    <span id="rate5" rate="5" class="fa fa-star"></span>
+                                    @{
+                                        if (User.Identity.IsAuthenticated)
+                                        {
+                                            var check = "fa fa-star";
+                                            var cur_user = int.Parse(User.Identity.Name);
+                                            var userRating = db.Ratings.Where(x => x.UserId == cur_user && x.ProductId == Model.Id).FirstOrDefault();
+                                            if (userRating != null)
+                                            {
+                                                if (userRating.Rating1 >= 1)
+                                                {
+                                                    check = "color:orange";
+                                                }
+                                                <span id="rate1" rate="1" class="fa fa-star" style="@check"></span>
+                                                check = "";
+                                                if (userRating.Rating1 >= 2)
+                                                {
+                                                    check = "color:orange";
+                                                }
+                                                <span id="rate2" rate="2" class="fa fa-star" style="@check"></span>
+                                                check = "";
+                                                if (userRating.Rating1 >= 3)
+                                                {
+                                                    check = "color:orange";
+                                                }
+                                                <span id="rate3" rate="3" class="fa fa-star" style="@check"></span>
+                                                check = "";
+                                                if (userRating.Rating1 >= 4)
+                                                {
+                                                    check = "color:orange";
+                                                }
+                                                <span id="rate4" rate="4" class="fa fa-star" style="@check"></span>
+                                                check = "";
+                                                if (userRating.Rating1 >= 5)
+                                                {
+                                                    check = "color:orange";
+                                                }
+                                                <span id="rate5" rate="5" class="fa fa-star" style="@check"></span>
+                                            }
+                                            else
+                                            {
+                                                <span id="rate1" rate="1" class="fa fa-star"></span>
+                                                <span id="rate2" rate="2" class="fa fa-star"></span>
+                                                <span id="rate3" rate="3" class="fa fa-star"></span>
+                                                <span id="rate4" rate="4" class="fa fa-star"></span>
+                                                <span id="rate5" rate="5" class="fa fa-star"></span>
+                                            }
+
+                                        }
+                                        if (!User.Identity.IsAuthenticated)
+                                        {
+                                            <span id="rate1" rate="1" class="fa fa-star"></span>
+                                            <span id="rate2" rate="2" class="fa fa-star"></span>
+                                            <span id="rate3" rate="3" class="fa fa-star"></span>
+                                            <span id="rate4" rate="4" class="fa fa-star"></span>
+                                            <span id="rate5" rate="5" class="fa fa-star"></span>
+                                        }
+                                    }
+                                    
 
                                 </div>
                                 <div class="review-form">
@@ -286,12 +458,27 @@
                                     <div class="send-your-review">
 
                                         <div class="send-cancel-btn">
-                                            <button class="send-btn">Send</button>
+                                            <button id="review-submit" class="send-btn">Send</button>
 
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            <!--Comment Area Start-->
+                            <div class="comments-area mt-80">
+                                @{ 
+                                    var comments = db.Comments.Where(x => x.ProductId == Model.Id && x.ParentId == null).ToList();
+                                }
+                                <h3>@comments.Count() comments</h3>
+                                @foreach(var item in comments)
+                                {
+                                    @Html.Partial("_ProductComments", item);
+                                }
+                            </div>
+                            
+                            <!--Comment Area End-->
+                        </div>
+
                         </div>
                     </div>
                     <!--Review And Description Tab Content End-->
@@ -299,487 +486,120 @@
             </div>
         </div>
     </div>
-</div>
+
 <!--Single Product Review Tab End-->
 <!--Product Area Start-->
-<div class="product-area mt-55">
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <!--Section Title Start-->
-                <div class="section-title">
-                    <h2>12 other products in the same category:</h2>
-                </div>
-                <!--Section Title End-->
-            </div>
-        </div>
-        <div class="product-block-content">
-            <div class="row">
-                <div class="bestsellerSlide-3 pdr-0 owl-carousel">
-                    <div class="col-md-12">
-                        <!--Single Product Start-->
-                        <div class="single-product">
-                            <div class="product-img">
-                                <a href="single-product.html">
-                                    <img class="first-img" src="img/product/product30.jpg" alt="">
-                                    <img class="hover-img" src="img/product/product22.jpg" alt="">
-                                </a>
-                                <span class="sticker">New</span>
-                                <div class="product-action">
-                                    <ul>
-                                        <li><a href="cart.html"><i class="ion-bag"></i></a></li>
-                                        <li><a href="#open-modal" data-toggle="modal"><i class="ion-eye"></i></a></li>
-                                        <li><a href="#"><i class="ion-ios-copy-outline"></i></a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="product-content">
-                                <h4><a href="single-product.html">Versace Bright Crystal</a></h4>
-                                <div class="product-price">
-                                    <span class="price">$260.00</span>
-                                </div>
-                                <div class="product-reviews">
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <!--Single Product End-->
-                    </div>
-                    <div class="col-md-12">
-                        <!--Single Product Start-->
-                        <div class="single-product">
-                            <div class="product-img">
-                                <a href="single-product.html">
-                                    <img class="first-img" src="img/product/product28.jpg" alt="">
-                                    <img class="hover-img" src="img/product/product26.jpg" alt="">
-                                </a>
-                                <span class="sticker">New</span>
-                                <div class="product-action">
-                                    <ul>
-                                        <li><a href="cart.html"><i class="ion-bag"></i></a></li>
-                                        <li><a href="#open-modal" data-toggle="modal"><i class="ion-eye"></i></a></li>
-                                        <li><a href="#"><i class="ion-ios-copy-outline"></i></a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="product-content">
-                                <h4><a href="single-product.html">Merax Stylish Accent</a></h4>
-                                <div class="product-price">
-                                    <span class="price">$90.00</span>
-                                </div>
-                                <div class="product-reviews">
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <!--Single Product End-->
-                    </div>
-                    <div class="col-md-12">
-                        <!--Single Product Start-->
-                        <div class="single-product">
-                            <div class="product-img">
-                                <a href="single-product.html">
-                                    <img class="first-img" src="img/product/product23.jpg" alt="">
-                                </a>
-                                <span class="sticker">New</span>
-                                <div class="product-action">
-                                    <ul>
-                                        <li><a href="cart.html"><i class="ion-bag"></i></a></li>
-                                        <li><a href="#open-modal" data-toggle="modal"><i class="ion-eye"></i></a></li>
-                                        <li><a href="#"><i class="ion-ios-copy-outline"></i></a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="product-content">
-                                <h4><a href="single-product.html">Dwar Men's Casual Long</a></h4>
-                                <div class="product-price">
-                                    <span class="price">$350.00</span>
-                                </div>
-                                <div class="product-reviews">
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <!--Single Product End-->
-                    </div>
-                    <div class="col-md-12">
-                        <!--Single Product Start-->
-                        <div class="single-product">
-                            <div class="product-img">
-                                <a href="single-product.html">
-                                    <img class="first-img" src="img/product/product14.jpg" alt="">
-                                    <img class="hover-img" src="img/product/product21.jpg" alt="">
-                                </a>
-                                <span class="sticker">New</span>
-                                <div class="product-action">
-                                    <ul>
-                                        <li><a href="cart.html"><i class="ion-bag"></i></a></li>
-                                        <li><a href="#open-modal" data-toggle="modal"><i class="ion-eye"></i></a></li>
-                                        <li><a href="#"><i class="ion-ios-copy-outline"></i></a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="product-content">
-                                <h4><a href="single-product.html">Vera Wang Princess</a></h4>
-                                <div class="product-price">
-                                    <span class="price">$120.00</span>
-                                </div>
-                                <div class="product-reviews">
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <!--Single Product End-->
-                    </div>
-                    <div class="col-md-12">
-                        <!--Single Product Start-->
-                        <div class="single-product">
-                            <div class="product-img">
-                                <a href="single-product.html">
-                                    <img class="first-img" src="img/product/product31.jpg" alt="">
-                                    <img class="hover-img" src="img/product/product12.jpg" alt="">
-                                </a>
-                                <span class="sticker">New</span>
-                                <div class="product-action">
-                                    <ul>
-                                        <li><a href="cart.html"><i class="ion-bag"></i></a></li>
-                                        <li><a href="#open-modal" data-toggle="modal"><i class="ion-eye"></i></a></li>
-                                        <li><a href="#"><i class="ion-ios-copy-outline"></i></a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="product-content">
-                                <h4><a href="single-product.html">Chouyatou Men's Casual</a></h4>
-                                <div class="product-price">
-                                    <span class="price">$20.00</span>
-                                </div>
-                                <div class="product-reviews">
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <!--Single Product End-->
-                    </div>
-                    <div class="col-md-12">
-                        <!--Single Product Start-->
-                        <div class="single-product">
-                            <div class="product-img">
-                                <a href="single-product.html">
-                                    <img class="first-img" src="img/product/product12.jpg" alt="">
-                                    <img class="hover-img" src="img/product/product14.jpg" alt="">
-                                </a>
-                                <span class="sticker">New</span>
-                                <div class="product-action">
-                                    <ul>
-                                        <li><a href="cart.html"><i class="ion-bag"></i></a></li>
-                                        <li><a href="#open-modal" data-toggle="modal"><i class="ion-eye"></i></a></li>
-                                        <li><a href="#"><i class="ion-ios-copy-outline"></i></a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="product-content">
-                                <h4><a href="single-product.html">Enriched Nail Polish</a></h4>
-                                <div class="product-price">
-                                    <span class="price">$180.00</span>
-                                </div>
-                                <div class="product-reviews">
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <!--Single Product End-->
-                    </div>
-                    <div class="col-md-12">
-                        <!--Single Product Start-->
-                        <div class="single-product">
-                            <div class="product-img">
-                                <a href="single-product.html">
-                                    <img class="first-img" src="img/product/product36.jpg" alt="">
-                                    <img class="hover-img" src="img/product/product2.jpg" alt="">
-                                </a>
-                                <span class="sticker">New</span>
-                                <div class="product-action">
-                                    <ul>
-                                        <li><a href="cart.html"><i class="ion-bag"></i></a></li>
-                                        <li><a href="#open-modal" data-toggle="modal"><i class="ion-eye"></i></a></li>
-                                        <li><a href="#"><i class="ion-ios-copy-outline"></i></a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="product-content">
-                                <h4><a href="single-product.html">Makeup Brushes Set</a></h4>
-                                <div class="product-price">
-                                    <span class="price">$320.00</span>
-                                </div>
-                                <div class="product-reviews">
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <!--Single Product End-->
-                    </div>
-                    <div class="col-md-12">
-                        <!--Single Product Start-->
-                        <div class="single-product">
-                            <div class="product-img">
-                                <a href="single-product.html">
-                                    <img class="first-img" src="img/product/product24.jpg" alt="">
-                                    <img class="hover-img" src="img/product/product12.jpg" alt="">
-                                </a>
-                                <span class="sticker">New</span>
-                                <div class="product-action">
-                                    <ul>
-                                        <li><a href="cart.html"><i class="ion-bag"></i></a></li>
-                                        <li><a href="#open-modal" data-toggle="modal"><i class="ion-eye"></i></a></li>
-                                        <li><a href="#"><i class="ion-ios-copy-outline"></i></a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="product-content">
-                                <h4><a href="single-product.html">Columbia Men's Ascender</a></h4>
-                                <div class="product-price">
-                                    <span class="price">$36.00</span>
-                                </div>
-                                <div class="product-reviews">
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                    <i class="ion-android-star"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <!--Single Product End-->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!--Product Area End-->
-<!--Feature Area Start-->
-<div class="feature-area mt-80">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4">
-                <!--Single Feature Start-->
-                <div class="single-feature">
-                    <div class="feature-icon">
-                        <i class="icon ion-ios-telephone"></i>
-                    </div>
-                    <div class="feature-content">
-                        <h3>(999) 1234 56789</h3>
-                        <p>Free support line!</p>
-                    </div>
-                </div>
-                <!--Single Feature End-->
-            </div>
-            <div class="col-md-4">
-                <!--Single Feature Start-->
-                <div class="single-feature">
-                    <div class="feature-icon">
-                        <i class="icon ion-email"></i>
-                    </div>
-                    <div class="feature-content">
-                        <h3>(999) 1234 56789</h3>
-                        <p>Free support line!</p>
-                    </div>
-                </div>
-                <!--Single Feature End-->
-            </div>
-            <div class="col-md-4">
-                <!--Single Feature Start-->
-                <div class="single-feature">
-                    <div class="feature-icon">
-                        <i class="icon ion-ios-timer-outline"></i>
-                    </div>
-                    <div class="feature-content">
-                        <h3>(999) 1234 56789</h3>
-                        <p>Free support line!</p>
-                    </div>
-                </div>
-                <!--Single Feature End-->
-            </div>
-        </div>
-    </div>
-</div>
-<!--Feature Area End-->
+@{
+    var groups = db.Groups.Where(x => x.GroupItems.Select(c => c.ProductId).Contains(Model.Id) && x.IsActive);
 
-<!-- Modal Area Strat -->
-<div class="modal fade" id="open-modal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
+
+        <div class="product-area mt-55">
+            <div class="container">
                 <div class="row">
-                    <!--Modal Img-->
-                    <div class="col-md-5">
-                        <!--Modal Tab Content Start-->
-                        <div class="tab-content product-details-large" id="myTabContent">
-                            <div class="tab-pane fade show active" id="single-slide1" role="tabpanel" aria-labelledby="single-slide-tab-1">
-                                <!--Single Product Image Start-->
-                                <div class="single-product-img img-full">
-                                    <img src="img/single-product/large/large1.jpg" alt="">
-                                </div>
-                                <!--Single Product Image End-->
-                            </div>
-                            <div class="tab-pane fade" id="single-slide2" role="tabpanel" aria-labelledby="single-slide-tab-2">
-                                <!--Single Product Image Start-->
-                                <div class="single-product-img img-full">
-                                    <img src="img/single-product/large/large2.jpg" alt="">
-                                </div>
-                                <!--Single Product Image End-->
-                            </div>
-                            <div class="tab-pane fade" id="single-slide3" role="tabpanel" aria-labelledby="single-slide-tab-3">
-                                <!--Single Product Image Start-->
-                                <div class="single-product-img img-full">
-                                    <img src="img/single-product/large/large3.jpg" alt="">
-                                </div>
-                                <!--Single Product Image End-->
-                            </div>
-                            <div class="tab-pane fade" id="single-slide4" role="tabpanel" aria-labelledby="single-slide-tab-4">
-                                <!--Single Product Image Start-->
-                                <div class="single-product-img img-full">
-                                    <img src="img/single-product/large/large4.jpg" alt="">
-                                </div>
-                                <!--Single Product Image End-->
-                            </div>
+                    <div class="col-12">
+                        <!--Section Title Start-->
+                        <div class="section-title">
+                            <h2>Related products:</h2>
                         </div>
-                        <!--Modal Content End-->
-                        <!--Modal Tab Menu Start-->
-                        <div class="single-product-menu">
-                            <div class="nav single-slide-menu" role="tablist">
-                                <div class="single-tab-menu img-full">
-                                    <a class="active" data-toggle="tab" id="single-slide-tab-1" href="#single-slide1"><img src="img/single-product/small/small1.jpg" alt=""></a>
-                                </div>
-                                <div class="single-tab-menu img-full">
-                                    <a data-toggle="tab" id="single-slide-tab-2" href="#single-slide2"><img src="img/single-product/small/small2.jpg" alt=""></a>
-                                </div>
-                                <div class="single-tab-menu img-full">
-                                    <a data-toggle="tab" id="single-slide-tab-3" href="#single-slide3"><img src="img/single-product/small/small3.jpg" alt=""></a>
-                                </div>
-                                <div class="single-tab-menu img-full">
-                                    <a data-toggle="tab" id="single-slide-tab-4" href="#single-slide4"><img src="img/single-product/small/small4.jpg" alt=""></a>
-                                </div>
-                            </div>
-                        </div>
-                        <!--Modal Tab Menu End-->
+                        <!--Section Title End-->
                     </div>
-                    <!--Modal Img-->
-                    <!--Modal Content-->
-                    <div class="col-md-7">
-                        <div class="single-product-content">
-                            <h1 class="single-product-name">Printed Chiffon Dress</h1>
-                            <div class="single-product-reviews">
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                            </div>
-                            <div class="single-product-price">
-                                <div class="product-discount">
-                                    <span class="regular-price">$20.50</span>
-                                    <span class="price">$16.40</span>
-                                    <span class="discount">-20%</span>
-                                </div>
-                            </div>
-                            <div class="product-info">
-                                <p>Long printed dress with thin adjustable straps. V-neckline and wiring under the bust with ruffles at the bottom of the dress.</p>
-                            </div>
-                            <div class="single-product-action">
-                                <form action="#">
-                                    <div class="product-variants">
-                                        <div class="product-variants-item">
-                                            <span class="control-label">Size</span>
-                                            <select class="nice-select" name="size">
-                                                <option value="1">S</option>
-                                                <option value="2">M</option>
-                                                <option value="3">X</option>
-                                                <option value="4">XL</option>
-                                            </select>
-                                        </div>
-                                        <div class="product-variants-item">
-                                            <span class="control-label">Color</span>
-                                            <select class="nice-select" name="color">
-                                                <option value="1">Red</option>
-                                                <option value="2">Green</option>
-                                                <option value="3">Blue</option>
-                                                <option value="4">White</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="product-add-to-cart">
-                                        <span class="control-label">Quantity</span>
-                                        <div class="cart-plus-minus">
-                                            <input class="cart-plus-minus-box" type="text" name="qtybutton" value="0">
-                                        </div>
-                                        <div class="add">
-                                            <button class="add-to-cart"><i class="zmdi zmdi-shopping-cart-plus"></i> add-to-cart</button>
-                                            <span class="product-availability"><i class="zmdi zmdi-check"></i> In stock</span>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
+                </div>
+                <div class="product-block-content">
+                    <div class="row">
+                        <div class="deal-product-active4 owl-carousel">
+                            
+                          
+                               @{
+                                   if (groups.Count() != 0)
+                                   {
+                                       foreach (var b in groups)
+                                       {
+                                           var ids = b.GroupItems.Select(c => c.ProductId);
+                                           var p = db.Products.Where(x => ids.Contains(x.Id) && x.Id != Model.Id);
+                                           foreach (var c in p)
+                                           {
+                                                @Html.Partial("_ProductItems", c);
+                                           }
+
+                                       }
+                                   }
+                                   else
+                                   {
+                                       foreach (var b in db.Products.Where(x => x.Category.TopicId == Model.Category.TopicId && x.Id != Model.Id))
+                                       {
+                                            @Html.Partial("_ProductItems", b);
+                                       }
+                                   }
+                            }
+
+
+
+
+
+
                         </div>
                     </div>
-                    <!--Modal Content-->
                 </div>
-            </div>
-            <div class="modal-footer">
-                <!--Single Product Share-->
-                <div class="single-product-share">
-                    <ul>
-                        <li class="categories-title">Share :</li>
-                        <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                        <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                        <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
-                        <li><a href="#"><i class="fa fa-pinterest"></i></a></li>
-                    </ul>
-                </div>
-                <!--Single Product Share-->
             </div>
         </div>
-    </div>
-</div>
-<!-- Modal Area End -->
+                                    
+
+}
+<!--Product Area End-->
+
+
 
     <script>
         $(document).ready(function () {
+            //display reply form
+            $(".reply-comment").click(function (e) {
+                if ("@User.Identity.IsAuthenticated" === "False"){
+                    alert("please login to continue");
+                    return false;
+                }
+                e.preventDefault();
+                var btn = $(this);
+                var replyform = btn.attr("replytrigger");
+                var parent = btn.attr("parentid");
+                var replyto = btn.attr("replyto");
+                $(".reply-form").css("display", "none");
+                $("#" + replyform + " button").removeAttr("parentid");
+                $("#" + replyform + " button").removeAttr("replyto");
+                $("#" + replyform + " .replyto").html("");
+                $("#" + replyform).css("display", "inline-block");
+                //$("#" + replyform).removeClass("reply-hidden");
+                $("#" + replyform + " #review-submit").attr("parentid", parent);
+                $("#" + replyform + " #review-submit").attr("replyto", replyto);
+                $("#" + replyform + " .replyto").html(replyto);
+            });
+            //submit reply
+            $(".reply-form #review-submit").click(function () {
+                var reply = $("#reply-content").val();
+                if (reply == "") {
+                    alert("please leave your comment before submitting");
+                    return false;
+                }
+                var str = "@@" + $(this).attr("replyto") + "   " + reply + "-" + @Model.Id + "-" + $(this).attr("parentid");
+                $.post("/Products/UserReplyComment?comment=" + str, function (response) {
+                    if (response == "OK") {
+                        //add comment to comment section
+
+
+                        alert("done");
+                    }
+                    else if (response == "NotLogin") {
+                        alert("Please login to continue!");
+                    } else {
+                        alert(response);
+                    }
+                });
+            });
             $(".btnAddToCart").click(function () {
                 var a = $(this);
+                if (@Model.Stock === 0) {
+                    alert("This product is out of stock, can't add to cart");
+                    return false;
+                }
                 var quantity = $("#quantity").val();
                 if (quantity != 0) {
                     addItem(a.attr("pid"), a.attr("pname"), a.attr("pthumbnail"), a.attr("pprice"), quantity);
@@ -791,6 +611,35 @@
                 CartItemsCount();
 
             });
+            //display user rating on product
+           $(".loginBtnAddToCart").click(function () {
+               var a = $(this);
+               var id = a.attr("pid");
+                if (@Model.Stock === 0) {
+                    alert("This product is out of stock, can't add to cart");
+                    return false;
+                }
+                var quantity = $("#quantity").val();
+                if (quantity != 0) {
+                    addItem(a.attr("pid"), a.attr("pname"), a.attr("pthumbnail"), a.attr("pprice"), quantity);
+                    $.post("/Carts/AddToCart?id=" + id + "&qty=" + quantity, function (response) {
+                        if (response == "OK") {
+                            //alert("Added " + quantity + " product to your cart!");
+                            loginCartItemsCount();
+                        }
+                        else {
+                            alert("Invalid");
+                        }
+                    });
+                }
+                else {
+                    alert("Please choose the quantity of the product");
+                }
+
+                CartItemsCount();
+
+            });
+            //rating star hover effect
             $("#rate1").hover(function () {
                 $(this).css("color", "orange");
             }, function () {
@@ -834,24 +683,66 @@
                     $(this).css("color", "black");
                 });
                 });
+
+            //rating
             $("#rate1, #rate2,#rate3,#rate4,#rate5").each(function () {
                 $(this).click(function () {
                     var btn = $(this);
                     var ratenumber = btn.attr("rate");
                     var str = ratenumber + "-" + @Model.Id;
-                    $.post("/Products/UserRating/" + str, function (response) {
-                    if (response == "OK") {
-                        alert("You have successfully rated this product "+ ratenumber + " star(s)!");
-                        for (i = ratenumber; i > 0; i--) {
-                            $("#rate" + i).css("color", "orange");
+
+                    $.post("/Products/UserRating?str=" + str, function (response) {
+                        if (response == "OK") {
+                            alert("You have successfully rated this product " + ratenumber + " star(s)!");
+                            $("#rate1, #rate2,#rate3,#rate4,#rate5").each(function () {
+                                $(this).removeClass("checked");
+                            });
+                            for (i = ratenumber; i > 0; i--) {
+                                $("#rate" + i).addClass("checked");
+                            }
                         }
-                    }
-                    if (response == "NotLogin"){
-                        alert("Please login to continue!");
-                    }
-                });
+                        else if (response == "NotLogin"){
+                            alert("Please login to continue!");
+                        } else {
+                            alert(response);
+                        }
+                    });
                 });
 
+
+            });
+            //leaving comment
+            var reviewcontent = "";
+            $("#content").click(function () {
+                if ("@User.Identity.IsAuthenticated" === "False"){
+                    alert("please login to continue");
+                    return false;
+                }
+                else {
+
+                }
+            });
+            $("#review-submit").click(function () {
+                var reviewcontent = $("#content").val();
+                if (reviewcontent == "") {
+                    alert("please leave your rating before submitting");
+                    return false;
+                }
+                var str = reviewcontent + "-" + @Model.Id;
+
+                $.post("/Products/UserComment?comment=" + str, function (response) {
+                        if (response == "OK") {
+                            //add comment to comment section
+
+
+                            alert("done");
+                        }
+                        else if (response == "NotLogin"){
+                            alert("Please login to continue!");
+                        } else {
+                            alert(response);
+                        }
+                    });
             });
         });
 </script>

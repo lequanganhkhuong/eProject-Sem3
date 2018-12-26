@@ -17,9 +17,11 @@ namespace ZuLuCommerce.Models.VM
         [Required]
         public string Phone { get; set; }
         public string Address { get; set; }
+        public int CityId { get; set; }
         [EmailAddress]
         [Required]
         public string Email { get; set; }
+        [DataType(DataType.DateTime)]
         public Nullable<System.DateTime> Birthday { get; set; }
 
         [Required]

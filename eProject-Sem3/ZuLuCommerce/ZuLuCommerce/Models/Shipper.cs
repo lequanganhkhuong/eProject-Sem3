@@ -27,8 +27,11 @@ namespace ZuLuCommerce.Models
         public string Address { get; set; }
         public string Email { get; set; }
         public System.DateTime Birthday { get; set; }
+        public int StatusId { get; set; }
+        public bool IsActive { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Shipment> Shipments { get; set; }
+        public virtual ShipmentStatus ShipmentStatus { get; set; }
     }
 }

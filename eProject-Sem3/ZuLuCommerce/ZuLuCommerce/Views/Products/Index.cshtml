@@ -2,11 +2,22 @@
 @using PagedList.Mvc 
 @using ZuLuCommerce.Models
 @{ 
-    eCommerceEntities db = new eCommerceEntities();
-}
-@{ 
     ViewBag.Title = "Products List";
+    eCommerceEntities db = new eCommerceEntities();
+    int start = 1;
+    int end = Model.PageSize;
+    int max = db.Products.Count();
+    if (Model.PageNumber > 1)
+    {
+        start = start + Model.PageSize * (Model.PageNumber - 1);
+        end = end * Model.PageNumber;
+    }
+    if (end > max)
+    {
+        end = max;
+    }
 }
+
     <!--Breadcrumb Area Start-->
 <div class="breadcrumb-area">
     <div class="container">
@@ -15,7 +26,7 @@
                 <div class="breadcrumb-content text-center">
                     <h1 class="breadmome-name">Shop</h1>
                     <ul>
-                        <li><a href="index.html">Home</a></li>
+                        <li><a href=@Url.Action("Index","Home")>Home</a></li>
                         <li class="active">Shop</li>
                     </ul>
                 </div>
@@ -43,7 +54,7 @@
                                             var cat = db.Categories.Where(x => x.TopicId == topic.Id);
                                             foreach (var c in cat)
                                             {
-                                                <li><a href="shop.html">@c.Name</a></li>
+                                                <li><a href=@Url.Action("Categories","Products",new { id = c.Id})>@c.Name</a></li>
                                             }
                                         }
 
@@ -133,7 +144,7 @@
                                     <a data-toggle="tab" href="#list"><i class="ion-android-menu show_list"></i></a>
                                 </li>
                             </ul>
-                            <p class="show-product">Showing 1–9 of 42 results</p>
+                            <p class="show-product">Showing @start - @end of @max item(s)</p>
                         </div>
                         <!--Toolbar Short Area Start-->
                         <div class="toolbar-short-area d-md-flex align-items-center">
@@ -158,12 +169,16 @@
                             <div id="grid" class="tab-pane fade show active">
                                 <div class="product-grid-view">
                                     <div class="row">
+
                                         @foreach (var item in Model)
-                                        {
+                                        {<div class="col-lg-4 col-xl-4 col-md-4">
                                             @Html.Partial("_ProductItems", item);
+                                        </div>
                                         }
-                                       
+
+
                                     </div>
+
                                 </div>
                             </div>
                             <div id="list" class="tab-pane fade">
@@ -178,22 +193,7 @@
                             <!--Pagination Start-->
                             <div class="pagination-product d-md-flex justify-content-md-between align-items-center">
                                 <div class="showing-product">
-                                    @{ 
-                                        int start = 1;
-                                        int end = Model.PageSize;
-                                        int max = db.Products.Count();
-                                        if (Model.PageNumber > 1)
-                                        {
-                                            start = start + Model.PageSize * (Model.PageNumber - 1);
-                                            end = end * Model.PageNumber;
-                                        }
-                                        if (end > max)
-                                        {
-                                            end = max;
-                                        }
-
-
-                                    }
+                                    
                                     <p> Showing @start - @end of @max item(s) </p>
                                 </div>
                                 <div class="page-list">
@@ -212,53 +212,7 @@
     </div>
 </div>
 <!--Shop Area End-->
-<!--Feature Area Start-->
-<div class="feature-area mt-80">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4">
-                <!--Single Feature Start-->
-                <div class="single-feature">
-                    <div class="feature-icon">
-                        <i class="icon ion-ios-telephone"></i>
-                    </div>
-                    <div class="feature-content">
-                        <h3>(999) 1234 56789</h3>
-                        <p>Free support line!</p>
-                    </div>
-                </div>
-                <!--Single Feature End-->
-            </div>
-            <div class="col-md-4">
-                <!--Single Feature Start-->
-                <div class="single-feature">
-                    <div class="feature-icon">
-                        <i class="icon ion-email"></i>
-                    </div>
-                    <div class="feature-content">
-                        <h3>(999) 1234 56789</h3>
-                        <p>Free support line!</p>
-                    </div>
-                </div>
-                <!--Single Feature End-->
-            </div>
-            <div class="col-md-4">
-                <!--Single Feature Start-->
-                <div class="single-feature">
-                    <div class="feature-icon">
-                        <i class="icon ion-ios-timer-outline"></i>
-                    </div>
-                    <div class="feature-content">
-                        <h3>(999) 1234 56789</h3>
-                        <p>Free support line!</p>
-                    </div>
-                </div>
-                <!--Single Feature End-->
-            </div>
-        </div>
-    </div>
-</div>
-<!--Feature Area End-->
+
 <!-- Modal Area Strat -->
 <div class="modal fade" id="open-modal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">

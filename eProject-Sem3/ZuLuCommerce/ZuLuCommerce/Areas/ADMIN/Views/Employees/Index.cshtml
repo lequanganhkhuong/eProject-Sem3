@@ -1,8 +1,9 @@
 ﻿@model PagedList.IPagedList<ZuLuCommerce.Models.Employee>
 @using PagedList.Mvc 
-
+@using ZuLuCommerce.Models
 @{
     ViewBag.Title = "Index";
+    var db = new eCommerceEntities();
 }
 
 <h2>Index</h2>
@@ -10,112 +11,125 @@
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
-@*<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayName("Full Name")
-        </th>
-   
-
-        <th>
-            @Html.DisplayName("User Name")
-        </th>
-        
-        <th>
-            @Html.DisplayName("Avatar")
-        </th>
-        <th>
-            @Html.DisplayName("Last login")
-        </th>
-        
-        <th></th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            <p> @item.FirstName   @item.LastName</p>
-        </td>
-       
-       
-        <td>
-            @Html.DisplayFor(modelItem => item.Username)
-        </td>
-        
-        <td>
-            @{ 
-                var src = "/Uploads/default-avatar.jpg";
-                if(item.Avatar !=null && !item.Avatar.Equals("") && File.Exists(Server.MapPath("~/Uploads/Employees/" + item.Id + "/" + item.Avatar)))
-                {
-                    src = "/Uploads/Employees/" + item.Id + "/" + item.Avatar;
-                }
-
-            }
-            <img style="height:100px;width:auto" src="@src"/>
-        </td>
-        <td>
-            @{
-                if (!item.IsOnline)
-                {
-                    DateTime lastonline = item.LastLogin.HasValue ? item.LastLogin.Value : DateTime.Now;
-                    var l = (DateTime.Now - lastonline);
-                    if (l.Seconds != 0)
-                    {
-                        var time = "";
-
-                        if (l.Seconds < 60)
-                        {
-                            time = l.Seconds + " seconds";
-                        }
-                        if (l.Minutes >= 1)
-                        {
-                            time = l.Minutes + " minutes";
-                        }
-                        if (l.Hours >= 1)
-                        {
-                            time = l.Hours + " hours";
-                        }
-                        if (l.Days > 1)
-                        {
-                            time = l.Days + " days";
-                        }
-                        <p class="user-offline">Last online @time ago</p>
-                    }
-                    if(l.Seconds == 0)
-                    {
-                        <p class="user-offline">Never</p>
-                    }
-
-                }
-                else
-                {
-                    <p class="user-online"><span class="fa fa-dot-circle-o"></span>  Online</p>
-                }
-            }
-            
-        </td>
-        
-      
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-    
-}
-
-</table>*@
-<div class="row">
-    @foreach (var item in Model)
+<div class="box">
+    @using (Html.BeginForm())
     {
-        @Html.Partial("_Employees", item);
+        <div class="row">
+            <div class="col-md-6 col-12">
+
+                <div class="form-group">
+                    <label>Search </label>
+                    @Html.Editor("kw", new { htmlAttributes = new { @class = "form-control", @placeholder = "Search by name,username or id" } })
+
+                </div>
+
+            </div>
+            <div class="col-md-6 col-12">
+
+
+                <div class="form-group">
+                    <label>Sort by</label>
+                    <select name="sort" id="sort" class="form-control ">
+                        <option value="name_asc">Name A->Z</option>
+                        <option value="name_desc">Name Z->A</option>
+                        <option value="id_asc">Id ascend</option>
+                        <option value="id_desc">Id descend</option>
+                        
+
+                    </select>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 col-12">
+
+                <label>Filter by:</label>
+                <div class="row">
+
+                    <div class="col-md-3 col-6">
+                        <select id="level" name="level" class="form-control dropdown-filter ">
+                            @{
+                                <option value="alllevel" selected="selected">All levels</option>
+                                foreach (var lv in db.Levels)
+                                {
+                                    <option value="@lv.LevelName">@lv.LevelName</option>
+                                }
+                            }
+
+                        </select>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <select id="gender" name="gender" class="form-control dropdown-filter">
+                            @{
+                                <option value="allgender" selected="selected">All genders</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+
+                            }
+                        </select>
+                    </div>
+                
+                    <div class="col-md-3 col-6">
+                        <select id="isactive" name="isactive" class="form-control dropdown-filter">
+                            @{
+                                <option value="none" selected="selected">Is Active</option>
+                                <option value="active">Active</option>
+                                <option value="notactive">Not active</option>
+
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <select id="isonline" name="isonline" class="form-control dropdown-filter ">
+                            @{
+                                <option value="none" selected="selected">Is online</option>
+                                <option value="online">Online</option>
+                                <option value="notonline">Not online</option>
+
+                            }
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <input type="submit" value="Submit" class="btn btn-success" style="margin:10px 0" />
     }
 </div>
+<a href=@Url.Action("Index","Employees",new { page=1,kw="",sort="",gender="",level="",isonline="",isactive = ""}) class="btn btn-danger" id="clear" style="width:130px">Clear all filter</a>
+
+<div class="box">
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            @Html.Partial("_Employees", item);
+        }
+    </div>
 
 
-<div class="page-list">
-    <div style="text-align:center;left:50%;position:relative;transform:translateX(-50%)" class="pagedListContainer">
-        @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+    <div class="page-list">
+        <div style="text-align:center;left:50%;position:relative;transform:translateX(-50%)" class="pagedListContainer">
+            @Html.PagedListPager(Model, page => Url.Action("Index", new { page, kw = ViewBag.kw, sort = ViewBag.sort }))
+        </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+       $(document).ready(function () {
+           $("#level").val("@ViewBag.level");
+           $("#sort").val("@ViewBag.sort");
+           $("#gender").val("@ViewBag.gender");
+           $("#isactive").val("@ViewBag.isactive");
+           $("#isonline").val("@ViewBag.isonline");
+
+
+       });
+    </script>
+}

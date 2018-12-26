@@ -1,7 +1,9 @@
-﻿@model IEnumerable<ZuLuCommerce.Models.Category>
-
+﻿@model PagedList.IPagedList<ZuLuCommerce.Models.Category>
+    @using PagedList.Mvc
+@using ZuLuCommerce.Models
 @{
     ViewBag.Title = "Index";
+    var db = new eCommerceEntities();
 }
 
 <h2>Index</h2>
@@ -9,37 +11,132 @@
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Description)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Topic.TopicName)
-        </th>
-        <th></th>
-    </tr>
+<div class="box" style="padding:20px">
+    @using (Html.BeginForm())
+    {
+        <div class="row">
+            <div class="col-md-6 col-12">
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Description)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Topic.TopicName)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
+                <div class="form-group">
+                    <label>Search </label>
+                    @Html.Editor("kw", new { htmlAttributes = new { @class = "form-control", @placeholder = "Search by name or id" } })
+
+                </div>
+
+            </div>
+            <div class="col-md-6 col-12">
+
+
+                <div class="form-group">
+                    <label>Sort by</label>
+                    <select name="sort" id="sort" class="form-control">
+                        <option value="name_asc">Name A->Z</option>
+                        <option value="name_desc">Name Z->A</option>
+                        <option value="id_asc">Id ascend</option>
+                        <option value="id_desc">Id descend</option>
+                
+                    </select>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 col-12">
+
+                <label>Filter by:</label>
+                <div class="row">
+
+                    <div class="col-md-3 col-6">
+                        <select id="topic" name="topic" class="form-control dropdown-filter ">
+                            @{
+                                <option value="alltopic" selected="selected">All topic</option>
+                                foreach (var sup in db.Topics)
+                                {
+                                    <option value="@sup.TopicName">@sup.TopicName</option>
+                                }
+                            }
+
+                        </select>
+                    </div>
+                    
+                </div>
+
+            </div>
+        </div>
+
+        <input type="submit" value="Submit" class="btn btn-success" style="margin:10px 0" />
+    }
+</div>
+<a href=@Url.Action("Index","Categories",new { page=1,kw="",sort="",topic = ""}) class="btn btn-danger" id="clear" style="width:130px">Clear all filter</a>
+<div class="box">
+    <table class="table table-hover table-bordered">
+        <tr>
+            <th>
+               Name
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+                Topic Name
+            </th>
+            <th>
+                Item count
+            </th>
+            <th>
+                Is Active
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Topic.TopicName)
+                </td>
+                <td>
+                    @{
+                        
+                        var count = db.Products.Where(x => x.CategoryId == item.Id).Count();
+                    }
+                    @count
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsActive)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                </td>
+            </tr>
+                        }
+
+    </table>
+    <div class="page-list">
+        <div style="text-align:center;left:50%;position:relative;transform:translateX(-50%)" class="pagedListContainer">
+            @Html.PagedListPager(Model, page => Url.Action("Index", new { page ,kw = ViewBag.kw,sort = ViewBag.sort}))
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+       $(document).ready(function () {
+           $("#topic").val("@ViewBag.topic");
+           $("#sort").val("@ViewBag.sort");
+          
+
+       });
+    </script>
 }
-
-</table>

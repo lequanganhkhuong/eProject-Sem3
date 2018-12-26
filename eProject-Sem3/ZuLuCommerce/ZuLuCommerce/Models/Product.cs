@@ -23,9 +23,12 @@ namespace ZuLuCommerce.Models
             this.GroupItems = new HashSet<GroupItem>();
             this.OrderDetails = new HashSet<OrderDetail>();
             this.Pictures = new HashSet<Picture>();
+            this.ProductFeatures = new HashSet<ProductFeature>();
             this.Ratings = new HashSet<Rating>();
             this.RecommendProducts = new HashSet<RecommendProduct>();
-            this.ProductFeatures = new HashSet<ProductFeature>();
+            this.SpecialDeals = new HashSet<SpecialDeal>();
+            this.BannerProducts = new HashSet<BannerProduct>();
+            this.NewProducts = new HashSet<NewProduct>();
         }
     
         public int Id { get; set; }
@@ -37,6 +40,7 @@ namespace ZuLuCommerce.Models
         public int SupplierId { get; set; }
         public string Description { get; set; }
         public string Thumbnail { get; set; }
+        public bool IsActive { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<BestSelling> BestSellings { get; set; }
@@ -51,12 +55,18 @@ namespace ZuLuCommerce.Models
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Picture> Pictures { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ProductFeature> ProductFeatures { get; set; }
         public virtual Supplier Supplier { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Rating> Ratings { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<RecommendProduct> RecommendProducts { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ProductFeature> ProductFeatures { get; set; }
+        public virtual ICollection<SpecialDeal> SpecialDeals { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<BannerProduct> BannerProducts { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<NewProduct> NewProducts { get; set; }
     }
 }

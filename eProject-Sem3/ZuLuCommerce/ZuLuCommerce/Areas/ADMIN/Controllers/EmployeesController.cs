@@ -8,23 +8,25 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using ZuLuCommerce.Areas.ADMIN.Models;
 using ZuLuCommerce.Models;
 
 namespace ZuLuCommerce.Areas.ADMIN.Controllers
 {
-    
+    [Authorize]
     public class EmployeesController : Controller
     {
         private eCommerceEntities db = new eCommerceEntities();
         public ActionResult UserProfile(int? id)
         {
-            if (id != int.Parse(User.Identity.Name))
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
-            }
+            
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            if (id != int.Parse(User.Identity.Name))
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
             }
             Employee employee = db.Employees.Find(id);
             if (employee == null)
@@ -54,10 +56,50 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
                 }
                 
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("UserProfile");
             }
             ViewBag.LevelId = new SelectList(db.Levels, "Id", "LevelName", employee.LevelId);
             return View(employee);
+        }
+        public ActionResult ChangePassword(int? id)
+        {
+            if (id != int.Parse(User.Identity.Name))
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+            }
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Employee employee = db.Employees.Find(id);
+            if (employee == null)
+            {
+                return HttpNotFound();
+            }
+            ChangePasswordVm change = new ChangePasswordVm()
+            {
+                Id = employee.Id,
+                Username = employee.Username
+            };
+
+            return View(change);
+        }
+        [HttpPost]
+        public ActionResult ChangePassword(ChangePasswordVm data)
+        {
+            var emp = db.Employees.Find(data.Id);
+            if (!emp.Password.Equals(MySecurity.EncryptPass(data.OldPassword)))
+            {
+                ViewBag.Message = "Wrong password!";
+            }
+            else
+            {
+                emp.Password = MySecurity.EncryptPass(data.Password);
+                db.SaveChanges();
+                return RedirectToAction("UserProfile",new { id=data.Id});
+            }
+
+            return View(data);
         }
         private void UploadPictures(int id)
         {
@@ -94,11 +136,271 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
         [Authorize(Roles = "Admin")]
 
         // GET: ADMIN/Employees
-        public ActionResult Index(int? page)
+        public ActionResult Index(int? page,string kw, string level,string isactive, string sort, string isonline,string gender)
         {
             int pageSize = 12;
             int pageNumber = page ?? 1;
-            var employees = db.Employees.Include(e => e.Level).OrderBy(x=>x.Id);
+            var employees = db.Employees.OrderBy(x=>x.Id).Include(e => e.Level);
+
+            //filter
+            //level filter
+            if (string.IsNullOrEmpty(level))
+            {
+                ViewBag.level = "alllevel";
+                level = "alllevel";
+            }
+            else
+            {
+                ViewBag.level = level;
+            }
+            if (level.Equals("alllevel"))
+            {
+                employees = db.Employees.OrderBy(x => x.Id).Include(e => e.Level);
+
+            }
+            else
+            {
+             
+                employees = db.Employees.Where(x => x.Level.LevelName == level);
+
+            }
+            //gender filter
+            if (string.IsNullOrEmpty(gender))
+            {
+                ViewBag.gender = "allgender";
+                gender = "allgender";
+            }
+            else
+            {
+                ViewBag.gender = gender;
+            }
+            if (gender.Equals("allgender"))
+            {
+                if (level.Equals("alllevel"))
+                {
+                    employees = db.Employees.OrderBy(x => x.Id).Include(e => e.Level);
+                }
+                else
+                {
+               
+                    employees = db.Employees.Where(x => x.Level.LevelName == level);
+                }
+            }
+            else
+            {
+                if (level.Equals("alllevel"))
+                {
+                    employees = db.Employees.Where(x => x.Gender == gender);
+                }
+                else
+                {
+                    employees = employees.Where(x => x.Gender == gender);
+
+                }
+
+            }
+            //filter isactive
+            if (string.IsNullOrEmpty(isactive))
+            {
+                ViewBag.isactive = "none";
+                isactive = "none";
+            }
+            else
+            {
+                ViewBag.isactive = isactive;
+            }
+            if (!isactive.Equals("none"))
+            {
+                sort = "id_asc";
+                switch (isactive)
+                {
+                    case "active":
+                        employees = employees.Where(x => x.IsActive);
+                        break;
+                    case "notactive":
+                        employees = employees.Where(x => !x.IsActive);
+                        break;
+                }
+            }
+            else
+            {
+                if (level.Equals("alllevel"))
+                {
+                    if (gender.Equals("allgender"))
+                    {
+                        employees = db.Employees.OrderBy(x => x.Id).Include(e => e.Level);
+                    }
+                    else
+                    {
+                     
+                        employees = db.Employees.Where(x => x.Gender == gender);
+                    }
+                }
+                else
+                {
+                    if (gender.Equals("allgender"))
+                    {
+                        employees = db.Employees.Where(x => x.Level.LevelName == level);
+                    }
+                    else
+                    {
+                        employees = employees.Where(x => x.Level.LevelName == level);
+
+                    }
+
+                }
+            }
+
+            //filter isonline
+            if (string.IsNullOrEmpty(isonline))
+            {
+                ViewBag.isonline = "none";
+                isonline = "none";
+            }
+            else
+            {
+                ViewBag.isonline = isonline;
+            }
+            if (!isonline.Equals("none"))
+            {
+            
+                switch (isonline)
+                {
+                    case "online":
+                        employees = employees.Where(x => x.IsOnline);
+                        break;
+                    case "notonline":
+                        employees = employees.Where(x => !x.IsOnline);
+                        break;
+                }
+            }
+            else
+            {
+                if (level.Equals("alllevel"))
+                {
+                    if (gender.Equals("allgender"))
+                    {
+                        if (isactive.Equals("none"))
+                        {
+                            employees = db.Employees.OrderBy(x => x.Id).Include(e => e.Level);
+                        }
+                        else
+                        {
+                            switch (isactive)
+                            {
+                                case "active":
+                                    employees = employees.Where(x => x.IsActive);
+                                    break;
+                                case "notactive":
+                                    employees = employees.Where(x => !x.IsActive);
+                                    break;
+                            }
+                        }
+                        
+                    }
+                    else
+                    {
+                        if (isactive.Equals("none"))
+                        {
+                            employees = db.Employees.Where(x => x.Gender == gender);
+                        }
+                        else
+                        {
+                            switch (isactive)
+                            {
+                                case "active":
+                                    employees = employees.Where(x => x.IsActive);
+                                    break;
+                                case "notactive":
+                                    employees = employees.Where(x => !x.IsActive);
+                                    break;
+                            }
+                        }
+                       
+                    }
+                }
+                else
+                {
+                    if (gender.Equals("allgender"))
+                    {
+                        if (isactive.Equals("none"))
+                        {
+                            employees = db.Employees.Where(x => x.Level.LevelName == level);
+                        }
+                        else
+                        {
+                            switch (isactive)
+                            {
+                                case "active":
+                                    employees = employees.Where(x => x.IsActive);
+                                    break;
+                                case "notactive":
+                                    employees = employees.Where(x => !x.IsActive);
+                                    break;
+                            }
+                        }
+                        
+                    }
+                    else
+                    {
+                        if (isactive.Equals("none"))
+                        {
+                            employees = employees.Where(x => x.Level.LevelName == level);
+                        }
+                        else
+                        {
+                            switch (isactive)
+                            {
+                                case "active":
+                                    employees = employees.Where(x => x.IsActive);
+                                    break;
+                                case "notactive":
+                                    employees = employees.Where(x => !x.IsActive);
+                                    break;
+                            }
+                        }
+                        employees = employees.Where(x => x.Level.LevelName == level);
+
+                    }
+
+                }
+            }
+            //search
+            if (!string.IsNullOrEmpty(kw))
+            {
+                employees = employees.Where(x => x.Id.ToString().Equals(kw) || x.Username.ToLower().Contains(kw.ToLower()) || x.FirstName.ToLower().Contains(kw.ToLower()) || x.LastName.ToLower().Contains(kw.ToLower()));
+                ViewBag.kw = kw;
+            }
+            //sort
+
+            //ViewBag.sortTopic = "topic_asc";
+            if (string.IsNullOrEmpty(sort))
+            {
+                ViewBag.sort = "id_asc";
+
+            }
+            else
+            {
+                ViewBag.sort = sort;
+            }
+            switch (sort)
+            {
+                case "id_asc":
+                    employees = employees.OrderBy(x => x.Id);
+                    break;
+                case "id_desc":
+                    employees = employees.OrderByDescending(x => x.Id);
+                    break;
+                case "name_asc":
+                    employees = employees.OrderBy(x => x.FirstName);
+                    break;
+                case "name_desc":
+                    employees = employees.OrderByDescending(x => x.FirstName);
+                    break;
+
+            }
+
+
             return View(employees.ToPagedList(pageNumber,pageSize));
         }
         [Authorize(Roles = "Admin")]
@@ -123,7 +425,7 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
             ViewBag.LevelId = new SelectList(db.Levels, "Id", "LevelName");
             return View();
         }
-
+        [Authorize(Roles = "Admin")]
         // POST: ADMIN/Employees/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
@@ -201,7 +503,7 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
             ViewBag.LevelId = new SelectList(db.Levels, "Id", "LevelName", employee.LevelId);
             return View(employee);
         }
-
+        [Authorize(Roles = "Admin")]
         // POST: ADMIN/Employees/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
@@ -212,7 +514,11 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
             if (ModelState.IsValid)
             {
                 db.Entry(employee).State = EntityState.Modified;
-         
+                var emp = db.Employees.Where(x=>x.Username == employee.Username).FirstOrDefault();
+                if(emp.Password != MySecurity.EncryptPass(employee.Password))
+                {
+                    employee.Password = MySecurity.EncryptPass(employee.Password);
+                }
                 if (User.Identity.IsAuthenticated && employee.Id == int.Parse(User.Identity.Name))
                 {
                     employee.IsOnline = true;
@@ -228,33 +534,7 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
             ViewBag.LevelId = new SelectList(db.Levels, "Id", "LevelName", employee.LevelId);
             return View(employee);
         }
-        [Authorize(Roles = "Admin")]
-        // GET: ADMIN/Employees/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Employee employee = db.Employees.Find(id);
-            if (employee == null)
-            {
-                return HttpNotFound();
-            }
-            return View(employee);
-        }
-
-        // POST: ADMIN/Employees/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            Employee employee = db.Employees.Find(id);
-            db.Employees.Remove(employee);
-            db.SaveChanges();
-            return RedirectToAction("Index");
-        }
-
+        
         protected override void Dispose(bool disposing)
         {
             if (disposing)

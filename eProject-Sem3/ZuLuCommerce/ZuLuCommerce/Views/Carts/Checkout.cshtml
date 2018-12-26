@@ -1,0 +1,313 @@
+﻿@model ZuLuCommerce.Models.Customer
+    @using ZuLuCommerce.Models
+@{
+    ViewBag.Title = "Checkout";
+    decimal subtotal = 0;
+    var db = new eCommerceEntities();
+    var specdeal = db.SpecialDeals.Where(x => x.IsActive && x.EndDate > DateTime.Now && x.StartDate < DateTime.Now );
+}
+
+<!--Breadcrumb Area Start-->
+<div class="breadcrumb-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb-content text-center">
+                    <h1 class="breadmome-name">Checkout</h1>
+                    <ul>
+                        <li><a href=@Url.Action("Index","Home")>Home</a></li>
+                        <li class="active">Checkout</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Breadcrumb Area End-->
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="coupon-accordion">
+                @if (!User.Identity.IsAuthenticated)
+                {
+                    <h3>Make your next checkout faster <span><a href=@Url.Action("Register","Customers")>Register an account</a></span></h3>
+                    <!--Accordion Start-->
+                    <h3>Returning customer? <span><a href=@Url.Action("Login","Customers")>Click here to login</a></span></h3>
+
+                <!--Accordion End-->
+                }
+                
+                <!--Accordion Start-->
+                <h3>Have a coupon? <span id="showcoupon">Click here to enter your code</span></h3>
+                <div id="checkout_coupon" class="coupon-checkout-content">
+                    <div class="coupon-info">
+
+                        <p class="checkout-coupon">
+                            <input placeholder="Coupon code" id="coupon" type="text">
+                            <button class="default-btn" value="Apply Coupon" id="checkcoupon">Check</button>
+                        </p>
+
+                    </div>
+                </div>
+                <!--Accordion End-->
+            </div>
+        </div>
+    </div>
+    <div class="row">
+   
+            <div class="col-lg-6 col-12">
+                @using (Html.BeginForm("Checkout", "Carts", FormMethod.Post, new { id = "info" }))
+                {
+                    @Html.AntiForgeryToken()
+
+
+                    <div class="checkbox-form">
+                        <h3>Billing Details </h3>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <h5 style="color:red">Please confirm your information</h5>
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                          <input style="height:0;display:none;" name="Id" id="Id" type="text" value="@Model.Id"/>
+                        }
+                        @if (!User.Identity.IsAuthenticated)
+                        {
+                            <input style="height:0;display:none;" name="data" id="data" type="text" value="" />
+                        }
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="country-select clearfix">
+                                    @Html.LabelFor(model => model.CityId, "City", htmlAttributes: new { @class = "" })
+
+                                    @Html.DropDownList("CityId", null, htmlAttributes: new { @class = "wide nice-select" })
+                                    @Html.ValidationMessageFor(model => model.CityId, "", new { @class = "text-danger" })
+
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="checkout-form-list">
+                                    <label>First Name <span class="required">*</span></label>
+                                    @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="checkout-form-list">
+                                    <label>Last Name <span class="required">*</span></label>
+                                    @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="checkout-form-list">
+                                    <label>Address <span class="required">*</span></label>
+                                    @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-12">
+                                <div class="checkout-form-list">
+                                    <label>Email <span class="required">*</span></label>
+                                    @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="checkout-form-list">
+                                    <label>Birthday </label>
+                                    @Html.TextBoxFor(model => model.Birthday, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.Birthday, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="checkout-form-list">
+                                    <label>Phone number <span class="required">*</span></label>
+                                    @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="country-select clearfix">
+                                    <label>Payment method <span class="required">*</span></label>
+                                    <select class="wide nice-select" name="payment" id="payment">
+                                        <option value="COD">COD</option>
+                                        <option value="CREDIT">Credit card</option>
+
+                                    </select>
+                                </div>
+
+                            </div>
+                            <div class="order-notes col-md-12">
+                                <div class="checkout-form-list">
+                                    <label>Order Notes</label>
+                                    <textarea id="checkout-mess" name="description" cols="30" rows="10" placeholder="Notes about your order, e.g. special notes for delivery."></textarea>
+                                </div>
+                            </div>
+
+                            <input name="discount" id="discount" value="0" style="display:none" />
+                        </div>
+                        <div class="payment-method">
+                            <div class="payment-accordion">
+
+                                <div class="order-button-payment">
+                                    <input value="Place order" id="submit" type="submit">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+    </div>
+            <div class="col-lg-6 col-12">
+                <div class="your-order">
+                    <h3>Your order</h3>
+                    <div class="your-order-table table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="cart-product-name">Product</th>
+                                    <th class="cart-product-total">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody">
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    var carts = ViewBag.carts as IEnumerable<CartItem>;
+                                    if (carts != null)
+                                    {
+                                        if (carts.Count() > 0)
+                                        {
+                                            foreach (var c in carts)
+                                            {
+                                                decimal price = 0;
+                                                if (specdeal.Select(x => x.ProductId).Contains(c.ProductId))
+                                                {
+                                                    price = c.Product.Price * (100 - specdeal.Where(x => x.ProductId == c.ProductId).SingleOrDefault().Discount) / 100 * c.Quantity;
+                                                }
+                                                else
+                                                {
+                                                    price = c.Product.Price * (100 - c.Product.Discount) / 100 * c.Quantity;
+                                                }
+                                                <tr class="cart_item">
+                                                    <td class="cart-product-name"> @c.Product.Name<strong class="product-quantity"> × @c.Quantity</strong></td>
+                                                    <td class="cart-product-total"><span class="amount">@price.ToString("N0")  VND</span></td>
+                                                </tr>
+                                                subtotal += price;
+                                            }
+                                        }
+                                    }
+
+                                }
+                                else
+                                {
+
+                                }
+
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th></th>
+                                    <td></td>
+                                </tr>
+                                <tr class="cart-subtotal">
+                                    <th>Cart Subtotal</th>
+                                    <td><span class="amount" id="subtotal" sub="0"></span></td>
+                                </tr>
+                                <tr class="cart-subtotal">
+                                    <th>Discount</th>
+                                    <td><span class="amount" id="orderdiscount" discount="0">0</span></td>
+                                </tr>
+                                <tr class="cart-subtotal">
+                                    <th>Tax</th>
+                                    <td><span class="amount" id="tax" tax="10">10%</span></td>
+                                </tr>
+
+                                <tr class="order-total">
+                                    <th>Order Total</th>
+                                    <td><strong><span class="amount" id="total">0</span></strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                  
+                </div>
+            </div>
+      
+    </div>
+
+</div>
+@if (!User.Identity.IsAuthenticated)
+{
+    
+    <script>
+        $(document).ready(function () {
+            loadCheckoutItems();
+            var cart_items = getCartItems();
+            $("#data").val(JSON.stringify(cart_items));
+        })
+     
+    </script>
+    
+}
+@if (User.Identity.IsAuthenticated)
+{
+
+    <script>
+        $(document).ready(function () {
+            $("#subtotal").html('@subtotal.ToString("N0")' + " VND");
+            $("#subtotal").attr("sub", '@subtotal');
+            
+        })
+
+    </script>
+
+}
+<script>
+    $(document).ready(function () {
+        $("#info").submit(function (e) {
+            e.preventDefault();
+            var payment = $("#payment").val();
+            var data = $("#data").val();
+            var discount = $("#discount").val();
+            var description = $("#checkout-mess").val();
+            $.post("/Carts/Checkout?payment=" + payment + "&data=" + data + "&discount=" + discount + "&description=" + description,
+                { Id: $("#Id").val(), FirstName: $("#FirstName").val(), LastName: $("#LastName").val(), Phone: $("#Phone").val(), Address: $("#Address").val(), Email: $("#Email").val(), Birthday: $("#Birthday").val(), CityId: $("#CityId").val() }, function (response) {
+                    if (response == "OK") {
+                        alert("Checked out successfully");
+                        emptyCartItems();
+                        location.href = "/Home/";
+                } else {
+
+                }
+            });
+        });
+        var subtotal = parseInt($("#subtotal").attr("sub"));
+        var discount = parseInt($("#orderdiscount").attr("discount"));
+        $("#total").html((subtotal * ((100 - discount) / 100 * 110 / 100)).toLocaleString('en') + " VND");
+       
+        $("#checkcoupon").click(function () {
+            var btn = $(this);
+            var data = $("#coupon").val();
+
+            $.post("/Carts/CheckCoupon?data=" + data, function (response) {
+                
+                if (response != "Invalid") {
+                    $("#discount").val(response);
+                    
+                    $("#orderdiscount").html(response + "%");
+                    $("#orderdiscount").attr("discount", data);
+                    $("#total").html(subtotal * ((100 - discount) / 100 * 110 / 100));
+                    alert("Coupon applied");
+                    $("#total").html((subtotal * (100 - $("#orderdiscount").attr("discount")) / 100 * 110 / 100).toLocaleString('en') + " VND");
+                }
+                else {
+                    alert("Invalid coupon");
+                }
+            });
+                
+        });
+    })
+</script>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PagedList;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -10,14 +11,18 @@ using ZuLuCommerce.Models;
 
 namespace ZuLuCommerce.Areas.ADMIN.Controllers
 {
+    [Authorize]
     public class CustomersController : Controller
     {
         private eCommerceEntities db = new eCommerceEntities();
 
         // GET: ADMIN/Customers
-        public ActionResult Index()
+        public ActionResult Index(int? page)
         {
-            return View(db.Customers.ToList());
+            int pageSize = 10;
+            int pageNumber = page ?? 1;
+            var customers = db.Customers.OrderBy(x=>x.Id).Include(c => c.CityShippingFee);
+            return View(customers.ToPagedList(pageNumber, pageSize));
         }
 
         // GET: ADMIN/Customers/Details/5
@@ -34,30 +39,7 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
             }
             return View(customer);
         }
-
-        // GET: ADMIN/Customers/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: ADMIN/Customers/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,FirstName,LastName,Phone,Address,Email,Birthday,IsRegistered")] Customer customer)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Customers.Add(customer);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-
-            return View(customer);
-        }
-
+        [Authorize(Roles ="Admin")]
         // GET: ADMIN/Customers/Edit/5
         public ActionResult Edit(int? id)
         {
@@ -70,15 +52,16 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
             {
                 return HttpNotFound();
             }
+            ViewBag.CityId = new SelectList(db.CityShippingFees, "Id", "CityName", customer.CityId);
             return View(customer);
         }
-
+        [Authorize(Roles = "Admin")]
         // POST: ADMIN/Customers/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,FirstName,LastName,Phone,Address,Email,Birthday,IsRegistered")] Customer customer)
+        public ActionResult Edit([Bind(Include = "Id,FirstName,LastName,Phone,Address,Email,Birthday,CityId,IsRegistered")] Customer customer)
         {
             if (ModelState.IsValid)
             {
@@ -86,35 +69,10 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+            ViewBag.CityId = new SelectList(db.CityShippingFees, "Id", "CityName", customer.CityId);
             return View(customer);
         }
-
-        // GET: ADMIN/Customers/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Customer customer = db.Customers.Find(id);
-            if (customer == null)
-            {
-                return HttpNotFound();
-            }
-            return View(customer);
-        }
-
-        // POST: ADMIN/Customers/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            Customer customer = db.Customers.Find(id);
-            db.Customers.Remove(customer);
-            db.SaveChanges();
-            return RedirectToAction("Index");
-        }
-
+        
         protected override void Dispose(bool disposing)
         {
             if (disposing)

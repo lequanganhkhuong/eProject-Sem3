@@ -1,7 +1,323 @@
-﻿
-@{
-    ViewBag.Title = "Index";
+﻿@using ZuLuCommerce.Models
+@{ 
+    var db = new eCommerceEntities();
+    ViewBag.Title = "Dashboard";
+    var sale = ViewBag.salePerMonthThisYear as IEnumerable<decimal>;
+    var orderMonth = ViewBag.orderMonth as IEnumerable<int>;
+    var saleperyear = ViewBag.salePerYear as IEnumerable<decimal>;
+    var years = ViewBag.years as IEnumerable<int>;
+    var orderEachYear = ViewBag.orderEachYear as IEnumerable<int>;
 }
 
-<h2>Index</h2>
 
+
+
+   
+            <section class="content-header">
+                <h1>
+                    Dashboard
+                </h1>
+                
+            </section>
+
+            <!-- Main content -->
+            <section class="content">
+                <div class="row">
+                    <div class="col-md-6 col-6 col-xl-6">
+                        <canvas id="saleYear"></canvas>
+                    </div>
+                    <div class="col-md-6 col-6 col-xl-6">
+                        <canvas id="saleperYear"></canvas>
+                    </div>
+                    <div class="col-md-6 col-6 col-xl-6">
+                        <canvas id="orderPerMonth"></canvas>
+                    </div>
+                    <div class="col-md-6 col-6 col-xl-6">
+                        <canvas id="orderYear"></canvas>
+                    </div>
+                    
+                </div>
+                <div class="row">
+                    <div class="col-xl-3 col-md-6 col-12">
+                        <div class="box box-body bg-purple">
+                            <h6 class="text-uppercase">Total orders</h6>
+                            <div class="flexbox mt-2">
+                                <span class="ion ion-bag  font-size-40"></span>
+                                <span class=" font-size-30">@ViewBag.orders</span>
+                            </div>
+                        </div>
+                    </div>
+           
+                    <!-- /.col -->
+                    <!-- /.col -->
+                    <div class="col-xl-3 col-md-6 col-12">
+                        <div class="box box-body bg-blue">
+                            <h6 class="text-uppercase">Total comments</h6>
+                            <div class="flexbox mt-2">
+                                <span class="ion ion-ios-chatboxes  font-size-40"></span>
+                                <span class=" font-size-30">@ViewBag.comments</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.col -->
+                    <!-- /.col -->
+                    <div class="col-xl-3 col-md-6 col-12">
+                        <div class="box box-body bg-blue">
+                            <h6 class="text-uppercase">Users</h6>
+                            <div class="flexbox mt-2">
+                                <span class="ion ion-person-stalker  font-size-40"></span>
+                                <span class=" font-size-30">@ViewBag.users</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.col -->
+                    <!-- /.col -->
+                    <div class="col-xl-3 col-md-6 col-12">
+                        <div class="box box-body bg-blue">
+                            <h6 class="text-uppercase">Orders this month</h6>
+                            <div class="flexbox mt-2">
+                                <span class="fa fa-balance-scale  font-size-40"></span>
+                                <span class=" font-size-30">@ViewBag.orderthismonth</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.col -->
+                </div>
+              
+                <!-- Small boxes (Stat box) -->
+                <div class="row">
+                    <div class="col-xl-3 col-md-6 col-6">
+                        <!-- small box -->
+                        <div class="small-box bg-blue">
+                            <div class="inner">
+                                <h3>@ViewBag.pending</h3>
+
+                                <p>Pending Orders</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fa fa-shopping-bag"></i>
+                            </div>
+                            <a href=@Url.Action("Index", "Orders", new { status = "Pending" }) class="small-box-footer">More info <i class="fa fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    <!-- ./col -->
+                    <div class="col-xl-3 col-md-6 col-6">
+                        <!-- small box -->
+                        <div class="small-box bg-success">
+                            <div class="inner">
+                                <h3>@ViewBag.stock</h3>
+
+                                <p>Products running out of stock</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fa fa-cubes"></i>
+                            </div>
+                            <a href=@Url.Action("Index", "Products", new { sort = "least_stock" }) class="small-box-footer">More info <i class="fa fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    <!-- ./col -->
+                    <div class="col-xl-3 col-md-6 col-6">
+                        <!-- small box -->
+                        <div class="small-box bg-purple">
+                            <div class="inner">
+                                <h3>@ViewBag.coupon</h3>
+
+                                <p>Active coupons</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fa  fa-rocket"></i>
+                            </div>
+                            <a href=@Url.Action("Index", "Coupons") class="small-box-footer">More info <i class="fa fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    <!-- ./col -->
+                    
+                </div>
+                <!-- /.row -->
+               <div class="row">
+                   <!-- /.col -->
+                   <div class="col-xl-3 col-md-6 col-12">
+                       <div class="box box-body bg-blue">
+                           <h6 class="text-uppercase">Sale this month</h6>
+                           <div class="flexbox mt-2">
+                               <span class="ion ion-ios-briefcase-outline  font-size-40"></span>
+                               <span class=" font-size-30">@ViewBag.salemonth</span>
+                           </div>
+                       </div>
+                   </div>
+                   <!-- /.col -->
+                   <!-- /.col -->
+                   <div class="col-xl-3 col-md-6 col-12">
+                       <div class="box box-body bg-blue">
+                           <h6 class="text-uppercase">Sale last month</h6>
+                           <div class="flexbox mt-2">
+                               <span class="ion ion-ios-briefcase-outline  font-size-40"></span>
+                               <span class=" font-size-30">@ViewBag.salelastmonth</span>
+                           </div>
+                       </div>
+                   </div>
+                   <!-- /.col -->
+                   <!-- /.col -->
+                   <div class="col-xl-3 col-md-6 col-12">
+                       <div class="box box-body bg-blue">
+                           <h6 class="text-uppercase">Sale this year</h6>
+                           <div class="flexbox mt-2">
+                               <span class="ion ion-ios-briefcase-outline  font-size-40"></span>
+                               <span class=" font-size-30">@ViewBag.saleyear</span>
+                           </div>
+                       </div>
+                   </div>
+                   <!-- /.col -->
+                   <!-- /.col -->
+                   <div class="col-xl-3 col-md-6 col-12">
+                       <div class="box box-body bg-blue">
+                           <h6 class="text-uppercase">Total sale</h6>
+                           <div class="flexbox mt-2">
+                               <span class="ion ion-ios-briefcase-outline  font-size-40"></span>
+                               <span class=" font-size-30">@ViewBag.totalsale</span>
+                           </div>
+                       </div>
+                   </div>
+                   <!-- /.col -->
+               </div>
+            </section>
+            <!-- /.content -->
+
+        <!-- /.content-wrapper -->
+
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+    <script>
+
+        function loadSalePerMonthChartdata() {
+            var data = [];
+            @foreach (var d in sale)
+            {
+                @:data.push("@d");
+            }
+
+            var ctx = document.getElementById('saleYear').getContext('2d');
+            var chart = new Chart(ctx, {
+                // The type of chart we want to create
+                type: 'line',
+
+                // The data for our dataset
+                data: {
+                    labels: ["Jan", "Feb", "Mar", "Apr", "May", "June", "July","Aug","Sep","Oct","Nov","Dec"],
+                    datasets: [{
+                        label: "Sale this year",
+                        backgroundColor: 'orange',
+                        borderColor: 'orange',
+                        data: data,
+                    }]
+                },
+
+                // Configuration options go here
+                options: {}
+            });
+        }
+        function loadOrderPerMonthChartdata() {
+            var data = [];
+            @foreach (var d in orderMonth)
+            {
+                @:data.push("@d");
+            }
+
+            var ctx = document.getElementById('orderPerMonth').getContext('2d');
+            var chart = new Chart(ctx, {
+                // The type of chart we want to create
+                type: 'line',
+
+                // The data for our dataset
+                data: {
+                    labels: ["Jan", "Feb", "Mar", "Apr", "May", "June", "July","Aug","Sep","Oct","Nov","Dec"],
+                    datasets: [{
+                        label: "Orders this year",
+                        backgroundColor: 'lightgreen',
+                        borderColor: 'lightgreen',
+                        data: data,
+                    }]
+                },
+
+                // Configuration options go here
+                options: {}
+            });
+        }
+        function loadSaleEachYearChartdata() {
+            var data = [];
+            var years = [];
+            var orders = [];
+            @foreach (var d in saleperyear)
+            {
+                @:data.push("@d");
+            }
+            @foreach(var y in years)
+            {
+                @:years.push("@y");
+            }
+            @foreach(var x in orderEachYear)
+            {
+                 @:orders.push("@x");
+            }
+            var ctx = document.getElementById('saleperYear').getContext('2d');
+            var chart = new Chart(ctx, {
+                // The type of chart we want to create
+                type: 'line',
+
+                // The data for our dataset
+                data: {
+                    labels: years,
+                    datasets: [{
+                        label: "Sale each year",
+                        backgroundColor: 'rgb(255, 99, 132)',
+                        borderColor: 'rgb(255, 99, 132)',
+                        data: data,
+                    }]
+                },
+
+                // Configuration options go here
+                options: {}
+            });
+        }
+        function loadOrderPerYearChartdata() {
+            var orders = [];
+            var years = [];
+            @foreach(var y in years)
+            {
+                @:years.push("@y");
+            }
+            @foreach(var x in orderEachYear)
+            {
+                 @:orders.push("@x");
+            }
+
+
+            var ctx = document.getElementById('orderYear').getContext('2d');
+            var chart = new Chart(ctx, {
+                // The type of chart we want to create
+                type: 'line',
+
+                // The data for our dataset
+                data: {
+                    labels: years,
+                    datasets: [{
+                        label: "Orders each year",
+                        backgroundColor: 'skyblue',
+                        borderColor: 'skyblue',
+                        data: orders,
+
+                    }]
+                },
+
+                // Configuration options go here
+                options: {}
+            });
+        }
+        $(document).ready(function () {
+            loadSalePerMonthChartdata();
+            loadSaleEachYearChartdata();
+            loadOrderPerYearChartdata();
+            loadOrderPerMonthChartdata();
+        })
+    </script>
+}

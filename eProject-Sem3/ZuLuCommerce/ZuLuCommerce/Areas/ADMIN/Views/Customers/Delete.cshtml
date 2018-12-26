@@ -67,6 +67,14 @@
             @Html.DisplayFor(model => model.IsRegistered)
         </dd>
 
+        <dt>
+            @Html.DisplayNameFor(model => model.CityShippingFee.CityName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CityShippingFee.CityName)
+        </dd>
+
     </dl>
 
     @using (Html.BeginForm()) {

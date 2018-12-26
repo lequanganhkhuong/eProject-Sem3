@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PagedList;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -15,10 +16,12 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
         private eCommerceEntities db = new eCommerceEntities();
 
         // GET: ADMIN/Carts
-        public ActionResult Index()
+        public ActionResult Index(int? page)
         {
+            int pageSize = 10;
+            int pageNumber = page ?? 1;
             var carts = db.Carts.Include(c => c.Account);
-            return View(carts.ToList());
+            return View(carts.ToPagedList(pageNumber,pageSize));
         }
 
         // GET: ADMIN/Carts/Details/5

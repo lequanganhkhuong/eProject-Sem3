@@ -1,14 +1,19 @@
 ﻿@model ZuLuCommerce.Models.Product
-<div class="col-lg-4 col-xl-4 col-md-4">
+@using ZuLuCommerce.Models
+@{ 
+    var db = new eCommerceEntities();
+    var discount_price = Model.Price;
+    var specdeal = db.SpecialDeals.Where(x => x.IsActive && x.EndDate > DateTime.Now && x.StartDate < DateTime.Now && x.ProductId == Model.Id).SingleOrDefault();
+}
     <!--Single Product Start-->
     <div class="single-product mb-30">
         <div class="product-img" style="height:230px;text-align:center">
 
-            <a href=@Url.Action("Details","Products", new { id = Model.Id})>
+            <a href=@Url.Action("Details", "Products", new { id = Model.Id })>
                 @{
                     string src = "/Uploads/image-not-available.jpg";//default
                     string hover = "/Uploads/image-not-available.jpg";//default
-                    if(Model.Thumbnail != null)
+                    if (Model.Thumbnail != null && File.Exists(Server.MapPath("~/Uploads/Products/" + Model.Id + "/" + Model.Thumbnail)))
                     {
                         var pic = Model.Pictures.Where(x => x.ProductId == Model.Id && x.URL != Model.Thumbnail).FirstOrDefault();
                         if (pic != null)
@@ -31,11 +36,70 @@
                 <img  class="first-img" src="@src" alt="@Model.Name">
                 <img  class="hover-img" src="@hover" alt="@Model.Name">
             </a>
+            @{
+                if (Model.Stock == 0)
+                {
+                    <span class="sticker" style="background-color:red">Out of stock!</span>
+                }
+                else
+                {
+                    if (db.NewProducts.Select(x => x.ProductId).Contains(Model.Id) && !db.SpecialDeals.Where(x => x.StartDate < DateTime.Now && x.EndDate > DateTime.Now && x.IsActive).Select(x => x.ProductId).Contains(Model.Id))
+                    {
+                        <span class="sticker" style="background-color:orange">New!</span>
+                    }
+                    if (db.BestSellings.Select(x => x.ProductId).Contains(Model.Id) && !db.SpecialDeals.Where(x => x.StartDate < DateTime.Now && x.EndDate > DateTime.Now && x.IsActive).Select(x => x.ProductId).Contains(Model.Id))
+                    {
+                        <span class="sticker" style="background-color:orange">Best selling!</span>
+                    }
+                    if (db.RecommendProducts.Select(x => x.ProductId).Contains(Model.Id) && !db.SpecialDeals.Where(x => x.StartDate < DateTime.Now && x.EndDate > DateTime.Now && x.IsActive).Select(x => x.ProductId).Contains(Model.Id))
+                    {
+                        <span class="sticker" style="background-color:#b200ff">Recommended products!</span>
+                    }
+                    if (db.SpecialDeals.Where(x => x.StartDate < DateTime.Now && x.EndDate > DateTime.Now && x.IsActive).Select(x => x.ProductId).Contains(Model.Id))
+                    {
+                        <span class="sticker" style="background-color:#1e56a0">Great discount!</span>
+                    }
+                }
 
-            <span class="sticker">New</span>
+            }
+            
             <div class="product-action">
                 <ul>
-                    <li><a class="quick-add-to-cart" pid="@Model.Id" pthumbnail="@Model.Thumbnail" pname="@Model.Name" pprice="@Model.Price" title="Add to cart" href="#"><i class="ion-bag"></i></a></li>
+                    @{
+                        var price = discount_price;
+                        if (specdeal != null)
+                        {
+                            if (specdeal.Discount != 0)
+                            {
+                                price -= Model.Price * specdeal.Discount / 100;
+                            }
+                            else
+                            {
+                                price -= Model.Price * Model.Discount / 100;
+                            }
+                            if (!User.Identity.IsAuthenticated)
+                            {
+                                <li><a class="quick-add-to-cart" pid="@Model.Id" pstock="@Model.Stock" pthumbnail="@Model.Thumbnail" pname="@Model.Name" pprice="@price" title="Add to cart" href="#"><i class="ion-bag"></i></a></li>
+                            }
+                            if (User.Identity.IsAuthenticated)
+                            {
+                                <li><a class="login-quick-add-to-cart" pid="@Model.Id" pstock="@Model.Stock" pthumbnail="@Model.Thumbnail" pname="@Model.Name" pprice="@price" title="Add to cart" href="#"><i class="ion-bag"></i></a></li>
+                            }
+                        }
+                        else
+                        {
+                            price -= Model.Price * Model.Discount / 100;
+                            if (!User.Identity.IsAuthenticated)
+                            {
+                                <li><a class="quick-add-to-cart" pid="@Model.Id" pstock="@Model.Stock" pthumbnail="@Model.Thumbnail" pname="@Model.Name" pprice="@price" title="Add to cart" href="#"><i class="ion-bag"></i></a></li>
+                            }
+                            if (User.Identity.IsAuthenticated)
+                            {
+                                <li><a class="login-quick-add-to-cart" pid="@Model.Id" pstock="@Model.Stock" pthumbnail="@Model.Thumbnail" pname="@Model.Name" pprice="@price" title="Add to cart" href="#"><i class="ion-bag"></i></a></li>
+                            }
+                        }
+                    }
+                   
                     <li><a title="Quick View" href="#open-modal" data-toggle="modal"><i class="ion-eye"></i></a></li>
                     <li><a title="Compare" href="#"><i class="ion-ios-copy-outline"></i></a></li>
                 </ul>
@@ -47,8 +111,7 @@
         <div class="product-content">
             <h4>
                 @{
-                    var discount_price = Model.Price;
-                    discount_price -= Model.Price * Model.Discount / 100;
+                    
                     string productname = Model.Name;
                     if (productname.Length > 25)
                     {
@@ -60,29 +123,113 @@
                 <a href="@Url.Action("Details","Products",new { id = Model.Id})">@productname</a>
             </h4>
             @{
-                if (Model.Discount == 0)
+                
+                if (specdeal != null)
                 {
-                    <div class="product-price">
-                        <span class="price">@Model.Price.ToString("N0") VND</span>
-                    </div>
+                    if (specdeal.Discount != 0)
+                    {
+                        discount_price -= Model.Price * specdeal.Discount / 100;
+                        <div class="product-price">
+                            <span class="regular-price">@Model.Price.ToString("N0")</span>
+                            <span class="price">@discount_price.ToString("N0") VND</span>
+                        </div>
+                    }
+                    else
+                    {
+                        discount_price -= Model.Price * Model.Discount / 100;
+                        if (Model.Discount == 0)
+                        {
+                            <div class="product-price">
+                                <span class="price">@Model.Price.ToString("N0") VND</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="product-price">
+                                <span class="regular-price">@Model.Price.ToString("N0")</span>
+                                <span class="price">@discount_price.ToString("N0") VND</span>
+                            </div>
+                        }
+                    }
                 }
                 else
                 {
-                    <div class="product-price">
-                        <span class="regular-price">@Model.Price.ToString("N0")</span>
-                        <span class="price">@discount_price.ToString("N0") VND</span>
-                    </div>
+                    discount_price -= Model.Price * Model.Discount / 100;
+                    if (Model.Discount == 0)
+                    {
+                        <div class="product-price">
+                            <span class="price">@Model.Price.ToString("N0") VND</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="product-price">
+                            <span class="regular-price">@Model.Price.ToString("N0")</span>
+                            <span class="price">@discount_price.ToString("N0") VND</span>
+                        </div>
+                    }
                 }
+
+
+
             }
             
-            <div class="product-reviews">
-                <i class="ion-android-star"></i>
-                <i class="ion-android-star"></i>
-                <i class="ion-android-star"></i>
-                <i class="ion-android-star"></i>
-                <i class="ion-android-star"></i>
+            <div class="product-reviews" style="color:black">
+                @{
+                    var productRate = db.Ratings.Where(x => x.ProductId == Model.Id).ToList();
+                    var count = productRate.Count();
+                    if (count != 0)
+                    {
+                        var total = productRate.Select(x => x.Rating1).Sum();
+                        var rate = total / count;
+                        if (rate != 0)
+                        {
+                            var check = "color:orange";
+                            if (rate >= 1)
+                            {
+                                check = "color:orange";
+                            }
+                            <i class="fa fa-star" style="@check"></i>
+                            check = "";
+                            if (rate >= 2)
+                            {
+                                check = "color:orange";
+                            }
+                            <i class="fa fa-star" style="@check"></i>
+                            check = "";
+                            if (rate >= 3)
+                            {
+                                check = "color:orange";
+                            }
+                            <i class="fa fa-star" style="@check"></i>
+                            check = "";
+                            if (rate >= 4)
+                            {
+                                check = "color:orange";
+                            }
+                            <i class="fa fa-star" style="@check"></i>
+                            check = "";
+                            if (rate >= 5)
+                            {
+                                check = "color:orange";
+                            }
+                            <i class="fa fa-star" style="@check"></i>
+                              
+                        }
+
+                    }
+                    else if (count == 0)
+                    {
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+
+                    }
+
+                }
             </div>
         </div>
     </div>
     <!--Single Product End-->
-</div>

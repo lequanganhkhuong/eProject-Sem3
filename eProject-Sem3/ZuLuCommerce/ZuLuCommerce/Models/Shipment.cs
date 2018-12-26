@@ -28,9 +28,9 @@ namespace ZuLuCommerce.Models
         public decimal ShippingFee { get; set; }
         public int ShipperId { get; set; }
     
+        public virtual ShipmentStatus ShipmentStatus { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Order> Orders { get; set; }
-        public virtual ShipmentStatus ShipmentStatus { get; set; }
         public virtual Shipper Shipper { get; set; }
     }
 }

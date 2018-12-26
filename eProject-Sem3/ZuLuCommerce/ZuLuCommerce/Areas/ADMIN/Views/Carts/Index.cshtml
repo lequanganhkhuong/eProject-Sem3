@@ -1,5 +1,5 @@
-﻿@model IEnumerable<ZuLuCommerce.Models.Cart>
-
+﻿@model PagedList.IPagedList<ZuLuCommerce.Models.Cart>
+@using PagedList.Mvc
 @{
     ViewBag.Title = "Index";
 }
@@ -12,7 +12,7 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Account.Username)
+            Username
         </th>
         <th></th>
     </tr>
@@ -31,3 +31,8 @@
 }
 
 </table>
+<div class="page-list">
+    <div style="text-align:center;left:50%;position:relative;transform:translateX(-50%)" class="pagedListContainer">
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+    </div>
+</div>

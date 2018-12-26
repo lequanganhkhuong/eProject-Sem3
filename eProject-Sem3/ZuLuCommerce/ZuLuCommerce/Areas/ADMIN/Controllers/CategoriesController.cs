@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PagedList;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -10,15 +11,73 @@ using ZuLuCommerce.Models;
 
 namespace ZuLuCommerce.Areas.ADMIN.Controllers
 {
+    [Authorize(Roles ="Admin")]
     public class CategoriesController : Controller
     {
         private eCommerceEntities db = new eCommerceEntities();
 
         // GET: ADMIN/Categories
-        public ActionResult Index()
+        public ActionResult Index(int? page, string topic, string sort, string kw)
         {
-            var categories = db.Categories.Include(c => c.Topic);
-            return View(categories.ToList());
+            int pageSize = 10;
+            int pageNumber = page ?? 1;
+            var p = db.Categories.OrderBy(x => x.Id).Include(c => c.Topic);
+
+            //filter topic
+            if (string.IsNullOrEmpty(topic))
+            {
+                ViewBag.topic = "alltopic";
+                topic = "alltopic";
+            }
+            else
+            {
+                ViewBag.topic = topic;
+            }
+            if (!topic.Equals("alltopic"))
+            {
+                sort = "id_asc";
+                p = db.Categories.Where(x => x.Topic.TopicName == topic);
+
+            }
+            
+            //search
+            if (!string.IsNullOrEmpty(kw))
+            {
+                p = p.Where(x => x.Id.ToString().Equals(kw) || x.Name.ToLower().Contains(kw.ToLower()));
+                ViewBag.kw = kw;
+            }
+            //sort
+
+            //ViewBag.sortTopic = "topic_asc";
+            if (string.IsNullOrEmpty(sort))
+            {
+                ViewBag.sort = "id_asc";
+
+            }
+            else
+            {
+                ViewBag.sort = sort;
+            }
+            switch (sort)
+            {
+                case "id_asc":
+                    p = p.OrderBy(x => x.Id);
+                    break;
+                case "id_desc":
+                    p = p.OrderByDescending(x => x.Id);
+                    break;
+                case "name_asc":
+                    p = p.OrderBy(x => x.Name);
+                    break;
+                case "name_desc":
+                    p = p.OrderByDescending(x => x.Name);
+                    break;
+               
+            }
+
+
+            ViewBag.resultcount = p.Count();
+            return View(p.ToPagedList(pageNumber,pageSize));
         }
 
         // GET: ADMIN/Categories/Details/5
@@ -48,7 +107,7 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,Description,TopicId")] Category category)
+        public ActionResult Create([Bind(Include = "Id,Name,Description,TopicId,IsActive")] Category category)
         {
             if (ModelState.IsValid)
             {
@@ -82,7 +141,7 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,Description,TopicId")] Category category)
+        public ActionResult Edit([Bind(Include = "Id,Name,Description,TopicId,IsActive")] Category category)
         {
             if (ModelState.IsValid)
             {
@@ -93,32 +152,7 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
             ViewBag.TopicId = new SelectList(db.Topics, "Id", "TopicName", category.TopicId);
             return View(category);
         }
-
-        // GET: ADMIN/Categories/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Category category = db.Categories.Find(id);
-            if (category == null)
-            {
-                return HttpNotFound();
-            }
-            return View(category);
-        }
-
-        // POST: ADMIN/Categories/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            Category category = db.Categories.Find(id);
-            db.Categories.Remove(category);
-            db.SaveChanges();
-            return RedirectToAction("Index");
-        }
+        
 
         protected override void Dispose(bool disposing)
         {

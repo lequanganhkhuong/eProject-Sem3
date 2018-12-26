@@ -10,37 +10,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="/Content/admin/admin/admin/unique/02/unique-admin/images/favicon.ico">
+    <link rel="icon" href="/Content/admin/admin/unique-admin/images/favicon.ico">
 
     <title>@ViewBag.Title</title>
     @*<link href="~/Content/bootstrap.css" rel="stylesheet" />*@
     <!-- Bootstrap 4.0-->
-    <link rel="stylesheet" href="/Content/admin/admin/admin/unique/02/unique-admin/assets/vendor_components/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="/Content/admin/admin/unique-admin/assets/vendor_components/bootstrap/dist/css/bootstrap.css">
 
     <!-- Bootstrap-extend -->
-    <link rel="stylesheet" href="/Content/admin/admin/admin/unique/02/unique-admin/support-system-dashboard/css/bootstrap-extend.css">
-
+    <link rel="stylesheet" href="/Content/admin/admin/unique-admin/support-system-dashboard/css/bootstrap-extend.css">
+    
     <!-- Morris charts -->
-    <link rel="stylesheet" href="/Content/admin/admin/admin/unique/02/unique-admin/assets/vendor_components/morris.js/morris.css">
+    <link rel="stylesheet" href="/Content/admin/admin/unique-admin/assets/vendor_components/morris.js/morris.css">
 
     <!-- date picker -->
-    <link rel="stylesheet" href="/Content/admin/admin/admin/unique/02/unique-admin/assets/vendor_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.css">
-
+    <link rel="stylesheet" href="/Content/admin/admin/unique-admin/assets/vendor_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.css">
+    
     <!-- daterange picker -->
-    <link rel="stylesheet" href="/Content/admin/admin/admin/unique/02/unique-admin/assets/vendor_components/bootstrap-daterangepicker/daterangepicker.css">
+    <link rel="stylesheet" href="/Content/admin/admin/unique-admin/assets/vendor_components/bootstrap-daterangepicker/daterangepicker.css">
 
     <!-- bootstrap wysihtml5 - text editor -->
-    <link rel="stylesheet" href="/Content/admin/admin/admin/unique/02/unique-admin/assets/vendor_plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.css">
+    <link rel="stylesheet" href="/Content/admin/admin/unique-admin/assets/vendor_plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.css">
 
     <!-- theme style -->
-    <link rel="stylesheet" href="/Content/admin/admin/admin/unique/02/unique-admin/support-system-dashboard/css/master_style.css">
+    <link rel="stylesheet" href="/Content/admin/admin/unique-admin/support-system-dashboard/css/master_style.css">
 
     <!-- Unique_Admin skins -->
-    <link rel="stylesheet" href="/Content/admin/admin/admin/unique/02/unique-admin/support-system-dashboard/css/skins/_all-skins.css">
+    <link rel="stylesheet" href="/Content/admin/admin/unique-admin/support-system-dashboard/css/skins/_all-skins.css">
     @*<link href="~/Content/bootstrap.css" rel="stylesheet" />*@
     <link href="~/Content/PagedList.css" rel="stylesheet" />
     <link href="~/Content/admin/MyCss.css" rel="stylesheet" type="text/css"/>
-    <link href="~/Content/admin/admin/admin/unique/02/unique-admin/assets/vendor_components/jquery-toast-plugin-master/src/jquery.toast.css" rel="stylesheet" />
+    <link href="~/Content/admin/admin/unique-admin/assets/vendor_components/jquery-toast-plugin-master/src/jquery.toast.css" rel="stylesheet" />
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
@@ -161,9 +161,27 @@
                         </a>
                     </li>
                     <li>
+                        <a href=@Url.Action("Index", "SpecialDeals")>
+                            <i class="fa fa-thumbs-o-up"></i>
+                            <span>Special deal</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href=@Url.Action("Index", "Coupons")>
+                            <i class="fa fa-thumbs-o-up"></i>
+                            <span>Coupon</span>
+                        </a>
+                    </li>
+                    <li>
                         <a href=@Url.Action("Index", "Customers")>
                             <i class="fa fa-diamond"></i>
                             <span>Customers</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href=@Url.Action("Index", "Accounts")>
+                            <i class="fa fa-diamond"></i>
+                            <span>Customer's accounts</span>
                         </a>
                     </li>
                     <li>
@@ -402,60 +420,65 @@
     </div>
     <!-- ./wrapper -->
     <!-- jQuery 3 -->
-    <script src="/Content/admin/admin/admin/unique/02/unique-admin/assets/vendor_components/jquery/dist/jquery.js"></script>
+    <script src="/Content/admin/admin/unique-admin/assets/vendor_components/jquery/dist/jquery.js"></script>
 
     <!-- popper -->
-    <script src="/Content/admin/admin/admin/unique/02/unique-admin/assets/vendor_components/popper/dist/popper.min.js"></script>
+    <script src="/Content/admin/admin/unique-admin/assets/vendor_components/popper/dist/popper.min.js"></script>
 
     <!-- Bootstrap 4.0-->
-    <script src="/Content/admin/admin/admin/unique/02/unique-admin/assets/vendor_components/bootstrap/dist/js/bootstrap.js"></script>
-
+    <script src="/Content/admin/admin/unique-admin/assets/vendor_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="~/Content/admin/select2.full.js"></script>
     <!-- Morris.js charts -->
-    <script src="/Content/admin/admin/admin/unique/02/unique-admin/assets/vendor_components/raphael/raphael.min.js"></script>
-    <script src="/Content/admin/admin/admin/unique/02/unique-admin/assets/vendor_components/morris.js/morris.min.js"></script>
+    <script src="/Content/admin/admin/unique-admin/assets/vendor_components/raphael/raphael.min.js"></script>
+    @*<script src="/Content/admin/admin/unique-admin/assets/vendor_components/morris.js/morris.min.js"></script>*@
 
     <!-- DataTables -->
-    <script src="/Content/admin/admin/admin/unique/02/unique-admin/assets/vendor_components/datatables.net/js/jquery.dataTables.min.js"></script>
-    <script src="/Content/admin/admin/admin/unique/02/unique-admin/assets/vendor_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+    <script src="/Content/admin/admin/unique-admin/assets/vendor_components/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="/Content/admin/admin/unique-admin/assets/vendor_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
 
     <!-- This is data table -->
-    <script src="/Content/admin/admin/admin/unique/02/unique-admin/assets/vendor_plugins/DataTables-1.10.15/media/js/jquery.dataTables.min.js"></script>
+    <script src="/Content/admin/admin/unique-admin/assets/vendor_plugins/DataTables-1.10.15/media/js/jquery.dataTables.min.js"></script>
 
     <!-- Sparkline -->
-    <script src="/Content/admin/admin/admin/unique/02/unique-admin/assets/vendor_components/jquery-sparkline/dist/jquery.sparkline.js"></script>
+    <script src="/Content/admin/admin/unique-admin/assets/vendor_components/jquery-sparkline/dist/jquery.sparkline.js"></script>
 
     <!-- daterangepicker -->
-    <script src="/Content/admin/admin/admin/unique/02/unique-admin/assets/vendor_components/moment/min/moment.min.js"></script>
-    <script src="/Content/admin/admin/admin/unique/02/unique-admin/assets/vendor_components/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <script src="/Content/admin/admin/unique-admin/assets/vendor_components/moment/min/moment.min.js"></script>
+    <script src="/Content/admin/admin/unique-admin/assets/vendor_components/bootstrap-daterangepicker/daterangepicker.js"></script>
 
     <!-- datepicker -->
-    <script src="/Content/admin/admin/admin/unique/02/unique-admin/assets/vendor_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
-
+    <script src="/Content/admin/admin/unique-admin/assets/vendor_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
+    <!-- input mask-->
+    <script src="~/Content/admin/admin/jquery.inputmask.js"></script>
+    <script src="~/Content/admin/admin/jquery.inputmask.date.extensions.js"></script>
+    <script src="~/Content/admin/admin/jquery.inputmask.extensions.js"></script>
     <!-- Bootstrap WYSIHTML5 -->
-    <script src="/Content/admin/admin/admin/unique/02/unique-admin/assets/vendor_plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.js"></script>
+    <script src="/Content/admin/admin/unique-admin/assets/vendor_plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.js"></script>
 
     <!-- Slimscroll -->
-    <script src="/Content/admin/admin/admin/unique/02/unique-admin/assets/vendor_components/jquery-slimscroll/jquery.slimscroll.js"></script>
+    <script src="/Content/admin/admin/unique-admin/assets/vendor_components/jquery-slimscroll/jquery.slimscroll.js"></script>
 
     <!-- FastClick -->
-    <script src="/Content/admin/admin/admin/unique/02/unique-admin/assets/vendor_components/fastclick/lib/fastclick.js"></script>
+    <script src="/Content/admin/admin/unique-admin/assets/vendor_components/fastclick/lib/fastclick.js"></script>
 
     <!-- peity -->
-    <script src="/Content/admin/admin/admin/unique/02/unique-admin/assets/vendor_components/jquery.peity/jquery.peity.js"></script>
+    <script src="/Content/admin/admin/unique-admin/assets/vendor_components/jquery.peity/jquery.peity.js"></script>
 
     <!-- Unique_Admin App -->
-    <script src="/Content/admin/admin/admin/unique/02/unique-admin/support-system-dashboard/js/template.js"></script>
+    <script src="/Content/admin/admin/unique-admin/support-system-dashboard/js/template.js"></script>
 
     <!-- Unique_Admin dashboard demo (This is only for demo purposes) -->
-    <script src="/Content/admin/admin/admin/unique/02/unique-admin/support-system-dashboard/js/pages/dashboard.js"></script>
+    @*<script src="/Content/admin/admin/unique-admin/support-system-dashboard/js/pages/dashboard.js"></script>*@
   
     <!-- Unique_Admin for demo purposes -->
-    <script src="/Content/admin/admin/admin/unique/02/unique-admin/support-system-dashboard/js/demo.js"></script>
-    <script src="/Content/admin/admin/admin/unique/02/unique-admin/support-system-dashboard/js/pages/notification.js"></script>
-    <script src="~/Content/admin/admin/admin/unique/02/unique-admin/support-system-dashboard/js/pages/toastr.js"></script>
-    <script src="~/Content/admin/admin/admin/unique/02/unique-admin/assets/vendor_components/jquery-toast-plugin-master/src/jquery.toast.js"></script>
+    <script src="/Content/admin/admin/unique-admin/support-system-dashboard/js/demo.js"></script>
+    <script src="/Content/admin/admin/unique-admin/support-system-dashboard/js/pages/notification.js"></script>
+    <script src="~/Content/admin/admin/unique-admin/support-system-dashboard/js/pages/toastr.js"></script>
+    <script src="~/Content/admin/admin/unique-admin/assets/vendor_components/jquery-toast-plugin-master/src/jquery.toast.js"></script>
     @*<script src="~/Content/admin/js/jquery.cookie.js"></script>
     <script src="~/Content/admin/js/shopping.js"></script>*@
-
+    @*<script src="~/Content/admin/advanced-form-element.js"></script>*@
+    
+    
 </body>
 </html>

@@ -1,99 +1,298 @@
-﻿@model IEnumerable<ZuLuCommerce.Models.Order>
-
+﻿@model PagedList.IPagedList<ZuLuCommerce.Models.Order>
+@using PagedList.Mvc
+@using ZuLuCommerce.Models
 @{
     ViewBag.Title = "Index";
 }
 
 <h2>Index</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.CreatedDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Description)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.PaymentType)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Discount)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Tax)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ShippingFee)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ShippingAddress)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ShippingCity)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Customer.FirstName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.OrderStatus.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Shipment.ShippingAddress)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Employee.FirstName)
-        </th>
-        <th></th>
-    </tr>
+<div class="box">
+    @using (Html.BeginForm())
+    {
+        <div class="row">
+            <div class="col-md-6 col-12">
+                <div class="form-group">
+                    <label>Search </label>
+                    @Html.Editor("kw", new { htmlAttributes = new { @class = "form-control", @placeholder = "Search by codename or shipment id" } })
+                </div>
+            </div>
+            <div class="col-md-6 col-12">
+                <div class="form-group">
+                    <label>Sort by</label>
+                    <select name="sort" id="sort" class="form-control">
+                        <option value="old">Oldest</option>
+                        <option value="new">Latest</option>
+                        <option value="id_asc">Id ascend</option>
+                        <option value="id_desc">Id descend</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.CreatedDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Description)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.PaymentType)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Discount)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Tax)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ShippingFee)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ShippingAddress)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ShippingCity)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Customer.FirstName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.OrderStatus.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Shipment.ShippingAddress)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Employee.FirstName)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
+            <div class="col-md-3 col-6">
+                <div class="form-group">
+                    <!-- Date -->
+                    <div class="form-group">
+                        <label>Date: @ViewBag.date</label>
+
+                        <div class="input-group date">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            <input type="text" name="date" class="form-control pull-right" id="datepicker">
+                        </div>
+                        <!-- /.input group -->
+                    </div>
+                    <!-- Date range -->
+                    @*<label>Date range:</label>
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            <input type="text" name="daterange" class="form-control pull-right" id="reservation">
+                        </div>*@
+                    <!-- /.input group -->
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="form-group">
+                    <label>Status</label>
+                    <select name="status" id="status" class="form-control">
+                        <option value="Total" selected>All status</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Delivering">Delivering</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Canceled">Canceled</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="form-group">
+                    <label>Payment type</label>
+                    <select name="pay" id="pay" class="form-control">
+                        <option value="all" selected>All type</option>
+                        <option value="cod">COD</option>
+                        <option value="credit">Credit card</option>
+                      
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="form-group">
+                    <label>City</label>
+                    <select id="city" name="city" class="form-control dropdown-filter ">
+                        @{
+                            var db = new eCommerceEntities();
+                            <option value="allcity" selected="selected">All city</option>
+                            foreach (var city in db.CityShippingFees)
+                            {
+                                <option value="@city.Id">@city.CityName</option>
+                            }
+                        }
+
+                    </select>
+                </div>
+                
+            </div>
+
+        </div>
+        <input type="submit" value="Submit" class="btn btn-success" style="margin:10px 0" />
+    }
+</div>
+
+<a href=@Url.Action("Index","Orders",new { page=1,kw="",sort="",status ="",date = ""}) class="btn btn-danger" id="clear" style="width:130px">Clear all filter</a>
+<!-- Main content -->
+<section class="box">
+
+    <div class="row">
+        <div class="col-12">
+            <div class="box">
+                <div class="box-header with-border">
+                    <h4 class="box-title">@ViewBag.status / Showing @ViewBag.from - @ViewBag.to of @ViewBag.resultcount result(s)</h4>
+
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-lg-3 col-12">
+                            <div class="row mb-30">
+                                <!-- Column -->
+                                <div class="col-12">
+                                    <a href=@Url.Action("Index",new { status = "Pending"})>
+                                        <div class="box box-inverse box-warning">
+                                            <div class="box-body text-center">
+                                                <h1 class="font-light text-white">@ViewBag.pending</h1>
+                                                <h6 class="text-white mb-10">Pending</h6>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                                <!-- Column -->
+                                <!-- Column -->
+                                <div class="col-12">
+                                    <div class="box box-success box-danger">
+                                        <div class="box-body text-center">
+                                            <a href=@Url.Action("Index",new { status = "Delivering" })>
+                                                <h1 class="font-light text-white">@ViewBag.delivering</h1>
+                                                <h6 class="text-white mb-10">Delivering</h6>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Column -->
+                                <div class="col-12">
+                                    <div class="box box-inverse box-success">
+                                        <div class="box-body text-center">
+                                            <a href=@Url.Action("Index",new { status = "Completed" })>
+                                                <h1 class="font-light text-white">@ViewBag.completed</h1>
+                                                <h6 class="text-white mb-10">Completed</h6>
+                                            </a>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Column -->
+                                <div class="col-12">
+                                    <div class="box box-inverse box-dark">
+                                        <div class="box-body text-center">
+                                            <a href=@Url.Action("Index",new { status = "Canceled" })>
+                                                <h1 class="font-light text-white">@ViewBag.canceled</h1>
+                                                <h6 class="text-white mb-10">Canceled</h6>
+                                            </a>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Column -->
+                                <div class="col-12">
+                                    <div class="box box-inverse box-info">
+                                        <div class="box-body text-center">
+                                            <a href=@Url.Action("Index",new { status = "Total" })>
+                                                <h1 class="font-light text-white">@ViewBag.total</h1>
+                                                <h6 class="text-white mb-10">Total orders</h6>
+                                            </a>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                        </div>
+                        <div class="col-lg-9 col-12">
+                            <div class="table-responsive">
+                                <table class="table table-hover table-bordered">
+                                    <thead>
+                                        <tr class="bg-gray">
+                                            <th>
+                                                Codename
+                                            </th>
+                                            <th>
+                                                Created Date
+                                            </th>
+
+                                            <th>
+                                                Payment Type
+                                            </th>
+
+                                            <th>
+                                                Shipping City
+                                            </th>
+
+                                            <th>
+                                                Order Status
+                                            </th>
+
+                                            <th>Action</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model)
+                                                            {
+                                                            <tr>
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.Codenname)
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.CreatedDate)
+                                                                </td>
+
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.PaymentType)
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.CityShippingFee.CityName)
+                                                                </td>
+
+                                                                <td>
+
+                                                                    @{
+                                                                            if (item.StatusId == 1)
+                                                                            {
+                                                                        <span class="label label-warning">Pending</span>
+                                                                            }
+                                                                            if (item.StatusId == 2)
+                                                                            {
+                                                                        <span class="label label-inverse">Delivering</span>
+                                                                            }
+                                                                            if (item.StatusId == 3)
+                                                                            {
+                                                                        <span class="label label-success">Complete</span>
+                                                                            }
+                                                                            if (item.StatusId == 4)
+                                                                            {
+                                                                        <span class="label label-danger">Canceled</span>
+                                                                            }
+                                                                    }
+                                                                </td>
+
+                                                                <td>
+                                                                    @{
+                                                                            if (User.IsInRole("Admin"))
+                                                                            {
+                                                                        @Html.ActionLink("Edit", "Edit", new { id = item.Id })
+                                                                            }
+                                                                    }
+
+                                                                    @Html.ActionLink("Details", "Details", new { id = item.Id })
+                                                                </td>
+                                                            </tr>
+                                                                            }
+
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="page-list">
+                                <div style="text-align:center;left:50%;position:relative;transform:translateX(-50%)" class="pagedListContainer">
+                                    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, kw = ViewBag.kw, sort = ViewBag.sort }))
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.row -->
+
+</section>
+<!-- /.content -->
+
+@section Scripts {
+    <script>
+       $(document).ready(function () {
+
+           $("#sort").val("@ViewBag.sort");
+           $("#pay").val("@ViewBag.pay");
+           $("#city").val("@ViewBag.city");
+           @*$("#datepicker").val(@ViewBag.date);*@
+           $("#status").val("@ViewBag.status");
+
+       });
+    </script>
 }
-
-</table>

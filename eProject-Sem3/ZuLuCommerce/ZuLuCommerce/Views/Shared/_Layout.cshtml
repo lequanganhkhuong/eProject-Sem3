@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="~/Content/admin/css/ionicons.min.css">
     <!-- Font Awesome CSS-->
     <link rel="stylesheet" href="~/Content/admin/css/font-awesome.min.css">
-    
+
     <!-- Animate CSS-->
     <link rel="stylesheet" href="~/Content/admin/css/animate.css">
     <!-- Owl Carousel CSS-->
@@ -66,14 +66,18 @@
                             <!--Header Top Right Start-->
                             <div class="header-top-right text-center text-md-right">
                                 <ul class="header-top-menu">
-                                    @{ 
-                                        if (User.Identity.IsAuthenticated)
+                                    @{
+                                        if (User.Identity.IsAuthenticated && !User.Identity.Name.Equals(""))
                                         {
                                             int userid = int.Parse(User.Identity.Name);
-                                            var acc = db.Accounts.Where(x=>x.Id == userid).FirstOrDefault();
-                                            <li>Hello <b>@acc.Username</b></li>
-                                            <li><a href="my-account.html">My account</a></li>
-                                            <li><a href=@Url.Action("Logout","Customers")>Logout</a></li>
+                                            var acc = db.Accounts.Find(userid);
+                                            if (acc != null)
+                                            {
+                                                <li>Hello <b>@acc.Username</b></li>
+                                                <li><a href=@Url.Action("UpdateProfile","Customers",new { id = acc.CustomerId})>My account</a></li>
+                                                <li><a href=@Url.Action("Logout","Customers")>Logout</a></li>
+                                            }
+
                                         }
                                         else
                                         {
@@ -120,7 +124,7 @@
                                     <ul class="main-menu">
                                         
                                         <li class="active">
-                                            <a href="index.html">Home</a>
+                                            <a href=@Url.Action("Index","Home")>Home</a>
                                             <!--Dropdown Menu Start-->
                                             @*<ul class="dropdown">
                                                 <li><a href="index.html">Home Shop 1</a></li>
@@ -244,6 +248,52 @@
         </header>
         <!--Header Area End-->
         @RenderBody()
+        <div class="feature-area mt-50">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4">
+                        <!--Single Feature Start-->
+                        <div class="single-feature">
+                            <div class="feature-icon">
+                                <i class="icon ion-ios-telephone"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h3>(999) 1234 56789</h3>
+                                <p>Free support line!</p>
+                            </div>
+                        </div>
+                        <!--Single Feature End-->
+                    </div>
+                    <div class="col-md-4">
+                        <!--Single Feature Start-->
+                        <div class="single-feature">
+                            <div class="feature-icon">
+                                <i class="icon ion-email"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h3>(999) 1234 56789</h3>
+                                <p>Free support line!</p>
+                            </div>
+                        </div>
+                        <!--Single Feature End-->
+                    </div>
+                    <div class="col-md-4">
+                        <!--Single Feature Start-->
+                        <div class="single-feature">
+                            <div class="feature-icon">
+                                <i class="icon ion-ios-timer-outline"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h3>(999) 1234 56789</h3>
+                                <p>Free support line!</p>
+                            </div>
+                        </div>
+                        <!--Single Feature End-->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Feature Area End-->
         <!--Footer Area Start-->
         <footer>
             <div class="footer-container">
@@ -510,10 +560,34 @@
     <!--Main Js-->
     <script src="~/Content/admin/js/main.js"></script>
     <script src="~/Content/admin/js/jquery.cookie.js"></script>
-    <script src="~/Content/admin/js/shopping.js"></script>
+    @if (User.Identity.IsAuthenticated)
+    {
+        int userid = int.Parse(User.Identity.Name);
+        var count = db.CartItems.Where(x => x.Cart.UserId == userid).Count();
+        <script>
+            function loginCartItemsCount() {
+                var count = @count;
+             if (count != 0) {
+                 $(".cart-total").css("background-color", "red");
+             } else {
+                 $(".cart-total").css("background-color", "#919fb3");
+             }
+             $(".cart-total").html(count);
+            }
+             
+         
+            loginCartItemsCount();
 
+        </script>
+    }
+    <script src="~/Content/admin/js/shopping.js"></script>
+@if (!User.Identity.IsAuthenticated)
+{
     <script>
         CartItemsCount();
+
     </script>
+}
+
 </body>
 </html>

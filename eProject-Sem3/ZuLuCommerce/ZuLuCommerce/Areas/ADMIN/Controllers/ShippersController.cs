@@ -14,12 +14,14 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
     {
         private eCommerceEntities db = new eCommerceEntities();
 
+        [Authorize(Roles ="Admin,Manager")]
         // GET: ADMIN/Shippers
         public ActionResult Index()
         {
-            return View(db.Shippers.ToList());
+            var shippers = db.Shippers.Include(s => s.ShipmentStatus);
+            return View(shippers.ToList());
         }
-
+        [Authorize(Roles = "Admin,Manager")]
         // GET: ADMIN/Shippers/Details/5
         public ActionResult Details(int? id)
         {
@@ -34,19 +36,20 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
             }
             return View(shipper);
         }
-
+        [Authorize(Roles = "Admin,Manager")]
         // GET: ADMIN/Shippers/Create
         public ActionResult Create()
         {
+            ViewBag.StatusId = new SelectList(db.ShipmentStatuses, "Id", "Name");
             return View();
         }
-
+        [Authorize(Roles = "Admin,Manager")]
         // POST: ADMIN/Shippers/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,FirstName,LastName,Phone,Address,Email,Birthday")] Shipper shipper)
+        public ActionResult Create([Bind(Include = "Id,FirstName,LastName,Phone,Address,Email,Birthday,StatusId,IsActive")] Shipper shipper)
         {
             if (ModelState.IsValid)
             {
@@ -55,9 +58,10 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
                 return RedirectToAction("Index");
             }
 
+            ViewBag.StatusId = new SelectList(db.ShipmentStatuses, "Id", "Name", shipper.StatusId);
             return View(shipper);
         }
-
+        [Authorize(Roles = "Admin,Manager")]
         // GET: ADMIN/Shippers/Edit/5
         public ActionResult Edit(int? id)
         {
@@ -70,15 +74,16 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
             {
                 return HttpNotFound();
             }
+            ViewBag.StatusId = new SelectList(db.ShipmentStatuses, "Id", "Name", shipper.StatusId);
             return View(shipper);
         }
-
+        [Authorize(Roles = "Admin,Manager")]
         // POST: ADMIN/Shippers/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,FirstName,LastName,Phone,Address,Email,Birthday")] Shipper shipper)
+        public ActionResult Edit([Bind(Include = "Id,FirstName,LastName,Phone,Address,Email,Birthday,StatusId,IsActive")] Shipper shipper)
         {
             if (ModelState.IsValid)
             {
@@ -86,34 +91,10 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+            ViewBag.StatusId = new SelectList(db.ShipmentStatuses, "Id", "Name", shipper.StatusId);
             return View(shipper);
         }
 
-        // GET: ADMIN/Shippers/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Shipper shipper = db.Shippers.Find(id);
-            if (shipper == null)
-            {
-                return HttpNotFound();
-            }
-            return View(shipper);
-        }
-
-        // POST: ADMIN/Shippers/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            Shipper shipper = db.Shippers.Find(id);
-            db.Shippers.Remove(shipper);
-            db.SaveChanges();
-            return RedirectToAction("Index");
-        }
 
         protected override void Dispose(bool disposing)
         {

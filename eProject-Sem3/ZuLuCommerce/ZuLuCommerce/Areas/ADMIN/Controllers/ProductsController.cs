@@ -1,4 +1,5 @@
-﻿using PagedList;
+﻿using Newtonsoft.Json;
+using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -16,7 +17,7 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
     public class ProductsController : Controller
     {
         private eCommerceEntities db = new eCommerceEntities();
-
+        
         private void UploadPictures(int product_id)
         {
             //add picture
@@ -63,6 +64,7 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
         }
+        
         public ActionResult SetThumbnail(int id)
         {
             try
@@ -79,31 +81,39 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
         }
-        //public List<Product> Filter(string filter)
-        //{
-        //    var p = db.Products.OrderBy(x => x.Id).Include(c => c.Category).Include(d => d.Supplier);
-        //    if (!string.IsNullOrEmpty(filter))
-        //    {
-        //        var flag = filter.Split('-');
-        //        if (flag[0].Equals("sup"))
-        //        {
-        //            p = p.Where(x => x.Supplier.Name.Equals(flag[1]));
-        //            return p.ToList();
-        //        }
-
-        //    }
-        //    return p.ToList();
-          
+        [HttpPost]
+        public ActionResult ProductFeatures(string data)
+        {
+            var features = JsonConvert.DeserializeObject<ProductFeature>(data);
+            var f = db.ProductFeatures.Find(features.Id);
+            if (f != null)
+            {
+                f.OS = features.OS;
+                f.Processor = features.Processor;
+                f.ScreenSize = features.ScreenSize;
+                f.StorageCap = features.StorageCap;
+                f.StorageType = features.StorageType;
+                f.BatteryLife = features.BatteryLife;
+                f.Graphic = features.Graphic;
+                db.SaveChanges();
+                return Content("OK");
+            }
+            else
+            {
+                return Content("Bay roi`");
+            }
+            
+        }
         //}
         // GET: ADMIN/Products
-        public ActionResult Index(int? page, string kw, string sort, string supplier,string category, string price,string discount)
+        public ActionResult Index(int? page, string kw, string sort, string supplier,string category, string price,string discount,string isactive)
         {
             int pageNumber = page ?? 1;
             int pageSize = 6;
             //select all
             var p = db.Products.OrderBy(x => x.Id).Include(c=>c.Category).Include(d=>d.Supplier);
-            
-            
+
+
             //filter
             //supplier filter
             if (string.IsNullOrEmpty(supplier))
@@ -118,16 +128,13 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
             if (supplier.Equals("allsup"))
             {
                 p = db.Products.OrderBy(x => x.Id).Include(c => c.Category).Include(d => d.Supplier);
-                //if (!category.Equals("allcat"))
-                //{
-                //    p = db.Products.Where(x => x.Category.Name == category);
-                //}
+
             }
             else
             {
-                sort = "id_asc";
+             
                 p = db.Products.Where(x => x.Supplier.Name == supplier);
-       
+
             }
             //category filter
             if (string.IsNullOrEmpty(category))
@@ -147,7 +154,7 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
                 }
                 else
                 {
-                    sort = "id_asc";
+               
                     p = db.Products.Where(x => x.Supplier.Name == supplier);
                 }
             }
@@ -160,10 +167,62 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
                 else
                 {
                     p = p.Where(x => x.Category.Name == category);
-                    
+
                 }
-                   
+
             }
+            //filter isactive
+            if (string.IsNullOrEmpty(isactive))
+            {
+                ViewBag.isactive = "none";
+                isactive = "none";
+            }
+            else
+            {
+                ViewBag.isactive = isactive;
+            }
+            if (!isactive.Equals("none"))
+            {
+             
+                switch (isactive)
+                {
+                    case "active":
+                        p = p.Where(x => x.IsActive);
+                        break;
+                    case "notactive":
+                        p = p.Where(x => !x.IsActive);
+                        break;
+                }
+            }
+            else
+            {
+                if (category.Equals("allcat"))
+                {
+                    if (supplier.Equals("allsup"))
+                    {
+                        p = db.Products.OrderBy(x => x.Id).Include(c => c.Category).Include(d => d.Supplier);
+                    }
+                    else
+                    {
+                    
+                        p = db.Products.Where(x => x.Supplier.Name == supplier);
+                    }
+                }
+                else
+                {
+                    if (supplier.Equals("allsup"))
+                    {
+                        p = db.Products.Where(x => x.Category.Name == category);
+                    }
+                    else
+                    {
+                        p = p.Where(x => x.Category.Name == category);
+
+                    }
+
+                }
+            }
+
             //filter price
             if (string.IsNullOrEmpty(price))
             {
@@ -177,41 +236,51 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
             switch (price)
             {
                 case "allprice":
-                    p = p.Where(x => x.Price >0);
-                    ViewBag.sortId = "id_desc";
+                    p = p.Where(x => x.Price > 0);
                     break;
                 case "0-1mil":
                     p = p.Where(x => x.Price > 0 && x.Price < 1000000);
-                    ViewBag.sortId = "id_desc";
                     break;
                 case "1-5mil":
                     p = p.Where(x => x.Price > 1000000 && x.Price < 5000000);
-                    ViewBag.sortId = "id_desc";
                     break;
                 case "5-10mil":
                     p = p.Where(x => x.Price > 5000000 && x.Price < 10000000);
-                    ViewBag.sortId = "id_desc";
                     break;
                 case "10-20mil":
                     p = p.Where(x => x.Price > 10000000 && x.Price < 20000000);
-                    ViewBag.sortId = "id_desc";
                     break;
                 case "20milup":
                     p = p.Where(x => x.Price > 20000000);
-                    ViewBag.sortId = "id_desc";
                     break;
             }
 
             //filter discount
-            //if (string.IsNullOrEmpty(discount))
-            //{
-            //    ViewBag.discount = "alldiscount";
-            //    discount = "alldiscount";
-            //}
-            //else
-            //{
-            //    ViewBag.discount = discount;
-            //}
+            if (string.IsNullOrEmpty(discount))
+            {
+                ViewBag.discount = "none";
+                discount = "none";
+            }
+            else
+            {
+                ViewBag.discount = discount;
+            }
+            switch (discount)
+            {
+                case "none":
+                    p = p.Where(x => x.Discount >= 0);
+                    break;
+                case "0-10":
+                    p = p.Where(x => x.Discount >= 0 && x.Discount <= 10);
+                    break;
+                case "10-20":
+                    p = p.Where(x => x.Discount >= 10 && x.Discount < 20);
+                    break;
+
+                case "20up":
+                    p = p.Where(x => x.Discount > 20);
+                    break;
+            }
 
             //search
             if (!string.IsNullOrEmpty(kw))
@@ -221,11 +290,11 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
             }
             //sort
 
-            //ViewBag.sortTopic = "topic_asc";
+            
             if (string.IsNullOrEmpty(sort))
             {
                 ViewBag.sort = "id_asc";
-
+                sort = "id_asc";
             }
             else
             {
@@ -235,37 +304,43 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
             {
                 case "id_asc":
                     p = p.OrderBy(x => x.Id);
-                    ViewBag.sortId = "id_desc";
                     break;
                 case "id_desc":
                     p = p.OrderByDescending(x => x.Id);
-                    ViewBag.sortId = "id_asc";
                     break;
                 case "name_asc":
                     p = p.OrderBy(x => x.Name);
-                    ViewBag.sortName = "name_desc";
                     break;
                 case "name_desc":
                     p = p.OrderByDescending(x => x.Name);
-                    ViewBag.sortName = "name_asc";
                     break;
                 case "category_asc":
                     p = p.OrderBy(x => x.Category.Name);
-                    ViewBag.sortTopic = "category_desc";
                     break;
                 case "category_desc":
                     p = p.OrderByDescending(x => x.Category.Name);
-                    ViewBag.sortTopic = "category_asc";
+                    break;
+                case "least_stock":
+                    p = p.OrderBy(x => x.Stock);
+                    break;
+                case "bestselling":
+                    var bs = db.OrderDetails.Where(x=>x.Order.StatusId == 3).GroupBy(x => x.ProductId)
+                   .Select(group => new
+                   {
+                       productid = group.Key,
+                       Count = group.Count()
+                   })
+                   .OrderByDescending(x => x.Count);
+                    p = from a in p
+                        join b in bs on a.Id equals b.productid into c
+                        from d in c.DefaultIfEmpty()
+                        orderby d.Count descending
+                        select a;
+                     
                     break;
             }
-            ViewBag.sortId = sort ?? "id_desc";
-            ViewBag.sortName = sort ?? "name_desc";
-            ViewBag.sortTopic = sort ?? "topic_desc";
 
-            
-
-
-
+            ViewBag.resultcount = p.Count();
             return View(p.ToPagedList(pageNumber, pageSize));
         }
 
@@ -297,13 +372,22 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,Price,Discount,Stock,CategoryId,SupplierId,Description,Thumbnail")] Product product)
+        [ValidateInput(false)]
+        public ActionResult Create([Bind(Include = "Id,Name,Price,Discount,Stock,CategoryId,SupplierId,Description,Thumbnail,IsActive")] Product product)
         {
             if (ModelState.IsValid)
             {
                 db.Products.Add(product);
                 db.SaveChanges();
                 UploadPictures(product.Id);
+                NewProduct np = new NewProduct()
+                {
+                    ProductId = product.Id,
+                    AddDate = DateTime.Now,
+                    IsActive = true
+                };
+                db.NewProducts.Add(np);
+                db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
@@ -334,7 +418,8 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,Price,Discount,Stock,CategoryId,SupplierId,Description,Thumbnail")] Product product)
+        [ValidateInput(false)]
+        public ActionResult Edit([Bind(Include = "Id,Name,Price,Discount,Stock,CategoryId,SupplierId,Description,Thumbnail,IsActive")] Product product)
         {
             if (ModelState.IsValid)
             {
@@ -348,31 +433,7 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
             return View(product);
         }
 
-        // GET: ADMIN/Products/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Product product = db.Products.Find(id);
-            if (product == null)
-            {
-                return HttpNotFound();
-            }
-            return View(product);
-        }
-
-        // POST: ADMIN/Products/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            Product product = db.Products.Find(id);
-            db.Products.Remove(product);
-            db.SaveChanges();
-            return RedirectToAction("Index");
-        }
+        
 
         protected override void Dispose(bool disposing)
         {

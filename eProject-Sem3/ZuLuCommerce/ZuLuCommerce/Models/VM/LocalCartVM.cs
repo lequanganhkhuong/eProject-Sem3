@@ -12,5 +12,7 @@ namespace ZuLuCommerce.Models
         public string thumbnail { get; set; }
         public decimal price { get; set; }
         public int quantity { get; set; }
+
+        public virtual Product Product { get; set; }
     }
 }

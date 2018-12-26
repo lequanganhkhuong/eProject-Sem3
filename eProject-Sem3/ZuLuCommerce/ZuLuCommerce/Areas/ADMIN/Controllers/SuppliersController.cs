@@ -10,6 +10,7 @@ using ZuLuCommerce.Models;
 
 namespace ZuLuCommerce.Areas.ADMIN.Controllers
 {
+    [Authorize(Roles = "Admin,Manager")]
     public class SuppliersController : Controller
     {
         private eCommerceEntities db = new eCommerceEntities();
@@ -88,33 +89,7 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
             }
             return View(supplier);
         }
-
-        // GET: ADMIN/Suppliers/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Supplier supplier = db.Suppliers.Find(id);
-            if (supplier == null)
-            {
-                return HttpNotFound();
-            }
-            return View(supplier);
-        }
-
-        // POST: ADMIN/Suppliers/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            Supplier supplier = db.Suppliers.Find(id);
-            db.Suppliers.Remove(supplier);
-            db.SaveChanges();
-            return RedirectToAction("Index");
-        }
-
+        
         protected override void Dispose(bool disposing)
         {
             if (disposing)
