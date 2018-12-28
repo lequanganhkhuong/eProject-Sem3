@@ -10,6 +10,7 @@ using System.Web.Mvc;
 using System.Web.Security;
 using ZuLuCommerce.Areas.ADMIN.Models;
 using ZuLuCommerce.Models;
+using ZuLuCommerce.Models.RoleSecurity;
 using ZuLuCommerce.Models.VM;
 
 namespace ZuLuCommerce.Controllers
@@ -17,12 +18,12 @@ namespace ZuLuCommerce.Controllers
     public class CustomersController : Controller
     {
         eCommerceEntities db = new eCommerceEntities();
-        [Authorize]
+       
         public ActionResult ForgotPassword()
         {
             return View();    
         }
-        [Authorize]
+     
         [HttpPost]
         public ActionResult ForgotPassword(string username, string email)
         {
@@ -117,7 +118,7 @@ namespace ZuLuCommerce.Controllers
             }
             return View();
         }
-        [Authorize]
+        [CustomAuthorization(LoginPage = "~/Customers/Login")]
         public ActionResult Logout()
         {
             FormsAuthentication.SignOut();
@@ -176,8 +177,13 @@ namespace ZuLuCommerce.Controllers
                     mail.From = new MailAddress("anhkhuongsubmail@gmail.com");
                     mail.To.Add(cus.Email);
                     mail.Subject = "Activate Account";
-                    mail.Body = "Follow this link to activate your account <a href='http://localhost:54358/Customers/Activate?token=" + acc.RegisterToken +
+                    mail.Body = "Follow this link to activate your account <a href='http://group5.aptech.cloud/Customers/Activate?token=" + acc.RegisterToken +
                         "'>Click here to activate</a>";
+
+
+                    // please use this line of code instead when running in localhost
+                    //mail.Body = "Follow this link to activate your account <a href='http://localhost:54358/Customers/Activate?token=" + acc.RegisterToken +
+                    //    "'>Click here to activate</a>";
 
                     mail.SubjectEncoding = Encoding.UTF8;
                     mail.BodyEncoding = Encoding.UTF8;
@@ -276,7 +282,7 @@ namespace ZuLuCommerce.Controllers
             }
             return View();
         }
-        [Authorize]
+        [CustomAuthorization(LoginPage = "~/Customers/Login")]
         public ActionResult UpdateProfile(int? id, string kw, int? page)
         {
             if (!User.Identity.IsAuthenticated)
@@ -305,7 +311,7 @@ namespace ZuLuCommerce.Controllers
             ViewBag.CityId = new SelectList(db.CityShippingFees, "Id", "CityName");
             return View(cus);
         }
-        [Authorize]
+        [CustomAuthorization(LoginPage = "~/Customers/Login")]
         [HttpPost]
         public ActionResult UpdateProfile(Customer data)
         {
@@ -334,7 +340,7 @@ namespace ZuLuCommerce.Controllers
             ViewBag.CityId = new SelectList(db.CityShippingFees, "Id", "CityName", cus.CityId);
             return View();
         }
-        [Authorize]
+        [CustomAuthorization(LoginPage = "~/Customers/Login")]
         public ActionResult ChangePassword(int? id)
         {
             if (id != int.Parse(User.Identity.Name))
@@ -358,7 +364,7 @@ namespace ZuLuCommerce.Controllers
 
             return View(change);
         }
-        [Authorize]
+        [CustomAuthorization(LoginPage = "~/Customers/Login")]
         [HttpPost]
         public ActionResult ChangePassword(ChangePasswordVm data)
         {

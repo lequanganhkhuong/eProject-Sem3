@@ -55,7 +55,19 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
         {
             int pageNumber = page ?? 1;
             int pageSize = 6;
-            var bestSellings = db.BestSellings.Include(b => b.Product).OrderBy(x => x.Id);
+            IQueryable<BestSelling> bestSellings = db.BestSellings.Include(b => b.Product).OrderBy(x => x.Id);
+            var bs = db.OrderDetails.Where(x => x.Order.StatusId == 3).GroupBy(x => x.ProductId)
+                  .Select(group => new
+                  {
+                      productid = group.Key,
+                      Count = group.Count()
+                  })
+                  .OrderByDescending(x => x.Count);
+            bestSellings = from a in bestSellings
+                           join b in bs on a.ProductId equals b.productid into c
+                from d in c.DefaultIfEmpty()
+                orderby d.Count descending
+                select a;
             ViewBag.resultcount = bestSellings.Count();
             return View(bestSellings.ToPagedList(pageNumber, pageSize));
         }
@@ -90,7 +102,6 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
             }
             else
             {
-                sort = "id_asc";
                 p = db.Products.Where(x => x.Supplier.Name == supplier);
 
             }
@@ -112,7 +123,6 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
                 }
                 else
                 {
-                    sort = "id_asc";
                     p = db.Products.Where(x => x.Supplier.Name == supplier);
                 }
             }
@@ -141,7 +151,6 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
             }
             if (!isactive.Equals("none"))
             {
-                sort = "id_asc";
                 switch (isactive)
                 {
                     case "active":
@@ -162,7 +171,6 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
                     }
                     else
                     {
-                        sort = "id_asc";
                         p = db.Products.Where(x => x.Supplier.Name == supplier);
                     }
                 }
@@ -277,6 +285,21 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
                     break;
                 case "category_desc":
                     p = p.OrderByDescending(x => x.Category.Name);
+                    break;
+                    case "bestselling":
+                    var bs = db.OrderDetails.Where(x=>x.Order.StatusId == 3).GroupBy(x => x.ProductId)
+                   .Select(group => new
+                   {
+                       productid = group.Key,
+                       Count = group.Count()
+                   })
+                   .OrderByDescending(x => x.Count);
+                    p = from a in p
+                        join b in bs on a.Id equals b.productid into c
+                        from d in c.DefaultIfEmpty()
+                        orderby d.Count descending
+                        select a;
+                     
                     break;
             }
 

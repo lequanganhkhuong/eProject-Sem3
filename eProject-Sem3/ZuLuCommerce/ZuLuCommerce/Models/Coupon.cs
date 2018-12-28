@@ -11,15 +11,22 @@ namespace ZuLuCommerce.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class Coupon
     {
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
+        [Required]
         public string Code { get; set; }
         public decimal Discount { get; set; }
         public int Uses { get; set; }
+        [Required]
+        [DataType(DataType.DateTime)]
         public System.DateTime StartDate { get; set; }
+        [Required]
+        [DataType(DataType.DateTime)]
         public System.DateTime EndDate { get; set; }
         public bool IsActive { get; set; }
     }

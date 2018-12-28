@@ -3,6 +3,8 @@
 @using ZuLuCommerce.Models
 @{
     ViewBag.Title = "Index";
+    var orderTotal = ViewBag.orderTotal as List<Tuple<int, decimal>>;
+     
 }
 
 <h2>Index</h2>
@@ -204,7 +206,9 @@
                                             <th>
                                                 Order Status
                                             </th>
-
+                                            <th>
+                                                Total
+                                            </th>
                                             <th>Action</th>
 
                                         </tr>
@@ -248,7 +252,9 @@
                                                                             }
                                                                     }
                                                                 </td>
-
+                                                                <td>
+                                                                    @orderTotal.Where(x=>x.Item1 == item.Id).SingleOrDefault().Item2.ToString("N0")
+                                                                </td>
                                                                 <td>
                                                                     @{
                                                                             if (User.IsInRole("Admin"))

@@ -11,12 +11,14 @@ namespace ZuLuCommerce.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class Rating
     {
         public int Id { get; set; }
         public int ProductId { get; set; }
         public int UserId { get; set; }
+        [Range(0, 5, ErrorMessage = "Please enter valid integer Number")]
         public int Rating1 { get; set; }
     
         public virtual Account Account { get; set; }

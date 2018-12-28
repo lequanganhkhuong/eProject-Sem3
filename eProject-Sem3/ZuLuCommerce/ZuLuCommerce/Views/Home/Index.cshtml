@@ -29,14 +29,14 @@
                                         foreach (var topic in db.Topics)
                                         {
                                             <li class="right-menu">
-                                                <a href=@Url.Action("Topics","Products",new { id=topic.Id})>@topic.TopicName</a>
+                                                <a href=@Url.Action("Index","Products",new { topic=topic.Id})>@topic.TopicName</a>
                                                 <!--Category Dropdown Menu Start-->
                                                 <ul class="cat-dropdown">
                                                     @{
                                                         var cat = db.Categories.Where(x => x.TopicId == topic.Id);
                                                         foreach (var c in cat)
                                                         {
-                                                            <li><a href=@Url.Action("Categories","Products",new { id = c.Id})>@c.Name</a></li>
+                                                            <li><a href=@Url.Action("Index","Products",new { cat = c.Id})>@c.Name</a></li>
                                                         }
                                                     }
                                                 </ul>
@@ -517,37 +517,30 @@
                                                         <div class="row">
                                                             <div class="deal-product-active4 owl-carousel">
                                                                 @{
-                                                                   
-                                                                        foreach (var b in db.Products.Where(x => x.Category.TopicId == t.Id && x.IsActive))
-                                                                        {
 
-                                                                            @Html.Partial("_ProductItems", b);
-                                                                        }
+                                                                    foreach (var b in db.Products.Where(x => x.Category.TopicId == t.Id && x.IsActive))
+                                                                    {
 
-                                                                        
-                                                                    <div class="col-md-12">
-                                                                        
-                                                                    </div>
+                                                                        @Html.Partial("_ProductItems", b);
+                                                                    }
                                                                 }
-
-
-
-
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
                                     </div>
-                                    
+
                                                                         }
 
                                                                     }
                         }
-                        
-                        
+
+
+
+
                         
                         <!--category Product Area End-->
                     </div>
@@ -562,46 +555,21 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="brand-active home-3 owl-carousel">
-                                <!--Single Brand Start-->
-                                <div class="single-brand">
-                                    <a href="#"><img src="img/brand/brand1.jpg" alt=""></a>
-                                </div>
-                                <!--Single Brand End-->
-                                <!--Single Brand Start-->
-                                <div class="single-brand">
-                                    <a href="#"><img src="img/brand/brand2.jpg" alt=""></a>
-                                </div>
-                                <!--Single Brand End-->
-                                <!--Single Brand Start-->
-                                <div class="single-brand">
-                                    <a href="#"><img src="img/brand/brand3.jpg" alt=""></a>
-                                </div>
-                                <!--Single Brand End-->
-                                <!--Single Brand Start-->
-                                <div class="single-brand">
-                                    <a href="#"><img src="img/brand/brand4.jpg" alt=""></a>
-                                </div>
-                                <!--Single Brand End-->
-                                <!--Single Brand Start-->
-                                <div class="single-brand">
-                                    <a href="#"><img src="img/brand/brand5.jpg" alt=""></a>
-                                </div>
-                                <!--Single Brand End-->
-                                <!--Single Brand Start-->
-                                <div class="single-brand">
-                                    <a href="#"><img src="img/brand/brand2.jpg" alt=""></a>
-                                </div>
-                                <!--Single Brand End-->
-                                <!--Single Brand Start-->
-                                <div class="single-brand">
-                                    <a href="#"><img src="img/brand/brand1.jpg" alt=""></a>
-                                </div>
-                                <!--Single Brand End-->
-                                <!--Single Brand Start-->
-                                <div class="single-brand">
-                                    <a href="#"><img src="img/brand/brand4.jpg" alt=""></a>
-                                </div>
-                                <!--Single Brand End-->
+                                @foreach (var s in db.Suppliers.Where(x => x.IsActive))
+                                {
+                                    var src = "/Uploads/image-not-available.jpg";
+                                    if (s.Logo != null && !s.Logo.Equals("") && File.Exists(Server.MapPath("~/Uploads/Suppliers/" + s.Id + "/" + s.Logo)))
+                                    {
+                                        src = "/Uploads/Suppliers/" + s.Id + "/" + s.Logo;
+                                    }
+                                    <!--Single Brand Start-->
+                                    <div class="single-brand">
+                                        <a href=@Url.Action("Index","Products",new { cat = ViewBag.cat,kw = ViewBag.kw,sup=s.Id})><img src="@src" alt=""></a>
+                                    </div>
+                                    <!--Single Brand End-->
+                                }
+                                
+                                
                             </div>
                         </div>
                     </div>
@@ -611,148 +579,7 @@
         <!-- Brand Area End -->
       
       
-        <!-- Modal Area Strat -->
-        <div class="modal fade" id="open-modal" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <!--Modal Img-->
-                            <div class="col-md-5">
-                                <!--Modal Tab Content Start-->
-                                <div class="tab-content product-details-large" id="myTabContent">
-                                    <div class="tab-pane fade show active" id="single-slide1" role="tabpanel" aria-labelledby="single-slide-tab-1">
-                                        <!--Single Product Image Start-->
-                                        <div class="single-product-img img-full">
-                                            <img src="img/single-product/large/large1.jpg" alt="">
-                                        </div>
-                                        <!--Single Product Image End-->
-                                    </div>
-                                    <div class="tab-pane fade" id="single-slide2" role="tabpanel" aria-labelledby="single-slide-tab-2">
-                                        <!--Single Product Image Start-->
-                                        <div class="single-product-img img-full">
-                                            <img src="img/single-product/large/large2.jpg" alt="">
-                                        </div>
-                                        <!--Single Product Image End-->
-                                    </div>
-                                    <div class="tab-pane fade" id="single-slide3" role="tabpanel" aria-labelledby="single-slide-tab-3">
-                                        <!--Single Product Image Start-->
-                                        <div class="single-product-img img-full">
-                                            <img src="img/single-product/large/large3.jpg" alt="">
-                                        </div>
-                                        <!--Single Product Image End-->
-                                    </div>
-                                    <div class="tab-pane fade" id="single-slide4" role="tabpanel" aria-labelledby="single-slide-tab-4">
-                                        <!--Single Product Image Start-->
-                                        <div class="single-product-img img-full">
-                                            <img src="img/single-product/large/large4.jpg" alt="">
-                                        </div>
-                                        <!--Single Product Image End-->
-                                    </div>
-                                </div>
-                                <!--Modal Content End-->
-                                <!--Modal Tab Menu Start-->
-                                <div class="single-product-menu">
-                                    <div class="nav single-slide-menu" role="tablist">
-                                        <div class="single-tab-menu img-full">
-                                            <a class="active" data-toggle="tab" id="single-slide-tab-1" href="#single-slide1"><img src="img/single-product/small/small1.jpg" alt=""></a>
-                                        </div>
-                                        <div class="single-tab-menu img-full">
-                                            <a data-toggle="tab" id="single-slide-tab-2" href="#single-slide2"><img src="img/single-product/small/small2.jpg" alt=""></a>
-                                        </div>
-                                        <div class="single-tab-menu img-full">
-                                            <a data-toggle="tab" id="single-slide-tab-3" href="#single-slide3"><img src="img/single-product/small/small3.jpg" alt=""></a>
-                                        </div>
-                                        <div class="single-tab-menu img-full">
-                                            <a data-toggle="tab" id="single-slide-tab-4" href="#single-slide4"><img src="img/single-product/small/small4.jpg" alt=""></a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!--Modal Tab Menu End-->
-                            </div>
-                            <!--Modal Img-->
-                            <!--Modal Content-->
-                            <div class="col-md-7">
-                                <div class="single-product-content">
-                                    <h1 class="single-product-name">Printed Chiffon Dress</h1>
-                                    <div class="single-product-reviews">
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                    </div>
-                                    <div class="single-product-price">
-                                        <div class="product-discount">
-                                            <span class="regular-price">$20.50</span>
-                                            <span class="price">$16.40</span>
-                                            <span class="discount">-20%</span>
-                                        </div>
-                                    </div>
-                                    <div class="product-info">
-                                        <p>Long printed dress with thin adjustable straps. V-neckline and wiring under the bust with ruffles at the bottom of the dress.</p>
-                                    </div>
-                                    <div class="single-product-action">
-                                        <form action="#">
-                                            <div class="product-variants">
-                                                <div class="product-variants-item">
-                                                    <span class="control-label">Size</span>
-                                                    <select class="nice-select" name="size">
-                                                        <option value="1">S</option>
-                                                        <option value="2">M</option>
-                                                        <option value="3">X</option>
-                                                        <option value="4">XL</option>
-                                                    </select>
-                                                </div>
-                                                <div class="product-variants-item">
-                                                    <span class="control-label">Color</span>
-                                                    <select class="nice-select" name="color">
-                                                        <option value="1">Red</option>
-                                                        <option value="2">Green</option>
-                                                        <option value="3">Blue</option>
-                                                        <option value="4">White</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="product-add-to-cart">
-                                                <span class="control-label">Quantity</span>
-                                                <div class="cart-plus-minus">
-                                                    <input class="cart-plus-minus-box" type="text" name="qtybutton" value="0">
-                                                </div>
-                                                <div class="add">
-                                                    <button class="add-to-cart"><i class="zmdi zmdi-shopping-cart-plus"></i> add-to-cart</button>
-                                                    <span class="product-availability"><i class="zmdi zmdi-check"></i> In stock</span>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                            <!--Modal Content-->
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <!--Single Product Share-->
-                        <div class="single-product-share">
-                            <ul>
-                                <li class="categories-title">Share :</li>
-                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
-                                <li><a href="#"><i class="fa fa-pinterest"></i></a></li>
-                            </ul>
-                        </div>
-                        <!--Single Product Share-->
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Modal Area End -->
+       
     </div>
 
 

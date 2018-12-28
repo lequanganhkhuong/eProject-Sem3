@@ -11,12 +11,17 @@ namespace ZuLuCommerce.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class SpecialDeal
     {
         public int Id { get; set; }
         public int ProductId { get; set; }
+        [DataType(DataType.DateTime)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
         public System.DateTime StartDate { get; set; }
+        [DataType(DataType.DateTime)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
         public System.DateTime EndDate { get; set; }
         public decimal Discount { get; set; }
         public bool IsActive { get; set; }

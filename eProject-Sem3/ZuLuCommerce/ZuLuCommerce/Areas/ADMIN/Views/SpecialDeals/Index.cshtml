@@ -7,56 +7,80 @@
 <h2>Special deal list</h2>
 
 <a href=@Url.Action("Create") class="btn btn-success" style="margin:10px 0">Add new product</a>
-<table class="table table-bordered table-hover">
-    <tr>
-        <th>
-            Product name
-        </th>
-        <th>
-            Start date
-        </th>
-        <th>
-            End date
-        </th>
-        <th>
-            Discount
-        </th>
-        <th>
-            Is Active
-        </th>
-      
-        <th></th>
-    </tr>
+<div class="box">
+    @using (Html.BeginForm())
+    {
+        <div class="col-md-3 col-6">
+            <select id="isactive" name="isactive" class="form-control dropdown-filter">
+                <option value="none" selected="selected">Is Active</option>
+                <option value="active">Active</option>
+                <option value="notactive">Not active</option>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Product.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.StartDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.EndDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Discount)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.IsActive)
-        </td>
-    
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) 
-          
-        </td>
-    </tr>
-}
+            </select>
+        </div>
+        <input type="submit" value="Submit" class="btn btn-success" style="margin:10px 0" />
+    }
+</div>
+<div class="box">
+    <table class="table table-bordered table-hover">
+        <tr>
+            <th>
+                Product name
+            </th>
+            <th>
+                Start date
+            </th>
+            <th>
+                End date
+            </th>
+            <th>
+                Discount
+            </th>
+            <th>
+                Is Active
+            </th>
 
-</table>
-<div class="page-list">
-    <div style="text-align:center;left:50%;position:relative;transform:translateX(-50%)" class="pagedListContainer">
-        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, kw = ViewBag.kw, sort = ViewBag.sort }))
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Product.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EndDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Discount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsActive)
+                </td>
+
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.Id })
+
+                </td>
+            </tr>
+        }
+
+    </table>
+    <div class="page-list">
+        <div style="text-align:center;left:50%;position:relative;transform:translateX(-50%)" class="pagedListContainer">
+            @Html.PagedListPager(Model, page => Url.Action("Index", new { page, kw = ViewBag.kw, sort = ViewBag.sort }))
+        </div>
     </div>
 </div>
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $("#isactive").val('@ViewBag.isactive');
+        });
+    </script>
+}

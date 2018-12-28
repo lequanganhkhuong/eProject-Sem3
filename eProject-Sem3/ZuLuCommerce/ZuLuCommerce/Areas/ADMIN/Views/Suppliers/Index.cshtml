@@ -47,7 +47,24 @@
             @Html.DisplayFor(modelItem => item.Address)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Logo)
+            @{
+                string src = "/Uploads/image-not-available.jpg";//default
+
+                if (item.Logo != null)
+                {
+         
+                    if (!item.Logo.Equals("") && File.Exists(Server.MapPath("~/Uploads/Suppliers/" + item.Id + "/" + item.Logo)))
+                    {
+                        src = "/Uploads/Suppliers/" + item.Id + "/" + item.Logo;
+
+                    }
+                }
+                
+
+            }
+
+            <img style="height:80px;width:auto;" class="img-responsive" src="@src" />
+
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.IsActive)

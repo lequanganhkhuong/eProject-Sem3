@@ -221,6 +221,10 @@
                                     <td><span class="amount" id="orderdiscount" discount="0">0</span></td>
                                 </tr>
                                 <tr class="cart-subtotal">
+                                    <th>Shipping fee</th>
+                                    <td><span class="amount" id="shipfee" fee="0">0</span></td>
+                                </tr>
+                                <tr class="cart-subtotal">
                                     <th>Tax</th>
                                     <td><span class="amount" id="tax" tax="10">10%</span></td>
                                 </tr>
@@ -286,7 +290,7 @@
         });
         var subtotal = parseInt($("#subtotal").attr("sub"));
         var discount = parseInt($("#orderdiscount").attr("discount"));
-        $("#total").html((subtotal * ((100 - discount) / 100 * 110 / 100)).toLocaleString('en') + " VND");
+        $("#total").html((subtotal * ((100 - discount) / 100 * 110 / 100)).toLocaleString('en') + " VND") + $("#shipfee").attr("fee");
        
         $("#checkcoupon").click(function () {
             var btn = $(this);
@@ -298,16 +302,29 @@
                     $("#discount").val(response);
                     
                     $("#orderdiscount").html(response + "%");
-                    $("#orderdiscount").attr("discount", data);
-                    $("#total").html(subtotal * ((100 - discount) / 100 * 110 / 100));
+                    $("#orderdiscount").attr("discount", response);
+                    //$("#total").html(subtotal * ((100 - discount) / 100 * 110 / 100 + parseInt($("#shipfee").attr("fee"))));
                     alert("Coupon applied");
-                    $("#total").html((subtotal * (100 - $("#orderdiscount").attr("discount")) / 100 * 110 / 100).toLocaleString('en') + " VND");
+                    $("#total").html((subtotal * (100 - $("#orderdiscount").attr("discount")) / 100 * 110 / 100 + parseInt($("#shipfee").attr("fee"))).toLocaleString('en') + " VND");
                 }
                 else {
                     alert("Invalid coupon");
                 }
             });
                 
+        });
+        $("#CityId").on('change', function () {
+            var btn = $(this);
+            var data = btn.val();
+            $.post("/Carts/getShippingFee?data=" + data, function (res) {
+                if (res != "Invalid") {
+                    $("#shipfee").html(res.toLocaleString('en'));
+                    $("#shipfee").attr("fee", res);
+                    $("#total").html((subtotal * (100 - $("#orderdiscount").attr("discount")) / 100 * 110 / 100 + parseInt($("#shipfee").attr("fee"))).toLocaleString('en') + " VND");
+                } else {
+                    alert("Invalid");
+                }
+            });
         });
     })
 </script>

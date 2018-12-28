@@ -11,7 +11,8 @@ namespace ZuLuCommerce.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class Supplier
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -21,9 +22,14 @@ namespace ZuLuCommerce.Models
         }
     
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
+        [EmailAddress]
+        [Required]
         public string Email { get; set; }
+        [Required]
         public string Phone { get; set; }
+        [Required]
         public string Address { get; set; }
         public string Logo { get; set; }
         public bool IsActive { get; set; }

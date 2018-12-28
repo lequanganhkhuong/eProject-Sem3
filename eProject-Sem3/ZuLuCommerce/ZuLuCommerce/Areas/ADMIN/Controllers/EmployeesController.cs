@@ -433,6 +433,10 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,FirstName,LastName,Phone,Address,Email,Gender,Birthday,Username,Password,LevelId,Avatar,LastLogin,IsActive")] Employee employee)
         {
+            if(!employee.Gender.ToLower().Equals("male") && !employee.Gender.ToLower().Equals("female"))
+            {
+                return Content("Gender cant be anything other than male and female");
+            }
             if (ModelState.IsValid)
             {
                 employee.Password = MySecurity.EncryptPass(employee.Password);
@@ -511,6 +515,10 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,FirstName,LastName,Phone,Address,Email,Gender,Birthday,Username,Password,LevelId,Avatar,LastLogin,IsActive,IsOnline")] Employee employee)
         {
+            if (!employee.Gender.ToLower().Equals("male") && !employee.Gender.ToLower().Equals("female"))
+            {
+                return Content("Gender cant be anything other than male and female");
+            }
             if (ModelState.IsValid)
             {
                 db.Entry(employee).State = EntityState.Modified;

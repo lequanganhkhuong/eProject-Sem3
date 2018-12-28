@@ -39,6 +39,17 @@
                 </div>
                 <div class="row">
                     <div class="col-xl-3 col-md-6 col-12">
+                        <div class="box box-body bg-blue">
+                            <h6 class="text-uppercase">Orders this month</h6>
+                            <div class="flexbox mt-2">
+                                <span class="fa fa-balance-scale  font-size-40"></span>
+                                <span class=" font-size-30">@ViewBag.orderthismonth</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.col -->
+
+                    <div class="col-xl-3 col-md-6 col-12">
                         <div class="box box-body bg-purple">
                             <h6 class="text-uppercase">Total orders</h6>
                             <div class="flexbox mt-2">
@@ -49,17 +60,17 @@
                     </div>
            
                     <!-- /.col -->
-                    <!-- /.col -->
                     <div class="col-xl-3 col-md-6 col-12">
                         <div class="box box-body bg-blue">
-                            <h6 class="text-uppercase">Total comments</h6>
+                            <h6 class="text-uppercase">New user this month</h6>
                             <div class="flexbox mt-2">
-                                <span class="ion ion-ios-chatboxes  font-size-40"></span>
-                                <span class=" font-size-30">@ViewBag.comments</span>
+                                <span class="ion ion-ios-briefcase-outline  font-size-40"></span>
+                                <span class=" font-size-30">@ViewBag.newUser</span>
                             </div>
                         </div>
                     </div>
                     <!-- /.col -->
+                   
                     <!-- /.col -->
                     <div class="col-xl-3 col-md-6 col-12">
                         <div class="box box-body bg-blue">
@@ -71,17 +82,7 @@
                         </div>
                     </div>
                     <!-- /.col -->
-                    <!-- /.col -->
-                    <div class="col-xl-3 col-md-6 col-12">
-                        <div class="box box-body bg-blue">
-                            <h6 class="text-uppercase">Orders this month</h6>
-                            <div class="flexbox mt-2">
-                                <span class="fa fa-balance-scale  font-size-40"></span>
-                                <span class=" font-size-30">@ViewBag.orderthismonth</span>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- /.col -->
+                    
                 </div>
               
                 <!-- Small boxes (Stat box) -->
@@ -128,6 +129,22 @@
                                 <i class="fa  fa-rocket"></i>
                             </div>
                             <a href=@Url.Action("Index", "Coupons") class="small-box-footer">More info <i class="fa fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    <!-- ./col -->
+                    <!-- ./col -->
+                    <div class="col-xl-3 col-md-6 col-6">
+                        <!-- small box -->
+                        <div class="small-box bg-purple">
+                            <div class="inner">
+                                <h3>@ViewBag.activeSpecialdiscount</h3>
+
+                                <p>Active special discounts</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fa  fa-shower"></i>
+                            </div>
+                            <a href=@Url.Action("Index", "SpecialDeals", new { isactive = "active" }) class="small-box-footer">More info <i class="fa fa-arrow-right"></i></a>
                         </div>
                     </div>
                     <!-- ./col -->
@@ -180,6 +197,18 @@
                    </div>
                    <!-- /.col -->
                </div>
+                <div class="row">
+                    <div class="col-xl-3 col-md-6 col-12">
+                        <div class="box box-body bg-blue">
+                            <h6 class="text-uppercase">Total comments</h6>
+                            <div class="flexbox mt-2">
+                                <span class="ion ion-ios-chatboxes  font-size-40"></span>
+                                <span class=" font-size-30">@ViewBag.comments</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.col -->
+                </div>
             </section>
             <!-- /.content -->
 

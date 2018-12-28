@@ -11,7 +11,8 @@ namespace ZuLuCommerce.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class Comment
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -25,6 +26,7 @@ namespace ZuLuCommerce.Models
         public Nullable<int> ParentId { get; set; }
         public string Content { get; set; }
         public int UserId { get; set; }
+        [DataType(DataType.DateTime)]
         public Nullable<System.DateTime> DateComment { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

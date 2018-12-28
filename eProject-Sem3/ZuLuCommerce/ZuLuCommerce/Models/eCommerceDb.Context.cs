@@ -55,7 +55,5 @@ namespace ZuLuCommerce.Models
         public virtual DbSet<NewProduct> NewProducts { get; set; }
         public virtual DbSet<Shipper> Shippers { get; set; }
         public virtual DbSet<Customer> Customers { get; set; }
-
-        public System.Data.Entity.DbSet<ZuLuCommerce.Areas.ADMIN.Models.ChangePasswordVm> ChangePasswordVms { get; set; }
     }
 }

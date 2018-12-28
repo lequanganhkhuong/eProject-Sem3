@@ -97,7 +97,7 @@
                                 var pic = item.Pictures.Where(x => x.ProductId == item.Id).ToList();
                                 if (pic != null)
                                 {
-                                    src = "/Uploads/Products/" + item.Id + "/" + item.Thumbnail;
+                                    src = "/Uploads/Products/" + item.Id + "/" + pic.FirstOrDefault().URL;
 
                                 }
                             }
@@ -156,7 +156,7 @@
            $("#isactive").val("@ViewBag.isactive");
            $("#discount").val("@ViewBag.discount");
            $("#bestselling").val("@ViewBag.discount");
-           bestselling
+           
        });
     </script>
 }

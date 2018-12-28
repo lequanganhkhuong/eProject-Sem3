@@ -4,6 +4,12 @@
 @{
     ViewBag.Title = "Add best selling products";
     var db = new eCommerceEntities();
+    var bs = db.OrderDetails.Where(x => x.Order.StatusId == 3).GroupBy(x => x.ProductId)
+                   .Select(group => new
+                   {
+                       productid = group.Key,
+                       Count = group.Count()
+                   }).OrderByDescending(x => x.Count);
 }
 
 <h2>Add best selling products</h2>
@@ -36,7 +42,7 @@
                         <option value="id_desc">Id descend</option>
                         <option value="category_asc">Category ascend</option>
                         <option value="category_desc">Category descend</option>
-
+                        <option value="bestselling">Best sellings</option>
                     </select>
 
                 </div>
@@ -146,6 +152,9 @@
                 Category
             </th>
             <th>
+                Sold
+            </th>
+            <th>
                 Supplier
             </th>
             <th></th>
@@ -197,6 +206,20 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Category.Name)
                 </td>
+                <td>
+                    @{
+                        if (bs.Select(c => c.productid).Contains(item.Id))
+                        {
+                            var count = bs.Where(x => x.productid == item.Id).SingleOrDefault().Count;
+                            <p>@count</p>
+                        }
+                        else
+                        {
+                            <p>0</p>
+                        }
+                    }
+                </td>
+
                 <td>
                     @Html.DisplayFor(modelItem => item.Supplier.Name)
                 </td>

@@ -11,7 +11,8 @@ namespace ZuLuCommerce.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class Employee
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -22,14 +23,25 @@ namespace ZuLuCommerce.Models
         }
     
         public int Id { get; set; }
+        [Required]
         public string FirstName { get; set; }
+        [Required]
         public string LastName { get; set; }
+        [Required]
         public string Phone { get; set; }
+        [Required]
         public string Address { get; set; }
+        [Required]
+        [EmailAddress]
         public string Email { get; set; }
         public string Gender { get; set; }
+        [DataType(DataType.DateTime)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
         public System.DateTime Birthday { get; set; }
+        [Required]
         public string Username { get; set; }
+        [Required]
+        [DataType(DataType.Password)]
         public string Password { get; set; }
         public int LevelId { get; set; }
         public string Avatar { get; set; }

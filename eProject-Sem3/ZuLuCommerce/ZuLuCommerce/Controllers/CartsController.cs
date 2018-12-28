@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Net.Mail;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using ZuLuCommerce.Models;
@@ -158,6 +160,13 @@ namespace ZuLuCommerce.Controllers
         [HttpPost]
         public ActionResult Checkout(Customer customer,string payment,string data,string discount,string description)
         {
+            // mail content
+            List<OrderDetail> maillist = new List<OrderDetail>();
+            var codename = "";
+            var maildiscount = "";
+            decimal shipfee = 0;
+
+            //
             decimal price = 0;
             decimal subtotal = 0;
             var coupon = db.Coupons.Where(x => x.Code.Equals(discount) && x.StartDate <= DateTime.Now && x.EndDate > DateTime.Now && x.Uses > 0 && x.IsActive).SingleOrDefault();
@@ -217,6 +226,9 @@ namespace ZuLuCommerce.Controllers
                         coupon.Uses -= 1;
                         coupdiscount = coupon.Discount;
                     }
+                    codename = o.Codenname;
+                    maildiscount = o.Discount.ToString();
+                    shipfee = o.ShippingFee ?? 0;
                     db.Orders.Add(o);
                     db.SaveChanges();
                     //add orderdetails
@@ -242,6 +254,7 @@ namespace ZuLuCommerce.Controllers
                             Description = null,
                             Price = price
                         };
+                        maillist.Add(od);
                         db.OrderDetails.Add(od);
                     }
                     db.SaveChanges();
@@ -292,7 +305,9 @@ namespace ZuLuCommerce.Controllers
                         ShippingCity = customer.CityId
                     };
                     db.Orders.Add(o);
-                    
+                    codename = o.Codenname;
+                    maildiscount = o.Discount.ToString();
+                    shipfee = o.ShippingFee ?? 0;
                     db.SaveChanges();
                     var cart = db.CartItems.Where(x=>x.Cart.UserId == id);
                    
@@ -320,6 +335,7 @@ namespace ZuLuCommerce.Controllers
                         };
                         db.OrderDetails.Add(od);
                         db.CartItems.Remove(c);
+                        maillist.Add(od);
                     }
                     db.SaveChanges();
                 }
@@ -329,6 +345,46 @@ namespace ZuLuCommerce.Controllers
                     return Content(ex.ToString());
                 }
             }
+            var mailtablebody = "";
+            decimal mailordertotal = 0;
+            foreach(var a in maillist)
+            {
+                var aPrice = a.Price.Value.ToString("N0");
+                mailtablebody += "<tr>"
+                                + "<td> " + a.ProductName + "<strong> × " + a.Quantity + "</strong></td>"
+                                + "<td><span>" + aPrice + " VND</span></td>"
+                                + "</tr>";
+                decimal p = a.Price ?? 0;
+                mailordertotal += p * a.Quantity;
+            }
+          
+            mailordertotal = (mailordertotal * (100 - int.Parse(maildiscount)) / 100) * 110 / 100 + shipfee;
+            //send mail
+            MailMessage mail = new MailMessage();
+            mail.From = new MailAddress("anhkhuongsubmail@gmail.com");
+            mail.To.Add(customer.Email);
+            mail.Subject = "Your order detail";
+            mail.Body = "Your order's codename is: " + codename + "<br>"
+                + "<table>"
+                + "<thead><tr><th>Product</th><th>Total</th></tr></thead>"
+                + "<tbody>"
+                + mailtablebody
+                + "</tbody>"
+                + "<tr><th>Discount </th><td><span>" + maildiscount + "</span></td></tr>"
+                + "<tr><th>Total </th><td><span>" + mailordertotal.ToString("N0") + " VND</span></td></tr>";
+
+            mail.SubjectEncoding = Encoding.UTF8;
+            mail.BodyEncoding = Encoding.UTF8;
+            mail.IsBodyHtml = true;
+
+            //Create SMTP for send mail
+            SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
+            smtp.UseDefaultCredentials = false;
+            smtp.Credentials = new NetworkCredential("anhkhuongsubmail", "AnhKhuong1");
+            smtp.EnableSsl = true;
+
+            //Call Send mail -> Check all Spam
+            smtp.Send(mail);
             return Content("OK");
         }
         [HttpPost]
@@ -341,6 +397,18 @@ namespace ZuLuCommerce.Controllers
             }
             
             return Content(coupon.Discount.ToString());
+        }
+        [HttpPost]
+        public ActionResult getShippingFee(string data)
+        {
+            var id = int.Parse(data);
+            var fee = db.CityShippingFees.Where(x => x.Id == id).SingleOrDefault();
+            if (fee == null)
+            {
+                return Content("Invalid");
+            }
+            int rs = (int)fee.ShippingFee;
+            return Content(rs.ToString());
         }
     }
 }

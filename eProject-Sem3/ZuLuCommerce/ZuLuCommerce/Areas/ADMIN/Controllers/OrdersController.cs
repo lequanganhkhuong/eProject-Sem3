@@ -79,6 +79,27 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
             ViewBag.ShipperId = new SelectList(db.Shippers, "Id", "FirstName", shipment.ShipperId);
             return View(shipment);
         }
+        public decimal Income(Order income)
+        {
+
+          
+            
+            
+                decimal sale = 0;
+                var od = db.OrderDetails.Where(x => x.OrderId == income.Id);
+                foreach (var d in od)
+                {
+                    decimal p = d.Price ?? 0;
+                    sale += p * d.Quantity;
+                }
+                var shipfee = income.ShippingFee ?? 0;
+                var dis = income.Discount ?? 0;
+                sale = (sale * (100 - dis) / 100) * (income.Tax + 100) / 100 + shipfee;
+            
+            
+
+            return sale;
+        }
         // GET: ADMIN/Orders
         public ActionResult Index(int? page, string kw, string sort, string status,string date,string pay, string city)
         {
@@ -224,6 +245,14 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
             ViewBag.resultcount = max;
             ViewBag.from = start;
             ViewBag.to = end;
+
+            var list = new List<Tuple<int, decimal>>();
+            foreach (var o in orders)
+            {
+                decimal sale = Income(o);
+                list.Add(new Tuple<int, decimal>(o.Id, sale));
+            }
+            ViewBag.orderTotal = list;
             return View(orders.ToPagedList(pageNumber, pageSize));
             
         }

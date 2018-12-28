@@ -11,7 +11,8 @@ namespace ZuLuCommerce.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class Order
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -21,7 +22,10 @@ namespace ZuLuCommerce.Models
         }
     
         public int Id { get; set; }
+        [Required]
         public string Codenname { get; set; }
+        [Required]
+        [DataType(DataType.DateTime)]
         public System.DateTime CreatedDate { get; set; }
         public int StatusId { get; set; }
         public string Description { get; set; }

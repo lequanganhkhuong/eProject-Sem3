@@ -173,10 +173,13 @@
     <Compile Include="Areas\ADMIN\Controllers\DashboardController.cs" />
     <Compile Include="Areas\ADMIN\Controllers\EmployeesController.cs" />
     <Compile Include="Areas\ADMIN\Controllers\GroupsController.cs" />
+    <Compile Include="Areas\ADMIN\Controllers\LevelsController.cs" />
     <Compile Include="Areas\ADMIN\Controllers\OrdersController.cs" />
+    <Compile Include="Areas\ADMIN\Controllers\OrderStatusController.cs" />
     <Compile Include="Areas\ADMIN\Controllers\ProductsController.cs" />
     <Compile Include="Areas\ADMIN\Controllers\RecommendProductsController.cs" />
     <Compile Include="Areas\ADMIN\Controllers\ShipmentsController.cs" />
+    <Compile Include="Areas\ADMIN\Controllers\ShipmentStatusController.cs" />
     <Compile Include="Areas\ADMIN\Controllers\ShippersController.cs" />
     <Compile Include="Areas\ADMIN\Controllers\SpecialDealsController.cs" />
     <Compile Include="Areas\ADMIN\Controllers\SuppliersController.cs" />
@@ -306,6 +309,7 @@
     <Compile Include="Models\RecommendProduct.cs">
       <DependentUpon>eCommerceDb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\RoleSecurity\CustomAuthorization.cs" />
     <Compile Include="Models\RoleSecurity\MyRoleProvider.cs" />
     <Compile Include="Models\RoleSecurity\MySecurity.cs" />
     <Compile Include="Models\Shipment.cs">
@@ -1162,6 +1166,23 @@
     <Content Include="Areas\ADMIN\Views\BannerProducts\Index.cshtml" />
     <Content Include="Areas\ADMIN\Views\Shared\_CreateOrderShipment.cshtml" />
     <Content Include="Areas\ADMIN\Views\Customers\Delete.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Dashboard\Products.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Dashboard\Customers.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Levels\Create.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Levels\Delete.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Levels\Details.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Levels\Edit.cshtml" />
+    <Content Include="Areas\ADMIN\Views\Levels\Index.cshtml" />
+    <Content Include="Areas\ADMIN\Views\OrderStatus\Create.cshtml" />
+    <Content Include="Areas\ADMIN\Views\OrderStatus\Delete.cshtml" />
+    <Content Include="Areas\ADMIN\Views\OrderStatus\Details.cshtml" />
+    <Content Include="Areas\ADMIN\Views\OrderStatus\Edit.cshtml" />
+    <Content Include="Areas\ADMIN\Views\OrderStatus\Index.cshtml" />
+    <Content Include="Areas\ADMIN\Views\ShipmentStatus\Create.cshtml" />
+    <Content Include="Areas\ADMIN\Views\ShipmentStatus\Delete.cshtml" />
+    <Content Include="Areas\ADMIN\Views\ShipmentStatus\Details.cshtml" />
+    <Content Include="Areas\ADMIN\Views\ShipmentStatus\Edit.cshtml" />
+    <Content Include="Areas\ADMIN\Views\ShipmentStatus\Index.cshtml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Scripts\ckeditor\CHANGES.md" />
     <Content Include="Scripts\ckeditor\LICENSE.md" />
@@ -1500,6 +1521,7 @@
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Uploads\default-avatar.jpg" />
     <Content Include="Uploads\image-not-available.jpg" />
+    <Content Include="Uploads\logo.png" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

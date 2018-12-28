@@ -6,7 +6,7 @@
     eCommerceEntities db = new eCommerceEntities();
     int start = 1;
     int end = Model.PageSize;
-    int max = db.Products.Count();
+    int max = ViewBag.resultcount;
     if (Model.PageNumber > 1)
     {
         start = start + Model.PageSize * (Model.PageNumber - 1);
@@ -15,6 +15,10 @@
     if (end > max)
     {
         end = max;
+    }
+    if(max == 0)
+    {
+        start = 0;
     }
 }
 
@@ -26,9 +30,23 @@
                 <div class="breadcrumb-content text-center">
                     <h1 class="breadmome-name">Shop</h1>
                     <ul>
-                        <li><a href=@Url.Action("Index","Home")>Home</a></li>
+                        <li><a href=@Url.Action("Index", "Home")>Home</a></li>
                         <li class="active">Shop</li>
                     </ul>
+                    @{
+                        if (ViewBag.catname != null)
+                        {
+                            <h3>Category: @ViewBag.catname</h3>
+                        }
+                        if (ViewBag.topicname != null)
+                        {
+                            <h3>Category: @ViewBag.topicname</h3>
+                        }
+                        if (ViewBag.supname != null)
+                        {
+                            <h3>Brand: @ViewBag.supname</h3>
+                        }
+                    }
                 </div>
             </div>
         </div>
@@ -38,6 +56,7 @@
 <!--Shop Area Start-->
 <div class="shop-area mt-80">
     <div class="container">
+       
         <div class="row">
             <div class="col-lg-3 order-2 order-lg-1">
                 <!--Shop Product Categorie Start-->
@@ -45,16 +64,16 @@
                     <h3>Categories</h3>
                     <div id="shop-cate-toggle" class="category-menu sidebar-menu sidbar-style">
                         <ul class="category-sub-menu">
-                            @foreach (var topic in db.Topics.OrderBy(x=>x.Id))
+                            @foreach (var t in db.Topics.OrderBy(x=>x.Id))
                             {
                                 <li class="has-sub">
-                                    <a href="#">@topic.TopicName</a>
+                                    <a href=@Url.Action("Index",new { cat = ViewBag.cat, kw = ViewBag.kw, sup = ViewBag.sup, topic = t.Id })>@t.TopicName</a>
                                     <ul class="category-sub">
                                         @{
-                                            var cat = db.Categories.Where(x => x.TopicId == topic.Id);
-                                            foreach (var c in cat)
+                                            var category = db.Categories.Where(x => x.TopicId == t.Id);
+                                            foreach (var c in category)
                                             {
-                                                <li><a href=@Url.Action("Categories","Products",new { id = c.Id})>@c.Name</a></li>
+                                                <li><a href=@Url.Action("Index","Products",new { cat = c.Id, kw = ViewBag.kw, sup = ViewBag.sup, topic = ViewBag.topic })>@c.Name</a></li>
                                             }
                                         }
 
@@ -72,8 +91,15 @@
                     <h3>Brand</h3>
                     <div class="shop-checkbox">
                         <ul>
-                            <li><input name="product-categori" type="checkbox"><a href="#">Graphic Corner (5)</a></li>
-                            <li><input name="product-categori" type="checkbox"><a href="#">Studio Design (8)</a></li>
+                            @{
+                                foreach (var s in db.Suppliers)
+                                {
+                                    var p = db.Products.Where(x => x.SupplierId == s.Id).Count();
+                                    <li><a href=@Url.Action("Index",new { cat = ViewBag.cat,kw = ViewBag.kw,sup=s.Id})>@s.Name (@p)</a></li>
+                                }
+                            }
+                            
+                            
                         </ul>
                     </div>
                 </div>
@@ -83,56 +109,79 @@
                     <h3>Price</h3>
                     <div class="shop-checkbox">
                         <ul>
-                            <li><input name="price-filter" checked="" type="radio"><a href="#">$18.00 - $21.00 (1)</a></li>
-                            <li><input name="price-filter" checked="" type="radio"><a href="#">$30.00 - $37.00 (1)</a></li>
-                            <li><input name="price-filter" checked="" type="radio"><a href="#">$54.00 - $62.00 (1)</a></li>
-                            <li><input name="price-filter" checked="" type="radio"><a href="#">$72.00 - $83.00 (1)</a></li>
-                            <li><input name="price-filter" checked="" type="radio"><a href="#">$90.00 - $94.00 (1)</a></li>
-                            <li><input name="price-filter" checked="" type="radio"><a href="#">$96.00 - $125.00 (1)</a></li>
-                            <li><input name="price-filter" checked="" type="radio"><a href="#">$176.00 - $364.00 (7)</a></li>
+
+                            <li><input name="price-filter" class="pricecheck" value="all" checked="" type="radio"><a href="#">All </a></li>
+                            <li><input name="price-filter" class="pricecheck" value="0-5" checked="" type="radio"><a href="#">Below 5mil </a></li>
+                            <li><input name="price-filter" class="pricecheck" value="5-10" checked="" type="radio"><a href="#">5mil - 10mil </a></li>
+                            <li><input name="price-filter" class="pricecheck" value="10-20" checked="" type="radio"><a href="#">10mil - 20mil </a></li>
+                            <li><input name="price-filter" class="pricecheck" value="20-40" checked="" type="radio"><a href="#">20mil - 40mil </a></li>
+                            <li><input name="price-filter" class="pricecheck" value="40" checked="" type="radio"><a href="#">above 40mil</a></li>
                         </ul>
                     </div>
                 </div>
                 <!--Price Categorie Widget End-->
-                <!--Size Categorie Widget Strat-->
-                <div class="shop-sidebar mb-20">
-                    <h3>Size</h3>
-                    <div class="shop-checkbox">
-                        <ul>
-                            <li><input name="product-categori" type="checkbox"><a href="#">S (2)</a></li>
-                            <li><input name="product-categori" type="checkbox"><a href="#">M (2)</a></li>
-                            <li><input name="product-categori" type="checkbox"><a href="#">L (2)</a></li>
-                            <li><input name="product-categori" type="checkbox"><a href="#">XL (2)</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <!--Size Categorie Widget End-->
-                <!--Color Categorie Widget Start-->
-                <div class="shop-sidebar mb-20">
-                    <h3>color</h3>
-                    <div class="shop-checkbox">
-                        <ul>
-                            <li><a href="#"><span class="color"></span>Pink (2)</a></li>
-                            <li><a href="#"><span class="color"></span>Green (2)</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <!--Color Categorie Widget End-->
-                <!--Dimension Categorie Widget Start-->
-                <div class="shop-sidebar mb-20">
-                    <h3>Dimension</h3>
-                    <div class="shop-checkbox">
-                        <ul>
-                            <li><input name="product-categori" type="checkbox"><a href="#">40x60cm (3)</a></li>
-                            <li><input name="product-categori" type="checkbox"><a href="#">60x90cm (3)</a></li>
-                            <li><input name="product-categori" type="checkbox"><a href="#">80x120cm (3)</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <!--Dimension Categorie Widget End-->
+                
             </div>
             <div class="col-lg-9 order-1 order-lg-2">
                 <div class="shop-layout">
+                 
+                    @{
+                        int cat = ViewBag.cat;
+                        var topic = ViewBag.topic;
+                        if (cat != 0 || topic != 0)
+                        {
+                            if (db.Categories.Where(x => x.TopicId == 1 || x.TopicId == 4).Select(x => x.Id).Contains(cat) || topic == 1 || topic == 4)
+                            {
+                                <div class="row" style="margin:10px 0">
+                                    <div class="col-md-3 col-3">
+
+                                        <label>processor size:</label>
+                                        <select class="feature" name="processor" id="processor">
+                                            <option value="all">All processor</option>
+                                            @foreach (var a in db.ProductFeatures.Select(x => x.Processor).Distinct())
+                                            {
+                                                <option value="@a">@a</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3 col-3">
+
+                                        <label>Storage types:</label>
+                                        <select class="feature" name="storage" id="storage">
+                                            <option value="all">All types</option>
+                                            @foreach (var a in db.ProductFeatures.Select(x => x.StorageType).Distinct())
+                                            {
+                                                <option value="@a">@a</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3 col-3">
+
+                                        <label>Graphic:</label>
+                                        <select class="feature" name="graphic" id="graphic">
+                                            <option value="all">All types</option>
+                                            @foreach (var a in db.ProductFeatures.Select(x => x.Graphic).Distinct())
+                                            {
+                                                <option value="@a">@a</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3 col-3">
+
+                                        <label>Storage cap:</label>
+                                        <select class="feature" name="cap" id="cap">
+                                            <option value="all">All types</option>
+                                            @foreach (var a in db.ProductFeatures.Select(x => x.StorageCap).Distinct())
+                                            {
+                                                <option value="@a">@a</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    }
+                    
                     <!--Grid & List View Start-->
                     <div class="shop-topbar-wrapper mb-30 d-md-flex justify-content-md-between align-items-center">
                         <div class="grid-list-option">
@@ -150,13 +199,13 @@
                         <div class="toolbar-short-area d-md-flex align-items-center">
                             <div class="toolbar-shorter">
                                 <label>Sort By:</label>
-                                <select class="wide nice-select">
-                                    <option data-display="Select">Nothing</option>
-                                    <option value="Relevance">Relevance</option>
-                                    <option value="Name, A to Z">Name, A to Z</option>
-                                    <option value="Name, Z to A">Name, Z to A</option>
-                                    <option value="Price, low to high">Price, low to high</option>
-                                    <option value="Price, high to low">Price, high to low</option>
+                                <select name="sort" id="sort" >
+                                  
+                                    <option value="name_asc" >Name, A to Z</option>
+                                    <option value="name_desc">Name, Z to A</option>
+                                    <option value="price_asc">Price, low to high</option>
+                                    <option value="price_desc">Price, high to low</option>
+                                    <option value="bestselling">Bestselling</option>
                                 </select>
                             </div>
                         </div>
@@ -172,7 +221,7 @@
 
                                         @foreach (var item in Model)
                                         {<div class="col-lg-4 col-xl-4 col-md-4">
-                                            @Html.Partial("_ProductItems", item);
+                                            @Html.Partial("_ProductItems", item)
                                         </div>
                                         }
 
@@ -185,7 +234,7 @@
                                 <div class="product-list-view">
                                    @foreach (var item in Model)
                                         {
-                                            @Html.Partial("_ProductItems2", item);
+                                            @Html.Partial("_ProductItems2", item)
                                         }
                                    
                                 </div>
@@ -213,148 +262,88 @@
 </div>
 <!--Shop Area End-->
 
-<!-- Modal Area Strat -->
-<div class="modal fade" id="open-modal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <!--Modal Img-->
-                    <div class="col-md-5">
-                        <!--Modal Tab Content Start-->
-                        <div class="tab-content product-details-large" id="myTabContent">
-                            <div class="tab-pane fade show active" id="single-slide1" role="tabpanel" aria-labelledby="single-slide-tab-1">
-                                <!--Single Product Image Start-->
-                                <div class="single-product-img img-full">
-                                    <img src="~/Content/admin/img/single-product/large/large1.jpg" alt="">
-                                </div>
-                                <!--Single Product Image End-->
-                            </div>
-                            <div class="tab-pane fade" id="single-slide2" role="tabpanel" aria-labelledby="single-slide-tab-2">
-                                <!--Single Product Image Start-->
-                                <div class="single-product-img img-full">
-                                    <img src="~/Content/admin/img/single-product/large/large2.jpg" alt="">
-                                </div>
-                                <!--Single Product Image End-->
-                            </div>
-                            <div class="tab-pane fade" id="single-slide3" role="tabpanel" aria-labelledby="single-slide-tab-3">
-                                <!--Single Product Image Start-->
-                                <div class="single-product-img img-full">
-                                    <img src="~/Content/admin/img/single-product/large/large3.jpg" alt="">
-                                </div>
-                                <!--Single Product Image End-->
-                            </div>
-                            <div class="tab-pane fade" id="single-slide4" role="tabpanel" aria-labelledby="single-slide-tab-4">
-                                <!--Single Product Image Start-->
-                                <div class="single-product-img img-full">
-                                    <img src="~/Content/admin/img/single-product/large/large4.jpg" alt="">
-                                </div>
-                                <!--Single Product Image End-->
-                            </div>
-                        </div>
-                        <!--Modal Content End-->
-                        <!--Modal Tab Menu Start-->
-                        <div class="single-product-menu">
-                            <div class="nav single-slide-menu" role="tablist">
-                                <div class="single-tab-menu img-full">
-                                    <a class="active" data-toggle="tab" id="single-slide-tab-1" href="#single-slide1"><img src="~/Content/admin/img/single-product/small/small1.jpg" alt=""></a>
-                                </div>
-                                <div class="single-tab-menu img-full">
-                                    <a data-toggle="tab" id="single-slide-tab-2" href="#single-slide2"><img src="~/Content/admin/img/single-product/small/small2.jpg" alt=""></a>
-                                </div>
-                                <div class="single-tab-menu img-full">
-                                    <a data-toggle="tab" id="single-slide-tab-3" href="#single-slide3"><img src="~/Content/admin/img/single-product/small/small3.jpg" alt=""></a>
-                                </div>
-                                <div class="single-tab-menu img-full">
-                                    <a data-toggle="tab" id="single-slide-tab-4" href="#single-slide4"><img src="~/Content/admin/img/single-product/small/small4.jpg" alt=""></a>
-                                </div>
-                            </div>
-                        </div>
-                        <!--Modal Tab Menu End-->
-                    </div>
-                    <!--Modal Img-->
-                    <!--Modal Content-->
-                    <div class="col-md-7">
-                        <div class="single-product-content">
-                            <h1 class="single-product-name">Printed Chiffon Dress</h1>
-                            <div class="single-product-reviews">
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                            </div>
-                            <div class="single-product-price">
-                                <div class="product-discount">
-                                    <span class="regular-price">$20.50</span>
-                                    <span class="price">$16.40</span>
-                                    <span class="discount">-20%</span>
-                                </div>
-                            </div>
-                            <div class="product-info">
-                                <p>Long printed dress with thin adjustable straps. V-neckline and wiring under the bust with ruffles at the bottom of the dress.</p>
-                            </div>
-                            <div class="single-product-action">
-                                <form action="#">
-                                    <div class="product-variants">
-                                        <div class="product-variants-item">
-                                            <span class="control-label">Size</span>
-                                            <select class="nice-select" name="size">
-                                                <option value="1">S</option>
-                                                <option value="2">M</option>
-                                                <option value="3">X</option>
-                                                <option value="4">XL</option>
-                                            </select>
-                                        </div>
-                                        <div class="product-variants-item">
-                                            <span class="control-label">Color</span>
-                                            <select class="nice-select" name="color">
-                                                <option value="1">Red</option>
-                                                <option value="2">Green</option>
-                                                <option value="3">Blue</option>
-                                                <option value="4">White</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="product-add-to-cart">
-                                        <span class="control-label">Quantity</span>
-                                        <div class="cart-plus-minus">
-                                            <input class="cart-plus-minus-box" type="text" name="qtybutton" value="0">
-                                        </div>
-                                        <div class="add">
-                                            <button class="add-to-cart"><i class="zmdi zmdi-shopping-cart-plus"></i> add-to-cart</button>
-                                            <span class="product-availability"><i class="zmdi zmdi-check"></i> In stock</span>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    <!--Modal Content-->
-                </div>
-            </div>
-            <div class="modal-footer">
-                <!--Single Product Share-->
-                <div class="single-product-share">
-                    <ul>
-                        <li class="categories-title">Share :</li>
-                        <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                        <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                        <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
-                        <li><a href="#"><i class="fa fa-pinterest"></i></a></li>
-                    </ul>
-                </div>
-                <!--Single Product Share-->
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Modal Area End -->
 
-<!-- Go to www.addthis.com/dashboard to customize your tools -->
-<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5bffd26313112501"></script>
+
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+                $("#cat").val('@ViewBag.cat');
+                $("#kw").val('@ViewBag.kw');
+                $("#sort").val('@ViewBag.sort');
+                $("#processor").val('@ViewBag.processor');
+                $("#storage").val('@ViewBag.storage');
+                $("#cap").val('@ViewBag.cap');
+                $("#graphic").val('@ViewBag.graphic');
+                $(".feature").on('change',function () {
+                    var kw = '@ViewBag.kw';
+                    var cat = '@ViewBag.cat';
+                    var sup = '@ViewBag.sup';
+                    var topic = '@ViewBag.topic';
+                    var sort = '@ViewBag.sort';
+                    var processor = $("#processor").val();
+                    var storage = $("#storage").val();
+                    var graphic = $("#graphic").val();
+                    var cap = $("#cap").val();
+                    window.location = "/Products?kw=" + kw + "&cat=" + cat + "&sup=" + sup + "&sort=" + sort + "&topic=" + topic + "&processor=" + processor + "&storage=" + storage + "&cap=" + cap + "&graphic=" + graphic ;
+
+                });
+                $("#sort").on('change',function () {
+                    var kw = '@ViewBag.kw';
+                    var cat = '@ViewBag.cat';
+                    var sup = '@ViewBag.sup';
+                    var topic = '@ViewBag.topic';
+                    var sort = $(this).val();
+                    @if(db.Categories.Where(x => x.TopicId == 1 || x.TopicId == 4).Select(x => x.Id).Contains(cat) || topic == 1 || topic == 4)
+                    {
+                        @:var processor = $("#processor").val();
+                        @:var storage = $("#storage").val();
+                        @:var graphic = $("#graphic").val();
+                        @:var cap = $("#cap").val();
+                    }
+                    else
+                    {
+                        @:var processor = "";
+                        @:var storage = "";
+                        @:var graphic = "";
+                        @:var cap = "";
+                    }
+                    window.location = "/Products?kw=" + kw + "&cat=" + cat + "&sup=" + sup + "&sort=" + sort + "&topic=" + topic + "&processor=" + processor + "&storage=" + storage + "&cap=" + cap + "&graphic=" + graphic;
+
+                });
+                $('.pricecheck').each(function () {
+                    var btn = $(this);
+                    if (btn.val() == '@ViewBag.price') {
+                        btn.prop("checked", true);
+                    }
+                });
+                $('.pricecheck').click(function () {
+                    var kw = '@ViewBag.kw';
+                    var cat = '@ViewBag.cat';
+                    var sup = '@ViewBag.sup';
+                    var topic = '@ViewBag.topic';
+                    var sort = '@ViewBag.sort';
+                    @if(db.Categories.Where(x => x.TopicId == 1 || x.TopicId == 4).Select(x => x.Id).Contains(cat) || topic == 1 || topic == 4)
+                    {
+                        @:var processor = $("#processor").val();
+                        @:var storage = $("#storage").val();
+                        @:var graphic = $("#graphic").val();
+                        @:var cap = $("#cap").val();
+                    }
+                    else
+                    {
+                        @:var processor = "";
+                        @:var storage = "";
+                        @:var graphic = "";
+                        @:var cap = "";
+                    }
+
+
+                    if ($(this).is(':checked')) {
+                        var price = $(this).val();
+                        window.location = "/Products?kw=" + kw + "&price=" + price + "&cat=" + cat + "&sup=" + sup + "&sort=" + sort + "&topic=" + topic + "&processor=" + processor + "&storage=" + storage + "&cap=" + cap + "&graphic=" + graphic;
+                    }
+                });
+            })
+    </script>
+    }

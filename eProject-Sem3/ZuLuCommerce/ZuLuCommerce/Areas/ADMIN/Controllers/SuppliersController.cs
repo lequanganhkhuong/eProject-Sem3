@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -14,7 +15,29 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
     public class SuppliersController : Controller
     {
         private eCommerceEntities db = new eCommerceEntities();
-
+        private void UploadPictures(int id)
+        {
+            var sup = db.Suppliers.Find(id);
+            //add picture
+            string path = Server.MapPath("~/Uploads/Suppliers") + "\\" + id;
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            for (int i = 0; i < Request.Files.Count; i++)
+            {
+                HttpPostedFileBase file = Request.Files[i];
+                string filename = file.FileName.Split('\\').Last();
+                try
+                {
+                    file.SaveAs(path + "\\" + filename);
+                    sup.Logo = filename;
+                   
+                }
+                catch { }
+            }
+            db.SaveChanges();
+        }
         // GET: ADMIN/Suppliers
         public ActionResult Index()
         {
@@ -52,7 +75,9 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
             if (ModelState.IsValid)
             {
                 db.Suppliers.Add(supplier);
+                
                 db.SaveChanges();
+                UploadPictures(supplier.Id);
                 return RedirectToAction("Index");
             }
 
@@ -84,6 +109,7 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
             if (ModelState.IsValid)
             {
                 db.Entry(supplier).State = EntityState.Modified;
+                UploadPictures(supplier.Id);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }

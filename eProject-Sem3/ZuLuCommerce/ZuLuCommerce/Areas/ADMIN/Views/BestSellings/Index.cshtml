@@ -1,7 +1,15 @@
 ﻿@model PagedList.IPagedList<ZuLuCommerce.Models.BestSelling>
 @using PagedList.Mvc
+@using ZuLuCommerce.Models
 @{
     ViewBag.Title = "Index";
+    eCommerceEntities db = new eCommerceEntities();
+    //var bs = db.OrderDetails.Where(x => x.Order.StatusId == 3).GroupBy(x => x.ProductId)
+    //               .Select(group => new
+    //               {
+    //                   productid = group.Key,
+    //                   Count = group.Count()
+    //               }).OrderByDescending(x => x.Count);
 }
 
 <h2>Best selling products list</h2>
@@ -29,6 +37,9 @@
             <th>
                 Thumbnail
             </th>
+            @*<th>
+                Sold
+            </th>*@
             <th>
                 Remove
             </th>
@@ -77,6 +88,19 @@
 
                     <img style="height:100px;width:auto" class="img-responsive" src="@src" />
                 </td>
+                @*<td>
+                    @{
+                        if (bs.Select(c => c.productid).Contains(item.Id))
+                        {
+                            var count = bs.Where(x => x.productid == item.Id).SingleOrDefault().Count;
+                            <p>@count</p>
+                        }
+                        else
+                        {
+                            <p>0</p>
+                        }
+                    }
+                </td>*@
                 <td>
                     <button pid="@item.Id" class='removeitem'>Remove</button>
                 </td>

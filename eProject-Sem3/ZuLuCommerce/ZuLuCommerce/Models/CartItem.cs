@@ -11,12 +11,14 @@ namespace ZuLuCommerce.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class CartItem
     {
         public int Id { get; set; }
         public int CartId { get; set; }
         public int ProductId { get; set; }
+        [Range(0, int.MaxValue, ErrorMessage = "Please enter valid integer Number")]
         public int Quantity { get; set; }
     
         public virtual Cart Cart { get; set; }

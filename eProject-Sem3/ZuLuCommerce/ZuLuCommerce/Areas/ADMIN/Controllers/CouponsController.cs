@@ -17,11 +17,36 @@ namespace ZuLuCommerce.Areas.ADMIN.Controllers
         private eCommerceEntities db = new eCommerceEntities();
 
         // GET: ADMIN/Coupons
-        public ActionResult Index(int? page)
+        public ActionResult Index(int? page,string isactive)
         {
             int pageSize = 10;
             int pageNumber = page ?? 1;
-            return View(db.Coupons.OrderBy(x=>x.Id).ToPagedList(pageNumber,pageSize));
+            IQueryable<Coupon> coupons = db.Coupons;
+            //filter isactive
+            if (string.IsNullOrEmpty(isactive))
+            {
+                ViewBag.isactive = "none";
+                isactive = "none";
+            }
+            else
+            {
+                ViewBag.isactive = isactive;
+            }
+            if (!isactive.Equals("none"))
+            {
+
+                switch (isactive)
+                {
+                    case "active":
+                        coupons =  coupons.Where(x=>x.IsActive);
+                        break;
+                    case "notactive":
+                        coupons = coupons.Where(x => !x.IsActive);
+                        break;
+                }
+            }
+            
+            return View(coupons.OrderBy(x => x.Id).ToPagedList(pageNumber,pageSize));
         }
 
         // GET: ADMIN/Coupons/Details/5

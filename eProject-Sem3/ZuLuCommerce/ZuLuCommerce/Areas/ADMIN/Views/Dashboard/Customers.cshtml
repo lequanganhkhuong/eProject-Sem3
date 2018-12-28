@@ -1,0 +1,170 @@
+﻿@using ZuLuCommerce.Models
+@{
+    ViewBag.Title = "Users analysis";
+    eCommerceEntities db = new eCommerceEntities();
+    var age = db.Customers.GroupBy(x => DateTime.Now.Year - (x.Birthday ?? new DateTime()).Year)
+                         .Select(x => new
+                         {
+                             age = x.Key,
+                             Count = x.Count()
+                         }).OrderByDescending(x => x.Count);
+    var city = db.Customers.GroupBy(x => x.CityShippingFee.CityName)
+                         .Select(x => new
+                         {
+                             city = x.Key,
+                             Count = x.Count()
+                         }).OrderByDescending(x => x.Count);
+    var highpaycustomer = ViewBag.highpaycustomers as List<Tuple<int,string, decimal, int>>;
+
+}
+
+<h2>Customers</h2>
+<div class="box">
+    <div class="row">
+        <div class="col-md-3 col-3 col-xl-3">
+            <h2 style="text-align:center">Customer ages</h2>
+            <canvas id="age"></canvas>
+        </div>
+        <div class="col-md-3 col-3 col-xl-3">
+            <h2 style="text-align:center">Customer / cities</h2>
+            <canvas id="city"></canvas>
+        </div>
+        <div class="col-md-6 col-6 col-xl-6" style="border-left:1px solid black">
+            <h2 style="text-align:center">Top 10 customers with highest order total</h2>
+            <table class="table table-hover table-hover">
+                <thead>
+                    <tr>
+                        <th>
+                            Name
+                        </th>
+                        <th>
+                            Total order
+                        </th>
+                        <th>
+                            Total payment
+                        </th>
+                        <th>
+                            Action
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var h in highpaycustomer.OrderByDescending(x=>x.Item3))
+                    {
+                        <tr>
+                            <td>
+                                @h.Item2
+                            </td>
+                            <td>
+                                @h.Item4
+                            </td>
+                            <td>
+                                @h.Item3.ToString("N0") VND
+                            </td>
+                            <td>
+                                <a href=@Url.Action("Details","Customers",new { id = h.Item1})>View details</a>
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+   
+        
+       
+</div>
+@*<h2>Users</h2>
+<div class="box">
+    <div class="row">
+       
+    </div>
+</div>*@
+
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+    <script>
+        var colors = ['aqua', 'black', 'lime', 'blue', 'fuchsia', 'gray', 'green',
+            'maroon', 'navy', 'olive', 'orange', 'purple', 'red',
+            'silver', 'teal', 'white', 'yellow', 'skyblue', 'lightgreen'];
+        function loadCustomerCity() {
+                var data = [];
+                var labels = [];
+              
+                var chartcolor = [];
+                for (var i = 0; i < @age.Count(); i++) {
+                    chartcolor[i] = colors[i];
+                }
+
+                @foreach (var d in city)
+                {
+                    @:data.push("@d.Count");
+                }
+                @foreach (var d in city)
+                {
+                    @:labels.push("@d.city");
+                }
+                var ctx = document.getElementById('city').getContext('2d');
+                var chart = new Chart(ctx, {
+                    // The type of chart we want to create
+                    type: 'pie',
+
+                    // The data for our dataset
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: "Customer ages",
+                            backgroundColor: chartcolor,
+                            borderColor: 'black',
+                            data: data,
+                        }]
+                    },
+
+                    // Configuration options go here
+                    options: {}
+                });
+            }
+        function loadCustomerAge() {
+                var data = [];
+                var labels = [];
+              
+                var chartcolor = [];
+                for (var i = 0; i < @age.Count(); i++) {
+                    chartcolor[i] = colors[i];
+                }
+
+                @foreach (var d in age)
+                {
+                    @:data.push("@d.Count");
+                }
+                @foreach (var d in age)
+                {
+                    @:labels.push("@d.age");
+                }
+                var ctx = document.getElementById('age').getContext('2d');
+                var chart = new Chart(ctx, {
+                    // The type of chart we want to create
+                    type: 'pie',
+
+                    // The data for our dataset
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: "Customer ages",
+                            backgroundColor: chartcolor,
+                            borderColor: 'black',
+                            data: data,
+                        }]
+                    },
+
+                    // Configuration options go here
+                    options: {}
+                });
+            }
+        $(document).ready(function () {
+            loadCustomerAge();
+            loadCustomerCity();
+        })
+    </script>
+}
